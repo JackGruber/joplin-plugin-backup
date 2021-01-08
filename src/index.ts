@@ -66,5 +66,22 @@ joplin.plugins.register({
       "CreateBackup",
       MenuItemLocation.Tools
     );
+
+    async function getNotebookFileName(notebooks, id): Promise<string> {
+      const names = [];
+      let parentId = "";
+
+      do {
+        names.push(notebooks[id].title);
+        parentId = notebooks[id].parent_id;
+        id = parentId;
+      } while (parentId != "");
+      return (
+        names
+          .reverse()
+          .join("_")
+          .replace(/[^a-zA-z0-9_-]/g, "") + ".jex"
+      );
+    }
   },
 });
