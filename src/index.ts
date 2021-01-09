@@ -8,18 +8,18 @@ joplin.plugins.register({
   onStart: async function () {
     console.info("Backup plugin started");
 
-		await joplin.settings.registerSection('backupSection', {
-			label: 'Backup',
-			iconName: 'fas fa-archive',
-		});
-		
-		await joplin.settings.registerSetting('path', {
-			value: 123,
-			type: SettingItemType.String,
-			section: 'backupSection',
-			public: true,
-			label: 'Backup Path',
-		});
+    await joplin.settings.registerSection("backupSection", {
+      label: "Backup",
+      iconName: "fas fa-archive",
+    });
+
+    await joplin.settings.registerSetting("path", {
+      value: 123,
+      type: SettingItemType.String,
+      section: "backupSection",
+      public: true,
+      label: "Backup Path",
+    });
 
     await joplin.commands.register({
       name: "CreateBackup",
