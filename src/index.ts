@@ -74,6 +74,14 @@ joplin.plugins.register({
             }
           }
 
+          // Backup Keymap
+          const profileDir = await joplin.settings.globalValue('profileDir');
+          try {
+            fs.copyFileSync(profileDir + "/keymap-desktop.json", backupPath + "/keymap-desktop.json")
+          } catch (e) {
+            showError("Backup error", e);
+            throw e;
+          }
         } else {
           console.info("Backup Path '" + backupPath + "' does not exist");
         }
