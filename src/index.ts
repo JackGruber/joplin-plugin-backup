@@ -46,15 +46,34 @@ joplin.plugins.register({
             }
           } while (folders.has_more);
 
+          // Backup notebooks with notes
           for (const folder of folders.items) {
-            let name: string = await getNotebookFileName(noteBooks, folder.id);
-            await joplin.commands.execute(
-              "exportFolders",
-              folder.id,
-              "jex",
-              backupPath + "/" + name
+            let noteCheck = await joplin.data.get(
+              ["folders", folder.id, "notes"],
+              {
+                fields: "id",
+              }
             );
+            if (noteCheck.items.length > 0) {
+              let name: string = await getNotebookFileName(
+                noteBooks,
+                folder.id
+              );
+              try {
+                let status: string = await joplin.commands.execute(
+                  "exportFolders",
+                  folder.id,
+                  "jex",
+                  backupPath + "/" + name
+                );
+              } catch (e) {
+                showError("Backup error", e);
+                throw e;
+              }
+              console.info(status);
+            }
           }
+
         } else {
           console.info("Backup Path '" + backupPath + "' does not exist");
         }
