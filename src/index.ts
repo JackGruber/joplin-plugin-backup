@@ -21,6 +21,8 @@ joplin.plugins.register({
       label: "Backup Path",
     });
 
+    const backupDialog = await joplin.views.dialogs.create("backupDialog");
+
     await joplin.commands.register({
       name: "CreateBackup",
       label: "Create Backup",
@@ -66,6 +68,22 @@ joplin.plugins.register({
       "CreateBackup",
       MenuItemLocation.Tools
     );
+
+    async function showError(title, e) {
+      await joplin.views.dialogs.setButtons(backupDialog, [
+        { id: "ok" },
+      ]);
+      await joplin.views.dialogs.setHtml(
+        backupDialog,
+        `
+        <div style="overflow-wrap: break-word;">
+          <h3> ${title}</h3>
+          ${e}
+        </div>
+        `
+      );
+      await joplin.views.dialogs.open(backupDialog);
+    }
 
     async function getNotebookFileName(notebooks, id): Promise<string> {
       const names = [];
