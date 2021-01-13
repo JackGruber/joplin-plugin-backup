@@ -14,7 +14,7 @@ joplin.plugins.register({
     });
 
     await joplin.settings.registerSetting("path", {
-      value: "",
+      value: " ",
       type: SettingItemType.String,
       section: "backupSection",
       public: true,
@@ -154,6 +154,7 @@ joplin.plugins.register({
           console.info("Backup Path '" + baseBackupPath + "' does not exist");
         }
 
+        showError("Backup finished", "The backup was created");
         console.info("End backup");
       },
     });
@@ -191,7 +192,7 @@ joplin.plugins.register({
         names
           .reverse()
           .join("_")
-          .replace(/[^a-zA-z0-9_-]/g, "") + ".jex"
+          .replace(/[[/\?%*:|"<>]]/g, "_") + ".jex"
       );
     }
   },
