@@ -72,7 +72,23 @@ joplin.plugins.register({
               .reverse();
             for (let i = backupRetention; i < oldBackupSets.length; i++) {
               try {
-                fs.rmdirSync( baseBackupPath + "/" + oldBackupSets[i],  { recursive: true })
+                fs.rmdirSync(baseBackupPath + "/" + oldBackupSets[i], {
+                  recursive: true,
+                });
+              } catch (e) {
+                showError("Backup error", e);
+                throw e;
+              }
+            }
+          } else {
+            const oldBackupData = fs
+              .readdirSync(baseBackupPath, { withFileTypes: true })
+              .filter((dirent) => dirent.isFile())
+              .map((dirent) => dirent.name)
+              .reverse();
+            for (const file of oldBackupData) {
+              try {
+                fs.removeSync(baseBackupPath + "/" + file);
               } catch (e) {
                 showError("Backup error", e);
                 throw e;
