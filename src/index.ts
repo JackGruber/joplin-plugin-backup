@@ -21,6 +21,16 @@ joplin.plugins.register({
       label: "Backup Path",
     });
 
+    await joplin.settings.registerSetting("backupRetention", {
+      value: 1,
+      minimum: 1,
+      maximum: 999,
+      type: SettingItemType.Int,
+      section: "backupSection",
+      public: true,
+      label: "Keep x Backups",
+    });
+
     const backupDialog = await joplin.views.dialogs.create("backupDialog");
 
     await joplin.commands.register({
@@ -29,8 +39,47 @@ joplin.plugins.register({
       execute: async () => {
         console.info("Start backup");
 
-        const backupPath = await joplin.settings.value("path");
-        if (fs.existsSync(backupPath)) {
+        const baseBackupPath = await joplin.settings.value("path");
+
+        if (fs.existsSync(baseBackupPath)) {
+          let backupPath = baseBackupPath;
+          const backupDate = new Date();
+          const backupRetention = await joplin.settings.value(
+            "backupRetention"
+          );
+          if (backupRetention > 1) {
+            backupPath =
+              baseBackupPath +
+              "/" +
+              backupDate.getFullYear().toString() +
+              (backupDate.getMonth() + 1).toString().padStart(2, "0") +
+              backupDate.getDate().toString().padStart(2, "0") +
+              backupDate.getHours().toString().padStart(2, "0") +
+              backupDate.getMinutes().toString().padStart(2, "0") +
+              backupDate.getSeconds().toString().padStart(2, "0");
+            try {
+              fs.mkdirSync(backupPath);
+            } catch (e) {
+              showError("Backup error", e);
+              throw e;
+            }
+
+            // delete old backup sets
+            const oldBackupSets = fs
+              .readdirSync(baseBackupPath, { withFileTypes: true })
+              .filter((dirent) => dirent.isDirectory())
+              .map((dirent) => dirent.name)
+              .reverse();
+            for (let i = backupRetention; i < oldBackupSets.length; i++) {
+              try {
+                fs.rmdirSync( baseBackupPath + "/" + oldBackupSets[i],  { recursive: true })
+              } catch (e) {
+                showError("Backup error", e);
+                throw e;
+              }
+            }
+          }
+
           let noteBooks = {};
           let pageNum = 0;
           do {
@@ -83,7 +132,7 @@ joplin.plugins.register({
             throw e;
           }
         } else {
-          console.info("Backup Path '" + backupPath + "' does not exist");
+          console.info("Backup Path '" + baseBackupPath + "' does not exist");
         }
 
         console.info("End backup");
