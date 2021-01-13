@@ -124,9 +124,12 @@ joplin.plugins.register({
           }
 
           // Backup Keymap
-          const profileDir = await joplin.settings.globalValue('profileDir');
+          const profileDir = await joplin.settings.globalValue("profileDir");
           try {
-            fs.copyFileSync(profileDir + "/keymap-desktop.json", backupPath + "/keymap-desktop.json")
+            fs.copyFileSync(
+              profileDir + "/keymap-desktop.json",
+              backupPath + "/keymap-desktop.json"
+            );
           } catch (e) {
             showError("Backup error", e);
             throw e;
@@ -146,9 +149,7 @@ joplin.plugins.register({
     );
 
     async function showError(title, e) {
-      await joplin.views.dialogs.setButtons(backupDialog, [
-        { id: "ok" },
-      ]);
+      await joplin.views.dialogs.setButtons(backupDialog, [{ id: "ok" }]);
       await joplin.views.dialogs.setHtml(
         backupDialog,
         `
