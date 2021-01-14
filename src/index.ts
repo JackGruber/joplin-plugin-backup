@@ -124,7 +124,7 @@ joplin.plugins.register({
             let noteCheck = await joplin.data.get(
               ["folders", folder.id, "notes"],
               {
-                fields: "id",
+                fields: "title, id",
               }
             );
             if (noteCheck.items.length > 0) {
@@ -133,6 +133,7 @@ joplin.plugins.register({
                 folder.id
               );
               try {
+                console.info("Backup >>" + folder.title + "<< (" + folder.id + ") as >>" + name + "<<");
                 let status: string = await joplin.commands.execute(
                   "exportFolders",
                   folder.id,
