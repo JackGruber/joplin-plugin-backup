@@ -31,6 +31,14 @@ joplin.plugins.register({
       label: "Keep x Backups",
     });
 
+    await joplin.settings.registerSetting("lastBackup", {
+      value: 0,
+      type: SettingItemType.Int,
+      section: "backupSection",
+      public: false,
+      label: "last backup run",
+    });
+
     const backupDialog = await joplin.views.dialogs.create("backupDialog");
 
     await joplin.commands.register({
@@ -150,6 +158,8 @@ joplin.plugins.register({
             showError("Backup error", e);
             throw e;
           }
+          
+          await joplin.settings.setValue('lastBackup', backupDate.valueOf());
         } else {
           console.info("Backup Path '" + baseBackupPath + "' does not exist");
         }
