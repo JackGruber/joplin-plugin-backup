@@ -34,6 +34,10 @@ Go to `Tools > Options > Combine notes`
 
 ## Changelog
 
+### v0.2.0 (2021-01-14)
+
+- Add: Automatic backups every X hours
+
 ### v0.1.0 (2021-01-14)
 
 - First version
