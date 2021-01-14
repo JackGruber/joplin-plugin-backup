@@ -29,6 +29,7 @@ joplin.plugins.register({
       section: "backupSection",
       public: true,
       label: "Keep x Backups",
+      description: "If more than one verison is configured, date (YYYYMMDDHHMMSS) folders are created in the Backup Path. ",
     });
 
     await joplin.settings.registerSetting("backupInterval", {
