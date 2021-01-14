@@ -14,7 +14,7 @@ joplin.plugins.register({
     });
 
     await joplin.settings.registerSetting("path", {
-      value: " ",
+      value: "",
       type: SettingItemType.String,
       section: "backupSection",
       public: true,
