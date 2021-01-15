@@ -29,7 +29,7 @@ joplin.plugins.register({
       section: "backupSection",
       public: true,
       label: "Keep x Backups",
-      description: "If more than one verison is configured, date (YYYYMMDDHHMMSS) folders are created in the Backup Path. ",
+      description: "If more than one verison is configured, date (YYYYMMDDHHMM) folders are created in the Backup Path. ",
     });
 
     await joplin.settings.registerSetting("backupInterval", {
@@ -85,8 +85,7 @@ joplin.plugins.register({
             (backupDate.getMonth() + 1).toString().padStart(2, "0") +
             backupDate.getDate().toString().padStart(2, "0") +
             backupDate.getHours().toString().padStart(2, "0") +
-            backupDate.getMinutes().toString().padStart(2, "0") +
-            backupDate.getSeconds().toString().padStart(2, "0");
+            backupDate.getMinutes().toString().padStart(2, "0");
           try {
             fs.mkdirSync(backupPath);
           } catch (e) {
