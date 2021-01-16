@@ -4,7 +4,7 @@
 	"app_min_version": "1.6.5",
 	"version": "0.2.0",
 	"name": "Simple Backup",
-	"description": "",
+	"description": "Plugin to create manual and automatic backups",
 	"author": "JackGruber",
 	"homepage_url": "https://github.com/JackGruber/joplin-plugin-backup",
 	"repository_url": "https://github.com/JackGruber/joplin-plugin-backup"
