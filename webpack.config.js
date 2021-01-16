@@ -17,21 +17,19 @@ const glob = require('glob');
 const execSync = require('child_process').execSync;
 
 const rootDir = path.resolve(__dirname);
-const userConfigFilename = './plugin.config.json';
-const userConfigPath = path.resolve(rootDir, userConfigFilename);
 const distDir = path.resolve(rootDir, 'dist');
 const srcDir = path.resolve(rootDir, 'src');
 const publishDir = path.resolve(rootDir, 'publish');
-
-const userConfig = Object.assign({}, {
-	extraScripts: [],
-}, fs.pathExistsSync(userConfigPath) ? require(userConfigFilename) : {});
 
 const manifestPath = `${srcDir}/manifest.json`;
 const packageJsonPath = `${rootDir}/package.json`;
 const manifest = readManifest(manifestPath);
 const pluginArchiveFilePath = path.resolve(publishDir, `${manifest.id}.jpl`);
 const pluginInfoFilePath = path.resolve(publishDir, `${manifest.id}.json`);
+
+fs.removeSync(distDir);
+fs.removeSync(publishDir);
+fs.mkdirpSync(publishDir);
 
 function validatePackageJson() {
 	const content = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
@@ -78,7 +76,13 @@ function createPluginArchive(sourceDir, destPath) {
 	const distFiles = glob.sync(`${sourceDir}/**/*`, { nodir: true })
 		.map(f => f.substr(sourceDir.length + 1));
 
-	if (!distFiles.length) throw new Error('Plugin archive was not created because the "dist" directory is empty');
+	if (!distFiles.length) {
+		// Usually means there's an error, which is going to be printed by
+		// webpack
+		console.warn(chalk.yellow('Plugin archive was not created because the "dist" directory is empty'));
+		return;
+	}
+
 	fs.removeSync(destPath);
 
 	tar.create(
@@ -104,14 +108,9 @@ function createPluginInfo(manifestPath, destPath, jplFilePath) {
 }
 
 function onBuildCompleted() {
-	try {
-		fs.removeSync(path.resolve(publishDir, 'index.js'));
-		createPluginArchive(distDir, pluginArchiveFilePath);
-		createPluginInfo(manifestPath, pluginInfoFilePath, pluginArchiveFilePath);
-		validatePackageJson();
-	} catch (error) {
-		console.error(chalk.red(error.message));
-	}
+	createPluginArchive(distDir, pluginArchiveFilePath);
+	createPluginInfo(manifestPath, pluginInfoFilePath, pluginArchiveFilePath);
+	validatePackageJson();
 }
 
 const baseConfig = {
@@ -141,6 +140,9 @@ const pluginConfig = Object.assign({}, baseConfig, {
 		filename: 'index.js',
 		path: distDir,
 	},
+});
+
+const lastStepConfig = {
 	plugins: [
 		new CopyPlugin({
 			patterns: [
@@ -154,15 +156,23 @@ const pluginConfig = Object.assign({}, baseConfig, {
 							// already copied into /dist so we don't copy them.
 							'**/*.ts',
 							'**/*.tsx',
+
+							// Currently we don't support JS files for the main
+							// plugin script. We support it for content scripts,
+							// but they should be declared in manifest.json,
+							// and then they are also compiled and copied to
+							// /dist. So wse also don't need to copy JS files.
+							'**/*.js',
 						],
 					},
 				},
 			],
 		}),
+		new WebpackOnBuildPlugin(onBuildCompleted),
 	],
-});
+};
 
-const extraScriptConfig = Object.assign({}, baseConfig, {
+const contentScriptConfig = Object.assign({}, baseConfig, {
 	resolve: {
 		alias: {
 			api: path.resolve(__dirname, 'api'),
@@ -171,46 +181,42 @@ const extraScriptConfig = Object.assign({}, baseConfig, {
 	},
 });
 
-const createArchiveConfig = {
-	stats: 'errors-only',
-	entry: './dist/index.js',
-	output: {
-		filename: 'index.js',
-		path: publishDir,
-	},
-	plugins: [new WebpackOnBuildPlugin(onBuildCompleted)],
-};
+function resolveContentScriptPaths(name) {
+	if (['.js', '.ts', '.tsx'].includes(path.extname(name).toLowerCase())) {
+		throw new Error(`Content script path must not include file extension: ${name}`);
+	}
 
-function resolveExtraScriptPath(name) {
-	const relativePath = `./src/${name}`;
+	const pathsToTry = [
+		`./src/${name}.ts`,
+		`${'./src/' + '/'}${name}.js`,
+	];
 
-	const fullPath = path.resolve(`${rootDir}/${relativePath}`);
-	if (!fs.pathExistsSync(fullPath)) throw new Error(`Could not find extra script: "${name}" at "${fullPath}"`);
+	for (const pathToTry of pathsToTry) {
+		if (fs.pathExistsSync(`${rootDir}/${pathToTry}`)) {
+			return {
+				entry: pathToTry,
+				output: {
+					filename: `${name}.js`,
+					path: distDir,
+					library: 'default',
+					libraryTarget: 'commonjs',
+					libraryExport: 'default',
+				},
+			};
+		}
+	}
 
-	const s = name.split('.');
-	s.pop();
-	const nameNoExt = s.join('.');
-
-	return {
-		entry: relativePath,
-		output: {
-			filename: `${nameNoExt}.js`,
-			path: distDir,
-			library: 'default',
-			libraryTarget: 'commonjs',
-			libraryExport: 'default',
-		},
-	};
+	throw new Error(`Could not find content script "${name}" at locations ${JSON.stringify(pathsToTry)}`);
 }
 
-function buildExtraScriptConfigs(userConfig) {
-	if (!userConfig.extraScripts.length) return [];
+function createContentScriptConfigs() {
+	if (!manifest.content_scripts) return [];
 
 	const output = [];
 
-	for (const scriptName of userConfig.extraScripts) {
-		const scriptPaths = resolveExtraScriptPath(scriptName);
-		output.push(Object.assign({}, extraScriptConfig, {
+	for (const contentScriptName of manifest.content_scripts) {
+		const scriptPaths = resolveContentScriptPaths(contentScriptName);
+		output.push(Object.assign({}, contentScriptConfig, {
 			entry: scriptPaths.entry,
 			output: scriptPaths.output,
 		}));
@@ -219,61 +225,8 @@ function buildExtraScriptConfigs(userConfig) {
 	return output;
 }
 
-function main(processArgv) {
-	const yargs = require('yargs/yargs');
-	const argv = yargs(processArgv).argv;
+const exportedConfigs = [pluginConfig].concat(createContentScriptConfigs());
 
-	const configName = argv['joplin-plugin-config'];
-	if (!configName) throw new Error('A config file must be specified via the --joplin-plugin-config flag');
-
-	// Webpack configurations run in parallel, while we need them to run in
-	// sequence, and to do that it seems the only way is to run webpack multiple
-	// times, with different config each time.
-
-	const configs = {
-		// Builds the main src/index.ts and copy the extra content from /src to
-		// /dist including scripts, CSS and any other asset.
-		buildMain: pluginConfig,
-
-		// Builds the extra scripts as defined in plugin.config.json. When doing
-		// so, some JavaScript files that were copied in the previous might be
-		// overwritten here by the compiled version. This is by design. The
-		// result is that JS files that don't need compilation, are simply
-		// copied to /dist, while those that do need it are correctly compiled.
-		buildExtraScripts: buildExtraScriptConfigs(userConfig),
-
-		// Ths config is for creating the .jpl, which is done via the plugin, so
-		// it doesn't actually need an entry and output, however webpack won't
-		// run without this. So we give it an entry that we know is going to
-		// exist and output in the publish dir. Then the plugin will delete this
-		// temporary file before packaging the plugin.
-		createArchive: createArchiveConfig,
-	};
-
-	// If we are running the first config step, we clean up and create the build
-	// directories.
-	if (configName === 'buildMain') {
-		fs.removeSync(distDir);
-		fs.removeSync(publishDir);
-		fs.mkdirpSync(publishDir);
-	}
-
-	return configs[configName];
-}
-
-let exportedConfigs = [];
-
-try {
-	exportedConfigs = main(process.argv);
-} catch (error) {
-	console.error(chalk.red(error.message));
-	process.exit(1);
-}
-
-if (!exportedConfigs.length) {
-	// Nothing to do - for example where there are no external scripts to
-	// compile.
-	process.exit(0);
-}
+exportedConfigs[exportedConfigs.length - 1] = Object.assign({}, exportedConfigs[exportedConfigs.length - 1], lastStepConfig);
 
 module.exports = exportedConfigs;
