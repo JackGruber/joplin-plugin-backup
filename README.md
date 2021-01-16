@@ -2,6 +2,8 @@
 
 A plugin to extend Joplin with a manual and automatic backup function.
 
+<img src=img/main.jpg>
+
 ## Installation
 
 ### Automatic
@@ -20,17 +22,22 @@ A plugin to extend Joplin with a manual and automatic backup function.
 
 ## Usage
 
-First configure the Plugin!
+First configure the Plugin under `Tools > Options > Backup`!
 
-For a manual backup click on `Tools > Create Backup`.
+Backups can be created manually with the command `Tools > Create Backup` or are created automatically based on the configured interval.
 
 ## Options
 
-Go to `Tools > Options > Combine notes`
+Go to `Tools > Options > Backup`
 
 - `Backup Path`: Where to save the backups to.
 - `Keep x Backups`: How many backups should be kept. Default `1`
 - `Backups interval in hours`: Create a backup every X hours. Default `24`
+
+## What is backuped
+
+- Each notebook as JEX
+- The `keymap-desktop.json`
 
 ## Changelog
 
