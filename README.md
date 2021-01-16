@@ -34,6 +34,10 @@ Go to `Tools > Options > Combine notes`
 
 ## Changelog
 
+### Not released
+
+- Fix: Check if keymap-desktop.json exists
+
 ### v0.2.0 (2021-01-14)
 
 - Add: Automatic backups every X hours
