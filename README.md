@@ -9,7 +9,7 @@ A plugin to extend Joplin with a manual and automatic backup function.
 ### Automatic
 
 - Go to `Tools > Options > Plugins`
-- Search for `Copy Tags`
+- Search for `Simple Backup`
 - Click Install plugin
 - Restart Joplin to enable the plugin
 
