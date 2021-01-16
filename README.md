@@ -34,6 +34,10 @@ Go to `Tools > Options > Combine notes`
 
 ## Changelog
 
+### v0.2.1 (2021-01-16)
+
+- remove seconds from folder
+
 ### v0.2.0 (2021-01-14)
 
 - Add: Automatic backups every X hours
