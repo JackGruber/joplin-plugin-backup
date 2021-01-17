@@ -38,6 +38,7 @@ Go to `Tools > Options > Combine notes`
 
 - Fix: Backup not only the last 50 notebooks
 - Add: Backup userchrome.css and userstyle.css
+- Add: Option to create single file JEX for all notebooks
 
 ### v0.2.1 (2021-01-16)
 

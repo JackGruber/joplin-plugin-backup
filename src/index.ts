@@ -21,6 +21,15 @@ joplin.plugins.register({
       label: "Backup Path",
     });
 
+    await joplin.settings.registerSetting("singleJex", {
+      value: false,
+      type: SettingItemType.Bool,
+      section: "backupSection",
+      public: true,
+      label: "Single JEX",
+      description: "Create only one JEX file for all notebooks."
+    });
+
     await joplin.settings.registerSetting("backupRetention", {
       value: 1,
       minimum: 1,
@@ -142,36 +151,49 @@ joplin.plugins.register({
           }
         } while (folders.has_more);
 
-        // Backup notebooks with notes
-        for (const folderId of noteBooksIds) {
-          let noteCheck = await joplin.data.get(
-            ["folders", folderId, "notes"],
-            {
-              fields: "title, id",
-            }
+        const singleJex = await joplin.settings.value("singleJex");
+        if(singleJex === true){
+          // Create on single file JEX backup
+          console.info("Create single file JEX backup");
+          let status: string = await joplin.commands.execute(
+            "exportFolders",
+            noteBooksIds,
+            "jex",
+            backupPath + "/all_notebooks.jex"
           );
-          
-          if (noteCheck.items.length > 0) {
-            let name: string = await getNotebookFileName(noteBookInfo, folderId);
-            try {
-              console.info(
-                "Backup '" +
-                  noteBookInfo[folderId]["title"] +
-                  "' (" +
-                  folderId +
-                  ") as '" +
-                  name +
-                  "'"
-              );
-              let status: string = await joplin.commands.execute(
-                "exportFolders",
-                folderId,
-                "jex",
-                backupPath + "/" + name
-              );
-            } catch (e) {
-              showError("Backup error", e);
-              throw e;
+        }
+        else{
+          // Backup notebooks with notes in seperatet JEX
+          for (const folderId of noteBooksIds) {
+            let noteCheck = await joplin.data.get(
+              ["folders", folderId, "notes"],
+              {
+                fields: "title, id",
+              }
+            );
+            
+            if (noteCheck.items.length > 0) {
+              let name: string = await getNotebookFileName(noteBookInfo, folderId);
+              try {
+                console.info(
+                  "Backup '" +
+                    noteBookInfo[folderId]["title"] +
+                    "' (" +
+                    folderId +
+                    ") as '" +
+                    name +
+                    "'"
+                );
+                let status: string = await joplin.commands.execute(
+                  "exportFolders",
+                  folderId,
+                  "jex",
+                  backupPath + "/" + name
+                );
+              } catch (e) {
+                showError("Backup error", e);
+                throw e;
+              }
             }
           }
         }
