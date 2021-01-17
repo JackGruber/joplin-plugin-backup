@@ -27,7 +27,7 @@ joplin.plugins.register({
       section: "backupSection",
       public: true,
       label: "Single JEX",
-      description: "Create only one JEX file for all notebooks."
+      description: "Create only one JEX file for all notebooks.",
     });
 
     await joplin.settings.registerSetting("backupRetention", {
@@ -38,7 +38,8 @@ joplin.plugins.register({
       section: "backupSection",
       public: true,
       label: "Keep x Backups",
-      description: "If more than one verison is configured, date (YYYYMMDDHHMM) folders are created in the Backup Path. ",
+      description:
+        "If more than one verison is configured, date (YYYYMMDDHHMM) folders are created in the Backup Path. ",
     });
 
     await joplin.settings.registerSetting("backupInterval", {
@@ -144,7 +145,7 @@ joplin.plugins.register({
             page: pageNum++,
           });
           for (const folder of folders.items) {
-            noteBooksIds.push(folder.id)
+            noteBooksIds.push(folder.id);
             noteBookInfo[folder.id] = {};
             noteBookInfo[folder.id]["title"] = folder.title;
             noteBookInfo[folder.id]["parent_id"] = folder.parent_id;
@@ -152,7 +153,7 @@ joplin.plugins.register({
         } while (folders.has_more);
 
         const singleJex = await joplin.settings.value("singleJex");
-        if(singleJex === true){
+        if (singleJex === true) {
           // Create on single file JEX backup
           console.info("Create single file JEX backup");
           let status: string = await joplin.commands.execute(
@@ -161,8 +162,7 @@ joplin.plugins.register({
             "jex",
             backupPath + "/all_notebooks.jex"
           );
-        }
-        else{
+        } else {
           // Backup notebooks with notes in seperatet JEX
           for (const folderId of noteBooksIds) {
             let noteCheck = await joplin.data.get(
@@ -171,9 +171,12 @@ joplin.plugins.register({
                 fields: "title, id",
               }
             );
-            
+
             if (noteCheck.items.length > 0) {
-              let name: string = await getNotebookFileName(noteBookInfo, folderId);
+              let name: string = await getNotebookFileName(
+                noteBookInfo,
+                folderId
+              );
               try {
                 console.info(
                   "Backup '" +
@@ -199,7 +202,7 @@ joplin.plugins.register({
         }
 
         const profileDir = await joplin.settings.globalValue("profileDir");
-        
+
         // Backup Keymap
         await backupFile(
           profileDir + "/keymap-desktop.json",
@@ -232,17 +235,13 @@ joplin.plugins.register({
     async function backupFile(src: string, dest: string): Promise<boolean> {
       if (fs.existsSync(src)) {
         try {
-          fs.copyFileSync(
-            src,
-            dest
-          );
+          fs.copyFileSync(src, dest);
         } catch (e) {
           showError("Backup error", e);
           throw e;
         }
         return true;
-      }
-      else{
+      } else {
         console.info("No file '" + src);
         return false;
       }
