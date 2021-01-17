@@ -181,6 +181,13 @@ joplin.plugins.register({
           backupPath + "/keymap-desktop.json"
         );
 
+
+        // Backup userstyle.css
+        await backupFile(
+          profileDir + "/userstyle.css",
+          backupPath + "/userstyle.css"
+        );
+
         await joplin.settings.setValue("lastBackup", backupDate.getTime());
       } else {
         console.info("Backup Path '" + baseBackupPath + "' does not exist");
