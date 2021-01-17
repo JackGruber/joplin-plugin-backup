@@ -221,7 +221,7 @@ joplin.plugins.register({
         return true;
       }
       else{
-        console.info("No file '" + src + "/keymap-desktop.json");
+        console.info("No file '" + src);
         return false;
       }
     }
