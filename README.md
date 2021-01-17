@@ -34,6 +34,10 @@ Go to `Tools > Options > Combine notes`
 
 ## Changelog
 
+### Not released
+
+- Add: Backup userchrome.css and userstyle.css
+
 ### v0.2.1 (2021-01-16)
 
 - remove seconds from folder
