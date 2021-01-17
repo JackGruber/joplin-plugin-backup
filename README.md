@@ -38,6 +38,8 @@ Go to `Tools > Options > Backup`
 
 - Each notebook as JEX
 - The `keymap-desktop.json`
+- The `userchrome.css`
+- The `userstyle.css`
 
 ## Changelog
 
