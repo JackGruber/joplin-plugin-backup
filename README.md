@@ -36,7 +36,7 @@ Go to `Tools > Options > Backup`
 
 ## What is backuped
 
-- Each notebook as JEX
+- Notebooks as JEX export (empty notbooks are not backed up)
 - The `keymap-desktop.json`
 - The `userchrome.css`
 - The `userstyle.css`
