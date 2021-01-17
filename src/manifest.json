@@ -2,7 +2,7 @@
 	"manifest_version": 1,
 	"id": "io.github.jackgruber.backup",
 	"app_min_version": "1.6.5",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"name": "Simple Backup",
 	"description": "Plugin to create manual and automatic backups",
 	"author": "JackGruber",
