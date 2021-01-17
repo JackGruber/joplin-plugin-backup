@@ -173,22 +173,13 @@ joplin.plugins.register({
           }
         }
 
-        // Backup Keymap
         const profileDir = await joplin.settings.globalValue("profileDir");
-        if (fs.existsSync(profileDir + "/keymap-desktop.json")) {
-          try {
-            fs.copyFileSync(
-              profileDir + "/keymap-desktop.json",
-              backupPath + "/keymap-desktop.json"
-            );
-          } catch (e) {
-            showError("Backup error", e);
-            throw e;
-          }
-        }
-        else{
-          console.info("No keymap file '" + profileDir + "/keymap-desktop.json");
-        }
+        
+        // Backup Keymap
+        await backupFile(
+          profileDir + "/keymap-desktop.json",
+          backupPath + "/keymap-desktop.json"
+        );
 
         await joplin.settings.setValue("lastBackup", backupDate.getTime());
       } else {
