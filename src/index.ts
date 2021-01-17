@@ -181,6 +181,11 @@ joplin.plugins.register({
           backupPath + "/keymap-desktop.json"
         );
 
+        // Backup userchrome.css
+        await backupFile(
+          profileDir + "/userchrome.css",
+          backupPath + "/userchrome.css"
+        );
 
         // Backup userstyle.css
         await backupFile(
