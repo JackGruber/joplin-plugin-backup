@@ -43,7 +43,7 @@ Go to `Tools > Options > Backup`
 
 ## Changelog
 
-### Not released
+### v0.3.0 (2021-01-17)
 
 - Fix: Backup not only the last 50 notebooks
 - Add: Backup userchrome.css and userstyle.css
