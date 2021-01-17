@@ -34,9 +34,9 @@ Go to `Tools > Options > Combine notes`
 
 ## Changelog
 
-### Not released
+### v0.2.1 (2021-01-16)
 
-- Fix: Check if keymap-desktop.json exists
+- remove seconds from folder
 
 ### v0.2.0 (2021-01-14)
 
