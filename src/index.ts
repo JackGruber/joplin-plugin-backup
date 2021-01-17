@@ -201,6 +201,25 @@ joplin.plugins.register({
       console.info("End backup");
     }
 
+    async function backupFile(src: string, dest: string): Promise<boolean> {
+      if (fs.existsSync(src)) {
+        try {
+          fs.copyFileSync(
+            src,
+            dest
+          );
+        } catch (e) {
+          showError("Backup error", e);
+          throw e;
+        }
+        return true;
+      }
+      else{
+        console.info("No file '" + src + "/keymap-desktop.json");
+        return false;
+      }
+    }
+
     async function showError(title, e) {
       await joplin.views.dialogs.setButtons(backupDialog, [{ id: "ok" }]);
       await joplin.views.dialogs.setHtml(
