@@ -125,7 +125,8 @@ joplin.plugins.register({
           }
         }
 
-        let noteBooks = {};
+        const noteBookInfo = {};
+        const noteBooksIds = [];
         let pageNum = 0;
         do {
           var folders = await joplin.data.get(["folders"], {
@@ -134,35 +135,37 @@ joplin.plugins.register({
             page: pageNum++,
           });
           for (const folder of folders.items) {
-            noteBooks[folder.id] = {};
-            noteBooks[folder.id]["title"] = folder.title;
-            noteBooks[folder.id]["parent_id"] = folder.parent_id;
+            noteBooksIds.push(folder.id)
+            noteBookInfo[folder.id] = {};
+            noteBookInfo[folder.id]["title"] = folder.title;
+            noteBookInfo[folder.id]["parent_id"] = folder.parent_id;
           }
         } while (folders.has_more);
 
         // Backup notebooks with notes
-        for (const folder of folders.items) {
+        for (const folderId of noteBooksIds) {
           let noteCheck = await joplin.data.get(
-            ["folders", folder.id, "notes"],
+            ["folders", folderId, "notes"],
             {
               fields: "title, id",
             }
           );
+          
           if (noteCheck.items.length > 0) {
-            let name: string = await getNotebookFileName(noteBooks, folder.id);
+            let name: string = await getNotebookFileName(noteBookInfo, folderId);
             try {
               console.info(
-                "Backup >>" +
-                  folder.title +
-                  "<< (" +
-                  folder.id +
-                  ") as >>" +
+                "Backup '" +
+                  noteBookInfo[folderId]["title"] +
+                  "' (" +
+                  folderId +
+                  ") as '" +
                   name +
-                  "<<"
+                  "'"
               );
               let status: string = await joplin.commands.execute(
                 "exportFolders",
-                folder.id,
+                folderId,
                 "jex",
                 backupPath + "/" + name
               );
