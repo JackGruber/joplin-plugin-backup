@@ -41,7 +41,7 @@ Go to `Tools > Options > Backup`
 
 ## Changelog
 
-### Not released
+### v0.2.2 (2021-01-17)
 
 - Fix: Check if keymap-desktop.json exists
 
