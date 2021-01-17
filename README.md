@@ -41,6 +41,10 @@ Go to `Tools > Options > Backup`
 
 ## Changelog
 
+### Not released
+
+- Fix: Check if keymap-desktop.json exists
+
 ### v0.2.1 (2021-01-16)
 
 - remove seconds from folder
