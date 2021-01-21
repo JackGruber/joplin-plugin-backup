@@ -40,6 +40,7 @@ Go to `Tools > Options > Backup`
 - The `keymap-desktop.json`
 - The `userchrome.css`
 - The `userstyle.css`
+- The `templates` folder
 
 ## Changelog
 
