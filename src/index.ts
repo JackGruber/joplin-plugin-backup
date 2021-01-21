@@ -182,9 +182,15 @@ joplin.plugins.register({
           profileDir + "/userstyle.css",
           activeBackupPath + "/userstyle.css"
         );
+        
+        // Backup Templates
+        await backupFolder(
+          profileDir + "/templates",
+          activeBackupPath + "/templates"
+        )
 
         await moveBackup(baseBackupPath, activeBackupPath, backupDate);
-        
+
         await joplin.settings.setValue("lastBackup", backupDate.getTime());
       } else {
         console.error("Backup Path '" + baseBackupPath + "' does not exist");
@@ -194,6 +200,21 @@ joplin.plugins.register({
         showError("Backup finished", "The backup was created");
       }
       console.info("End backup");
+    }
+
+    // Backup templates
+    async function backupFolder(src: string, dst: string) {
+      if (fs.existsSync(src)) {
+        try {
+          fs.copySync(src, dst)
+        } catch (e) {
+          showError("Backup error", e);
+          console.error(e);
+          throw e;
+        }
+      } else {
+        console.info("Automatic backup disabled");
+      }
     }
 
     // Cleanup old backups / move created backup
@@ -275,6 +296,14 @@ joplin.plugins.register({
             console.error(e);
             throw e;
           }
+        }
+
+        try {
+          fs.removeSync(backupPath + "/templates");
+        } catch (e) {
+          showError("Backup error", e);
+          console.error(e);
+          throw e;
         }
       }
     }
