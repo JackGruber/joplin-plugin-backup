@@ -232,6 +232,47 @@ joplin.plugins.register({
       console.info("End backup");
     }
 
+    // Cleanup old backups / move created backup
+    async function moveBackup(baseBackupPath: string, activeBackupPath: string, backupDate: any) {
+      const backupRetention = await joplin.settings.value("backupRetention");
+      if (backupRetention > 1) {
+        const backupDateFolder = backupDate.getFullYear().toString() +
+        (backupDate.getMonth() + 1).toString().padStart(2, "0") +
+        backupDate.getDate().toString().padStart(2, "0") +
+        backupDate.getHours().toString().padStart(2, "0") +
+        backupDate.getMinutes().toString().padStart(2, "0");
+        try {
+          fs.renameSync(activeBackupPath, baseBackupPath + "/" + backupDateFolder);        
+        } catch (e) {
+          showError("Backup error", e);
+          throw e;
+        }
+        await removeOldBackups(baseBackupPath, backupRetention);
+      } else {
+        await removeOldBackups(baseBackupPath, backupRetention);
+
+        const oldBackupData = fs
+          .readdirSync(activeBackupPath, { withFileTypes: true })
+          .map((dirent) => dirent.name);
+        for (const file of oldBackupData) {
+          try {
+            fs.moveSync(activeBackupPath + "/" + file, baseBackupPath + "/" + file);
+          } catch (e) {
+            showError("Backup error", e);
+            throw e;
+          }
+        }
+
+        try {
+          fs.rmdirSync(activeBackupPath, {
+            recursive: true,
+          });
+        } catch (e) {
+          showError("Backup error", e);
+          throw e;
+        }
+      }
+    }
 
     async function removeOldBackups(backupPath: string, backupRetention: number) {
       if (backupRetention > 1) {
