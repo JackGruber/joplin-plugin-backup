@@ -92,6 +92,7 @@ joplin.plugins.register({
           fs.emptyDirSync(activeBackupPath)
         } catch (e) {
           showError("Backup error", e);
+          console.error(e);
           throw e;
         }
 
@@ -155,6 +156,7 @@ joplin.plugins.register({
                 );
               } catch (e) {
                 showError("Backup error", e);
+                console.error(e);
                 throw e;
               }
             }
@@ -185,7 +187,7 @@ joplin.plugins.register({
         
         await joplin.settings.setValue("lastBackup", backupDate.getTime());
       } else {
-        console.info("Backup Path '" + baseBackupPath + "' does not exist");
+        console.error("Backup Path '" + baseBackupPath + "' does not exist");
       }
 
       if (showMsg === true) {
@@ -207,6 +209,7 @@ joplin.plugins.register({
           fs.renameSync(activeBackupPath, baseBackupPath + "/" + backupDateFolder);        
         } catch (e) {
           showError("Backup error", e);
+          console.error(e);
           throw e;
         }
         await removeOldBackups(baseBackupPath, backupRetention);
@@ -221,6 +224,7 @@ joplin.plugins.register({
             fs.moveSync(activeBackupPath + "/" + file, baseBackupPath + "/" + file);
           } catch (e) {
             showError("Backup error", e);
+            console.error(e);
             throw e;
           }
         }
@@ -231,6 +235,7 @@ joplin.plugins.register({
           });
         } catch (e) {
           showError("Backup error", e);
+          console.error(e);
           throw e;
         }
       }
@@ -251,6 +256,7 @@ joplin.plugins.register({
             });
           } catch (e) {
             showError("Backup error", e);
+            console.error(e);
             throw e;
           }
         }
@@ -266,6 +272,7 @@ joplin.plugins.register({
             fs.removeSync(backupPath + "/" + file);
           } catch (e) {
             showError("Backup error", e);
+            console.error(e);
             throw e;
           }
         }
@@ -278,6 +285,7 @@ joplin.plugins.register({
           fs.copyFileSync(src, dest);
         } catch (e) {
           showError("Backup error", e);
+          console.error(e);
           throw e;
         }
         return true;
