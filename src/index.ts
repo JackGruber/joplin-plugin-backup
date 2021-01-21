@@ -144,16 +144,16 @@ joplin.plugins.register({
                 noteBookInfo,
                 folderId
               );
+              console.info(
+                "Backup '" +
+                  noteBookInfo[folderId]["title"] +
+                  "' (" +
+                  folderId +
+                  ") as '" +
+                  name +
+                  "'"
+              );
               try {
-                console.info(
-                  "Backup '" +
-                    noteBookInfo[folderId]["title"] +
-                    "' (" +
-                    folderId +
-                    ") as '" +
-                    name +
-                    "'"
-                );
                 let status: string = await joplin.commands.execute(
                   "exportFolders",
                   folderId,
