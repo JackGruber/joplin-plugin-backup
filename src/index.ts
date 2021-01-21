@@ -84,55 +84,15 @@ joplin.plugins.register({
       const baseBackupPath = await joplin.settings.value("path");
 
       if (fs.existsSync(baseBackupPath)) {
-        let backupPath = baseBackupPath;
+        const activeBackupPath = baseBackupPath + "/activeBackupJob";
         const backupDate = new Date();
-        const backupRetention = await joplin.settings.value("backupRetention");
-        if (backupRetention > 1) {
-          backupPath =
-            baseBackupPath +
-            "/" +
-            backupDate.getFullYear().toString() +
-            (backupDate.getMonth() + 1).toString().padStart(2, "0") +
-            backupDate.getDate().toString().padStart(2, "0") +
-            backupDate.getHours().toString().padStart(2, "0") +
-            backupDate.getMinutes().toString().padStart(2, "0");
-          try {
-            fs.mkdirSync(backupPath);
-          } catch (e) {
-            showError("Backup error", e);
-            throw e;
-          }
 
-          // delete old backup sets
-          const oldBackupSets = fs
-            .readdirSync(baseBackupPath, { withFileTypes: true })
-            .filter((dirent) => dirent.isDirectory())
-            .map((dirent) => dirent.name)
-            .reverse();
-          for (let i = backupRetention; i < oldBackupSets.length; i++) {
-            try {
-              fs.rmdirSync(baseBackupPath + "/" + oldBackupSets[i], {
-                recursive: true,
-              });
-            } catch (e) {
-              showError("Backup error", e);
-              throw e;
-            }
-          }
-        } else {
-          const oldBackupData = fs
-            .readdirSync(baseBackupPath, { withFileTypes: true })
-            .filter((dirent) => dirent.isFile())
-            .map((dirent) => dirent.name)
-            .reverse();
-          for (const file of oldBackupData) {
-            try {
-              fs.removeSync(baseBackupPath + "/" + file);
-            } catch (e) {
-              showError("Backup error", e);
-              throw e;
-            }
-          }
+        // Create tmp dir for active backup
+        try {
+          fs.emptyDirSync(activeBackupPath)
+        } catch (e) {
+          showError("Backup error", e);
+          throw e;
         }
 
         const noteBookInfo = {};
@@ -160,7 +120,7 @@ joplin.plugins.register({
             "exportFolders",
             noteBooksIds,
             "jex",
-            backupPath + "/all_notebooks.jex"
+            activeBackupPath + "/all_notebooks.jex"
           );
         } else {
           // Backup notebooks with notes in seperatet JEX
@@ -191,7 +151,7 @@ joplin.plugins.register({
                   "exportFolders",
                   folderId,
                   "jex",
-                  backupPath + "/" + name
+                  activeBackupPath + "/" + name
                 );
               } catch (e) {
                 showError("Backup error", e);
@@ -206,21 +166,23 @@ joplin.plugins.register({
         // Backup Keymap
         await backupFile(
           profileDir + "/keymap-desktop.json",
-          backupPath + "/keymap-desktop.json"
+          activeBackupPath + "/keymap-desktop.json"
         );
 
         // Backup userchrome.css
         await backupFile(
           profileDir + "/userchrome.css",
-          backupPath + "/userchrome.css"
+          activeBackupPath + "/userchrome.css"
         );
 
         // Backup userstyle.css
         await backupFile(
           profileDir + "/userstyle.css",
-          backupPath + "/userstyle.css"
+          activeBackupPath + "/userstyle.css"
         );
 
+        await moveBackup(baseBackupPath, activeBackupPath, backupDate);
+        
         await joplin.settings.setValue("lastBackup", backupDate.getTime());
       } else {
         console.info("Backup Path '" + baseBackupPath + "' does not exist");
