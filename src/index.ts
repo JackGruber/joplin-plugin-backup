@@ -274,7 +274,7 @@ joplin.plugins.register({
         names
           .reverse()
           .join("_")
-          .replace(/[[/\?%*:|"<>]]/g, "_") + ".jex"
+          .replace(/[/\\?%*:|"<>]/g, "_") + ".jex"
       );
     }
 
