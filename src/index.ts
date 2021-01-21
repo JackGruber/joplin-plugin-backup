@@ -117,12 +117,18 @@ joplin.plugins.register({
         if (singleJex === true) {
           // Create on single file JEX backup
           console.info("Create single file JEX backup");
-          let status: string = await joplin.commands.execute(
-            "exportFolders",
-            noteBooksIds,
-            "jex",
-            activeBackupPath + "/all_notebooks.jex"
-          );
+          try {
+            let status: string = await joplin.commands.execute(
+              "exportFolders",
+              noteBooksIds,
+              "jex",
+              activeBackupPath + "/all_notebooks.jex"
+            );
+          } catch (e) {
+            showError("Backup error", "exportFolders single JEX<br>" + e);
+            console.error(e);
+            throw e;
+          }
         } else {
           // Backup notebooks with notes in seperatet JEX
           for (const folderId of noteBooksIds) {
