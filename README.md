@@ -43,6 +43,10 @@ Go to `Tools > Options > Backup`
 
 ## Changelog
 
+### v0.3.0 (2021-01-21)
+
+- Fix #1: Unsupported characters in filename
+
 ### v0.3.0 (2021-01-17)
 
 - Fix: Backup not only the last 50 notebooks
