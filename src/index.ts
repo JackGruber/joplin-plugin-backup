@@ -84,55 +84,16 @@ joplin.plugins.register({
       const baseBackupPath = await joplin.settings.value("path");
 
       if (fs.existsSync(baseBackupPath)) {
-        let backupPath = baseBackupPath;
+        const activeBackupPath = baseBackupPath + "/activeBackupJob";
         const backupDate = new Date();
-        const backupRetention = await joplin.settings.value("backupRetention");
-        if (backupRetention > 1) {
-          backupPath =
-            baseBackupPath +
-            "/" +
-            backupDate.getFullYear().toString() +
-            (backupDate.getMonth() + 1).toString().padStart(2, "0") +
-            backupDate.getDate().toString().padStart(2, "0") +
-            backupDate.getHours().toString().padStart(2, "0") +
-            backupDate.getMinutes().toString().padStart(2, "0");
-          try {
-            fs.mkdirSync(backupPath);
-          } catch (e) {
-            showError("Backup error", e);
-            throw e;
-          }
 
-          // delete old backup sets
-          const oldBackupSets = fs
-            .readdirSync(baseBackupPath, { withFileTypes: true })
-            .filter((dirent) => dirent.isDirectory())
-            .map((dirent) => dirent.name)
-            .reverse();
-          for (let i = backupRetention; i < oldBackupSets.length; i++) {
-            try {
-              fs.rmdirSync(baseBackupPath + "/" + oldBackupSets[i], {
-                recursive: true,
-              });
-            } catch (e) {
-              showError("Backup error", e);
-              throw e;
-            }
-          }
-        } else {
-          const oldBackupData = fs
-            .readdirSync(baseBackupPath, { withFileTypes: true })
-            .filter((dirent) => dirent.isFile())
-            .map((dirent) => dirent.name)
-            .reverse();
-          for (const file of oldBackupData) {
-            try {
-              fs.removeSync(baseBackupPath + "/" + file);
-            } catch (e) {
-              showError("Backup error", e);
-              throw e;
-            }
-          }
+        // Create tmp dir for active backup
+        try {
+          fs.emptyDirSync(activeBackupPath)
+        } catch (e) {
+          showError("Backup error", "Create activeBackupPath<br>" + e);
+          console.error(e);
+          throw e;
         }
 
         const noteBookInfo = {};
@@ -156,12 +117,18 @@ joplin.plugins.register({
         if (singleJex === true) {
           // Create on single file JEX backup
           console.info("Create single file JEX backup");
-          let status: string = await joplin.commands.execute(
-            "exportFolders",
-            noteBooksIds,
-            "jex",
-            backupPath + "/all_notebooks.jex"
-          );
+          try {
+            let status: string = await joplin.commands.execute(
+              "exportFolders",
+              noteBooksIds,
+              "jex",
+              activeBackupPath + "/all_notebooks.jex"
+            );
+          } catch (e) {
+            showError("Backup error", "exportFolders single JEX<br>" + e);
+            console.error(e);
+            throw e;
+          }
         } else {
           // Backup notebooks with notes in seperatet JEX
           for (const folderId of noteBooksIds) {
@@ -177,24 +144,25 @@ joplin.plugins.register({
                 noteBookInfo,
                 folderId
               );
+              console.info(
+                "Backup '" +
+                  noteBookInfo[folderId]["title"] +
+                  "' (" +
+                  folderId +
+                  ") as '" +
+                  name +
+                  "'"
+              );
               try {
-                console.info(
-                  "Backup '" +
-                    noteBookInfo[folderId]["title"] +
-                    "' (" +
-                    folderId +
-                    ") as '" +
-                    name +
-                    "'"
-                );
                 let status: string = await joplin.commands.execute(
                   "exportFolders",
                   folderId,
                   "jex",
-                  backupPath + "/" + name
+                  activeBackupPath + "/" + name
                 );
               } catch (e) {
-                showError("Backup error", e);
+                showError("Backup error", "exportFolders JEX<br>" + e);
+                console.error(e);
                 throw e;
               }
             }
@@ -206,24 +174,33 @@ joplin.plugins.register({
         // Backup Keymap
         await backupFile(
           profileDir + "/keymap-desktop.json",
-          backupPath + "/keymap-desktop.json"
+          activeBackupPath + "/keymap-desktop.json"
         );
 
         // Backup userchrome.css
         await backupFile(
           profileDir + "/userchrome.css",
-          backupPath + "/userchrome.css"
+          activeBackupPath + "/userchrome.css"
         );
 
         // Backup userstyle.css
         await backupFile(
           profileDir + "/userstyle.css",
-          backupPath + "/userstyle.css"
+          activeBackupPath + "/userstyle.css"
         );
+        
+        // Backup Templates
+        await backupFolder(
+          profileDir + "/templates",
+          activeBackupPath + "/templates"
+        )
+
+        await moveBackup(baseBackupPath, activeBackupPath, backupDate);
 
         await joplin.settings.setValue("lastBackup", backupDate.getTime());
       } else {
-        console.info("Backup Path '" + baseBackupPath + "' does not exist");
+        console.error("Backup Path '" + baseBackupPath + "' does not exist");
+        showError("Backup error", "Backup Path '" + baseBackupPath + "' does not exist");
       }
 
       if (showMsg === true) {
@@ -232,12 +209,119 @@ joplin.plugins.register({
       console.info("End backup");
     }
 
+    // Backup templates
+    async function backupFolder(src: string, dst: string) {
+      if (fs.existsSync(src)) {
+        try {
+          fs.copySync(src, dst)
+        } catch (e) {
+          showError("Backup error", "backupFolder<br>" + e);
+          console.error(e);
+          throw e;
+        }
+      } else {
+        console.info("Automatic backup disabled");
+      }
+    }
+
+    // Cleanup old backups / move created backup
+    async function moveBackup(baseBackupPath: string, activeBackupPath: string, backupDate: any) {
+      const backupRetention = await joplin.settings.value("backupRetention");
+      if (backupRetention > 1) {
+        const backupDateFolder = backupDate.getFullYear().toString() +
+        (backupDate.getMonth() + 1).toString().padStart(2, "0") +
+        backupDate.getDate().toString().padStart(2, "0") +
+        backupDate.getHours().toString().padStart(2, "0") +
+        backupDate.getMinutes().toString().padStart(2, "0");
+        try {
+          fs.renameSync(activeBackupPath, baseBackupPath + "/" + backupDateFolder);        
+        } catch (e) {
+          showError("Backup error", "moveBackup rename<br>" + e);
+          console.error(e);
+          throw e;
+        }
+        await removeOldBackups(baseBackupPath, backupRetention);
+      } else {
+        await removeOldBackups(baseBackupPath, backupRetention);
+
+        const oldBackupData = fs
+          .readdirSync(activeBackupPath, { withFileTypes: true })
+          .map((dirent) => dirent.name);
+        for (const file of oldBackupData) {
+          try {
+            fs.moveSync(activeBackupPath + "/" + file, baseBackupPath + "/" + file);
+          } catch (e) {
+            showError("Backup error", "moveBackup<br>" + e);
+            console.error(e);
+            throw e;
+          }
+        }
+
+        try {
+          fs.rmdirSync(activeBackupPath, {
+            recursive: true,
+          });
+        } catch (e) {
+          showError("Backup error", "moveBackup rm activeBackupPath<br>" + e);
+          console.error(e);
+          throw e;
+        }
+      }
+    }
+
+    async function removeOldBackups(backupPath: string, backupRetention: number) {
+      if (backupRetention > 1) {
+        // delete old backup sets
+        const oldBackupSets = fs
+          .readdirSync(backupPath, { withFileTypes: true })
+          .filter((dirent) => dirent.isDirectory())
+          .map((dirent) => dirent.name)
+          .reverse();
+        for (let i = backupRetention; i < oldBackupSets.length; i++) {
+          try {
+            fs.rmdirSync(backupPath + "/" + oldBackupSets[i], {
+              recursive: true,
+            });
+          } catch (e) {
+            showError("Backup error", "removeOldBackups folder<br>" + e);
+            console.error(e);
+            throw e;
+          }
+        }
+      } else {
+        // Remove only files
+        const oldBackupData = fs
+          .readdirSync(backupPath, { withFileTypes: true })
+          .filter((dirent) => dirent.isFile())
+          .map((dirent) => dirent.name)
+          .reverse();
+        for (const file of oldBackupData) {
+          try {
+            fs.removeSync(backupPath + "/" + file);
+          } catch (e) {
+            showError("Backup error", "removeOldBackups files<br>" + e);
+            console.error(e);
+            throw e;
+          }
+        }
+
+        try {
+          fs.removeSync(backupPath + "/templates");
+        } catch (e) {
+          showError("Backup error", "removeOldBackups templates<br>" + e);
+          console.error(e);
+          throw e;
+        }
+      }
+    }
+
     async function backupFile(src: string, dest: string): Promise<boolean> {
       if (fs.existsSync(src)) {
         try {
           fs.copyFileSync(src, dest);
         } catch (e) {
-          showError("Backup error", e);
+          showError("Backup error", "backupFile<br>" + e);
+          console.error(e);
           throw e;
         }
         return true;

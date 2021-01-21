@@ -40,8 +40,14 @@ Go to `Tools > Options > Backup`
 - The `keymap-desktop.json`
 - The `userchrome.css`
 - The `userstyle.css`
+- The `templates` folder
 
 ## Changelog
+
+### not released
+
+- Add `templates` to backup
+- Optimize: Delete old backups at the end of the backup job
 
 ### v0.3.1 (2021-01-21)
 
