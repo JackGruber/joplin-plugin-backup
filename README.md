@@ -43,7 +43,7 @@ Go to `Tools > Options > Backup`
 
 ## Changelog
 
-### v0.3.0 (2021-01-21)
+### v0.3.1 (2021-01-21)
 
 - Fix #1: Unsupported characters in filename
 
