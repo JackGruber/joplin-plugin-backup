@@ -91,7 +91,7 @@ joplin.plugins.register({
         try {
           fs.emptyDirSync(activeBackupPath)
         } catch (e) {
-          showError("Backup error", e);
+          showError("Backup error", "Create activeBackupPath<br>" + e);
           console.error(e);
           throw e;
         }
@@ -161,7 +161,7 @@ joplin.plugins.register({
                   activeBackupPath + "/" + name
                 );
               } catch (e) {
-                showError("Backup error", e);
+                showError("Backup error", "exportFolders JEX<br>" + e);
                 console.error(e);
                 throw e;
               }
@@ -200,6 +200,7 @@ joplin.plugins.register({
         await joplin.settings.setValue("lastBackup", backupDate.getTime());
       } else {
         console.error("Backup Path '" + baseBackupPath + "' does not exist");
+        showError("Backup error", "Backup Path '" + baseBackupPath + "' does not exist");
       }
 
       if (showMsg === true) {
@@ -214,7 +215,7 @@ joplin.plugins.register({
         try {
           fs.copySync(src, dst)
         } catch (e) {
-          showError("Backup error", e);
+          showError("Backup error", "backupFolder<br>" + e);
           console.error(e);
           throw e;
         }
@@ -235,7 +236,7 @@ joplin.plugins.register({
         try {
           fs.renameSync(activeBackupPath, baseBackupPath + "/" + backupDateFolder);        
         } catch (e) {
-          showError("Backup error", e);
+          showError("Backup error", "moveBackup rename<br>" + e);
           console.error(e);
           throw e;
         }
@@ -250,7 +251,7 @@ joplin.plugins.register({
           try {
             fs.moveSync(activeBackupPath + "/" + file, baseBackupPath + "/" + file);
           } catch (e) {
-            showError("Backup error", e);
+            showError("Backup error", "moveBackup<br>" + e);
             console.error(e);
             throw e;
           }
@@ -261,7 +262,7 @@ joplin.plugins.register({
             recursive: true,
           });
         } catch (e) {
-          showError("Backup error", e);
+          showError("Backup error", "moveBackup rm activeBackupPath<br>" + e);
           console.error(e);
           throw e;
         }
@@ -282,7 +283,7 @@ joplin.plugins.register({
               recursive: true,
             });
           } catch (e) {
-            showError("Backup error", e);
+            showError("Backup error", "removeOldBackups folder<br>" + e);
             console.error(e);
             throw e;
           }
@@ -298,7 +299,7 @@ joplin.plugins.register({
           try {
             fs.removeSync(backupPath + "/" + file);
           } catch (e) {
-            showError("Backup error", e);
+            showError("Backup error", "removeOldBackups files<br>" + e);
             console.error(e);
             throw e;
           }
@@ -307,7 +308,7 @@ joplin.plugins.register({
         try {
           fs.removeSync(backupPath + "/templates");
         } catch (e) {
-          showError("Backup error", e);
+          showError("Backup error", "removeOldBackups templates<br>" + e);
           console.error(e);
           throw e;
         }
@@ -319,7 +320,7 @@ joplin.plugins.register({
         try {
           fs.copyFileSync(src, dest);
         } catch (e) {
-          showError("Backup error", e);
+          showError("Backup error", "backupFile<br>" + e);
           console.error(e);
           throw e;
         }
