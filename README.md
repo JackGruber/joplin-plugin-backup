@@ -44,7 +44,7 @@ Go to `Tools > Options > Backup`
 
 ## Changelog
 
-### not released
+### v0.4.0 (2021-01-21)
 
 - Add `templates` to backup
 - Optimize: Delete old backups at the end of the backup job
