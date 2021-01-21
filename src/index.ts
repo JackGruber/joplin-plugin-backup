@@ -232,6 +232,43 @@ joplin.plugins.register({
       console.info("End backup");
     }
 
+
+    async function removeOldBackups(backupPath: string, backupRetention: number) {
+      if (backupRetention > 1) {
+        // delete old backup sets
+        const oldBackupSets = fs
+          .readdirSync(backupPath, { withFileTypes: true })
+          .filter((dirent) => dirent.isDirectory())
+          .map((dirent) => dirent.name)
+          .reverse();
+        for (let i = backupRetention; i < oldBackupSets.length; i++) {
+          try {
+            fs.rmdirSync(backupPath + "/" + oldBackupSets[i], {
+              recursive: true,
+            });
+          } catch (e) {
+            showError("Backup error", e);
+            throw e;
+          }
+        }
+      } else {
+        // Remove only files
+        const oldBackupData = fs
+          .readdirSync(backupPath, { withFileTypes: true })
+          .filter((dirent) => dirent.isFile())
+          .map((dirent) => dirent.name)
+          .reverse();
+        for (const file of oldBackupData) {
+          try {
+            fs.removeSync(backupPath + "/" + file);
+          } catch (e) {
+            showError("Backup error", e);
+            throw e;
+          }
+        }
+      }
+    }
+
     async function backupFile(src: string, dest: string): Promise<boolean> {
       if (fs.existsSync(src)) {
         try {
