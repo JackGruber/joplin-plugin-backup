@@ -43,6 +43,11 @@ Go to `Tools > Options > Backup`
 
 ## Changelog
 
+### not released
+
+- Add `templates` to backup
+- Optimize: Delete old backups at the end of the backup job
+
 ### v0.3.0 (2021-01-21)
 
 - Fix #1: Unsupported characters in filename
