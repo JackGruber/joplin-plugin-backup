@@ -282,11 +282,20 @@ joplin.plugins.register({
     async function removeOldBackups(backupPath: string, backupRetention: number) {
       if (backupRetention > 1) {
         // delete old backup sets
-        const oldBackupSets = fs
+        const folders = fs
           .readdirSync(backupPath, { withFileTypes: true })
           .filter((dirent) => dirent.isDirectory())
           .map((dirent) => dirent.name)
           .reverse();
+
+        // Check if folder is a old backupset
+        const oldBackupSets = [];
+        for (let folder of folders) {
+          if (parseInt(folder) > 202100000000) {
+            oldBackupSets.push(folder);
+          }
+        }
+
         for (let i = backupRetention; i < oldBackupSets.length; i++) {
           try {
             fs.rmdirSync(backupPath + "/" + oldBackupSets[i], {
