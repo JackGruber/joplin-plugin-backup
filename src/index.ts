@@ -201,6 +201,7 @@ joplin.plugins.register({
       } else {
         console.error("Backup Path '" + baseBackupPath + "' does not exist");
         showError("Backup error", "Backup Path '" + baseBackupPath + "' does not exist");
+        return;
       }
 
       if (showMsg === true) {
