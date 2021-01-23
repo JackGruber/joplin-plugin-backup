@@ -96,6 +96,15 @@ joplin.plugins.register({
           throw e;
         }
 
+        // Create profile backupfolder
+        try {
+          fs.emptyDirSync(activeBackupPath + "/profile")
+        } catch (e) {
+          showError("Backup error", "Create activeBackupPath/profile<br>" + e);
+          console.error(e);
+          throw e;
+        }
+
         const noteBookInfo = {};
         const noteBooksIds = [];
         let pageNum = 0;
@@ -174,25 +183,25 @@ joplin.plugins.register({
         // Backup Keymap
         await backupFile(
           profileDir + "/keymap-desktop.json",
-          activeBackupPath + "/keymap-desktop.json"
+          activeBackupPath + "/profile/keymap-desktop.json"
         );
 
         // Backup userchrome.css
         await backupFile(
           profileDir + "/userchrome.css",
-          activeBackupPath + "/userchrome.css"
+          activeBackupPath + "/profile/userchrome.css"
         );
 
         // Backup userstyle.css
         await backupFile(
           profileDir + "/userstyle.css",
-          activeBackupPath + "/userstyle.css"
+          activeBackupPath + "/profile/userstyle.css"
         );
         
         // Backup Templates
         await backupFolder(
           profileDir + "/templates",
-          activeBackupPath + "/templates"
+          activeBackupPath + "/profile/templates"
         )
 
         await moveBackup(baseBackupPath, activeBackupPath, backupDate);
@@ -310,6 +319,14 @@ joplin.plugins.register({
           fs.removeSync(backupPath + "/templates");
         } catch (e) {
           showError("Backup error", "removeOldBackups templates<br>" + e);
+          console.error(e);
+          throw e;
+        }
+
+        try {
+          fs.removeSync(backupPath + "/profile");
+        } catch (e) {
+          showError("Backup error", "removeOldBackups profile<br>" + e);
           console.error(e);
           throw e;
         }

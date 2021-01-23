@@ -1,5 +1,9 @@
 # Changelog
 
+## Not released
+
+- Optimize: Store profile data in `profile` folder
+
 ## v0.4.0 (2021-01-21)
 
 - Add `templates` to backup
