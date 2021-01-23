@@ -96,6 +96,15 @@ joplin.plugins.register({
           throw e;
         }
 
+        // Create profile backupfolder
+        try {
+          fs.emptyDirSync(activeBackupPath + "/profile")
+        } catch (e) {
+          showError("Backup error", "Create activeBackupPath/profile<br>" + e);
+          console.error(e);
+          throw e;
+        }
+
         const noteBookInfo = {};
         const noteBooksIds = [];
         let pageNum = 0;
@@ -174,25 +183,25 @@ joplin.plugins.register({
         // Backup Keymap
         await backupFile(
           profileDir + "/keymap-desktop.json",
-          activeBackupPath + "/keymap-desktop.json"
+          activeBackupPath + "/profile/keymap-desktop.json"
         );
 
         // Backup userchrome.css
         await backupFile(
           profileDir + "/userchrome.css",
-          activeBackupPath + "/userchrome.css"
+          activeBackupPath + "/profile/userchrome.css"
         );
 
         // Backup userstyle.css
         await backupFile(
           profileDir + "/userstyle.css",
-          activeBackupPath + "/userstyle.css"
+          activeBackupPath + "/profile/userstyle.css"
         );
         
         // Backup Templates
         await backupFolder(
           profileDir + "/templates",
-          activeBackupPath + "/templates"
+          activeBackupPath + "/profile/templates"
         )
 
         await moveBackup(baseBackupPath, activeBackupPath, backupDate);
@@ -201,6 +210,7 @@ joplin.plugins.register({
       } else {
         console.error("Backup Path '" + baseBackupPath + "' does not exist");
         showError("Backup error", "Backup Path '" + baseBackupPath + "' does not exist");
+        return;
       }
 
       if (showMsg === true) {
@@ -272,11 +282,20 @@ joplin.plugins.register({
     async function removeOldBackups(backupPath: string, backupRetention: number) {
       if (backupRetention > 1) {
         // delete old backup sets
-        const oldBackupSets = fs
+        const folders = fs
           .readdirSync(backupPath, { withFileTypes: true })
           .filter((dirent) => dirent.isDirectory())
           .map((dirent) => dirent.name)
           .reverse();
+
+        // Check if folder is a old backupset
+        const oldBackupSets = [];
+        for (let folder of folders) {
+          if (parseInt(folder) > 202100000000) {
+            oldBackupSets.push(folder);
+          }
+        }
+
         for (let i = backupRetention; i < oldBackupSets.length; i++) {
           try {
             fs.rmdirSync(backupPath + "/" + oldBackupSets[i], {
@@ -309,6 +328,14 @@ joplin.plugins.register({
           fs.removeSync(backupPath + "/templates");
         } catch (e) {
           showError("Backup error", "removeOldBackups templates<br>" + e);
+          console.error(e);
+          throw e;
+        }
+
+        try {
+          fs.removeSync(backupPath + "/profile");
+        } catch (e) {
+          showError("Backup error", "removeOldBackups profile<br>" + e);
           console.error(e);
           throw e;
         }
