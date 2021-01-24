@@ -199,8 +199,9 @@ joplin.plugins.register({
         );
         
         // Backup Templates
+        const templateDir = await joplin.settings.globalValue("templateDir");
         await backupFolder(
-          profileDir + "/templates",
+          templateDir,
           activeBackupPath + "/profile/templates"
         )
 
