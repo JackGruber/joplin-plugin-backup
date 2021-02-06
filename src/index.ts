@@ -3,6 +3,7 @@ import JoplinCommands from "api";
 import { MenuItem, MenuItemLocation, SettingItemType } from "api/types";
 
 const fs = require("fs-extra");
+const path = require("path");
 
 // Configure logging
 const backupLog = require("electron-log");
@@ -105,9 +106,9 @@ joplin.plugins.register({
     async function startBackup(showMsg) {
       const baseBackupPath = await joplin.settings.value("path");
       if (fs.existsSync(baseBackupPath)) {
-        if (fs.existsSync(baseBackupPath + "/backup.log")) {
+        if (fs.existsSync(path.join(baseBackupPath, "backup.log"))) {
           try {
-            await fs.unlinkSync(baseBackupPath + "/backup.log");
+            await fs.unlinkSync(path.join(baseBackupPath, "backup.log"));
           } catch (e) {
             backupLog.error(e);
           }
@@ -116,12 +117,12 @@ joplin.plugins.register({
         // Enable File logging
         const fileLogLevel = await joplin.settings.value("fileLogLevel");
         backupLog.transports.file.resolvePath = () =>
-          baseBackupPath + "/backup.log";
+          path.join(baseBackupPath, "backup.log");
         backupLog.transports.file.level = fileLogLevel;
 
         backupLog.info("Start backup");
 
-        const activeBackupPath = baseBackupPath + "/activeBackupJob";
+        const activeBackupPath = path.join(baseBackupPath, "activeBackupJob");
         const backupDate = new Date();
 
         // Create tmp dir for active backup
@@ -136,7 +137,7 @@ joplin.plugins.register({
 
         // Create profile backupfolder
         try {
-          fs.emptyDirSync(activeBackupPath + "/profile");
+          fs.emptyDirSync(path.join(activeBackupPath, "profile"));
         } catch (e) {
           showError("Backup error", "Create activeBackupPath/profile<br>" + e);
           backupLog.error("Create activeBackupPath/profile");
@@ -172,7 +173,7 @@ joplin.plugins.register({
               "exportFolders",
               noteBooksIds,
               "jex",
-              activeBackupPath + "/all_notebooks.jex"
+              path.join(activeBackupPath, "/all_notebooks.jex")
             );
           } catch (e) {
             showError("Backup error", "exportFolders single JEX<br>" + e);
@@ -210,7 +211,7 @@ joplin.plugins.register({
                   "exportFolders",
                   folderId,
                   "jex",
-                  activeBackupPath + "/" + name
+                  path.join(activeBackupPath, name)
                 );
               } catch (e) {
                 showError("Backup error", "exportFolders JEX<br>" + e);
@@ -236,27 +237,27 @@ joplin.plugins.register({
 
         // Backup Keymap
         await backupFile(
-          profileDir + "/keymap-desktop.json",
-          activeBackupPath + "/profile/keymap-desktop.json"
+          path.join(profileDir, "keymap-desktop.json"),
+          path.join(activeBackupPath, "profile", "keymap-desktop.json")
         );
 
         // Backup userchrome.css
         await backupFile(
-          profileDir + "/userchrome.css",
-          activeBackupPath + "/profile/userchrome.css"
+          path.join(profileDir, "userchrome.css"),
+          path.join(activeBackupPath, "profile", "userchrome.css")
         );
 
         // Backup userstyle.css
         await backupFile(
-          profileDir + "/userstyle.css",
-          activeBackupPath + "/profile/userstyle.css"
+          path.join(profileDir, "userstyle.css"),
+          path.join(activeBackupPath, "profile", "userstyle.css")
         );
 
         // Backup Templates
         const templateDir = await joplin.settings.globalValue("templateDir");
         await backupFolder(
           templateDir,
-          activeBackupPath + "/profile/templates"
+          path.join(activeBackupPath, "profile", "templates")
         );
 
         const backupDst = await moveBackup(
@@ -270,13 +271,13 @@ joplin.plugins.register({
         // Disable file logging and move file
         backupLog.transports.file.level = false;
         if (
-          fs.existsSync(baseBackupPath + "/backup.log") &&
+          fs.existsSync(path.join(baseBackupPath, "backup.log")) &&
           backupDst != baseBackupPath
         ) {
           try {
             fs.moveSync(
-              baseBackupPath + "/backup.log",
-              backupDst + "/backup.log"
+              path.join(baseBackupPath, "backup.log"),
+              path.join(backupDst, "backup.log")
             );
           } catch (e) {
             backupLog.error("move backup logfile");
@@ -331,7 +332,7 @@ joplin.plugins.register({
         try {
           fs.renameSync(
             activeBackupPath,
-            baseBackupPath + "/" + backupDateFolder
+            path.join(baseBackupPath, backupDateFolder)
           );
         } catch (e) {
           showError("Backup error", "moveBackup rename<br>" + e);
@@ -340,7 +341,7 @@ joplin.plugins.register({
           throw e;
         }
         await removeOldBackups(baseBackupPath, backupRetention);
-        return baseBackupPath + "/" + backupDateFolder;
+        return path.join(baseBackupPath, backupDateFolder);
       } else {
         await removeOldBackups(baseBackupPath, backupRetention);
 
@@ -350,8 +351,8 @@ joplin.plugins.register({
         for (const file of oldBackupData) {
           try {
             fs.moveSync(
-              activeBackupPath + "/" + file,
-              baseBackupPath + "/" + file
+              path.join(activeBackupPath, file),
+              path.join(baseBackupPath, file)
             );
           } catch (e) {
             showError("Backup error", "moveBackup<br>" + e);
@@ -398,7 +399,7 @@ joplin.plugins.register({
 
         for (let i = backupRetention; i < oldBackupSets.length; i++) {
           try {
-            fs.rmdirSync(backupPath + "/" + oldBackupSets[i], {
+            fs.rmdirSync(path.join(backupPath, oldBackupSets[i]), {
               recursive: true,
             });
           } catch (e) {
@@ -417,7 +418,7 @@ joplin.plugins.register({
           .reverse();
         for (const file of oldBackupData) {
           try {
-            fs.removeSync(backupPath + "/" + file);
+            fs.removeSync(path.join(backupPath, file));
           } catch (e) {
             showError("Backup error", "removeOldBackups files<br>" + e);
             backupLog.error("removeOldBackups files");
@@ -427,7 +428,7 @@ joplin.plugins.register({
         }
 
         try {
-          fs.removeSync(backupPath + "/templates");
+          fs.removeSync(path.join(backupPath, "templates"));
         } catch (e) {
           showError("Backup error", "removeOldBackups templates<br>" + e);
           backupLog.error("removeOldBackups templates");
@@ -436,7 +437,7 @@ joplin.plugins.register({
         }
 
         try {
-          fs.removeSync(backupPath + "/profile");
+          fs.removeSync(path.join(backupPath, "profile"));
         } catch (e) {
           showError("Backup error", "removeOldBackups profile<br>" + e);
           backupLog.error("removeOldBackups profile");
