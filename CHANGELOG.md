@@ -1,5 +1,9 @@
 # Changelog
 
+## Not released
+
+- Add: Option for Backuplogfile
+
 ## v0.4.1 (2021-01-23)
 
 - Optimize: Store profile data in `profile` folder
