@@ -3,6 +3,7 @@
 ## Not released
 
 - Add: Option for Backuplogfile
+- Add: Option to create a backup only if something has changed #3
 
 ## v0.4.1 (2021-01-23)
 

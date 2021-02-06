@@ -63,6 +63,15 @@ joplin.plugins.register({
       description: "0 = disable automatic backup",
     });
 
+    await joplin.settings.registerSetting("onlyOnChange", {
+      value: false,
+      type: SettingItemType.Bool,
+      section: "backupSection",
+      public: true,
+      label: "Only on change",
+      description: "Create a automatic backup only on a change.",
+    });
+
     await joplin.settings.registerSetting("lastBackup", {
       value: 0,
       type: SettingItemType.Int,
@@ -495,6 +504,27 @@ joplin.plugins.register({
       );
     }
 
+    // Get time of last changed item
+    async function getLastChangeDate(): Promise<number> {
+      let lastUpdate = 0;
+      const toCheck = ["folders", "notes", "resources", "tags"];
+      for (let check of toCheck) {
+        try {
+          let checkUpdated = await joplin.data.get([check], {
+            fields: "title, id, updated_time",
+            order_by: "updated_time",
+            order_dir: "DESC",
+            limit: 10,
+            page: 1,
+          });
+          if (checkUpdated.items[0].updated_time > lastUpdate) {
+            lastUpdate = checkUpdated.items[0].updated_time;
+          }
+        } catch (error) {}
+      }
+      return lastUpdate;
+    }
+
     async function checkBackupTime() {
       backupLog.info("Check for timed backup");
       const lastBackup = await joplin.settings.value("lastBackup");
@@ -506,7 +536,13 @@ joplin.plugins.register({
         // Do not start backup directly after startup
         if (startTime.getTime() + (checkEver - 1) * 60 * 1000 < now.getTime()) {
           if (now.getTime() > lastBackup + backupInterval * 60 * 60 * 1000) {
-            await startBackup(false);
+            const onlyOnChange = await joplin.settings.value("onlyOnChange");
+            const lastChange = await getLastChangeDate();
+            if (onlyOnChange === false || (onlyOnChange === true && (lastChange === 0 || lastBackup < lastChange)) ) {
+              await startBackup(false);
+            } else {
+              backupLog.info("create no backup (no change)");
+            }
           }
         }
 
