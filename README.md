@@ -36,6 +36,12 @@ Go to `Tools > Options > Backup`
 - `Backups interval in hours`: Create a backup every X hours. Default `24`
 - `Logfile` Log information to backup.log. Default `error`
 
+## Keyboard Shortcuts
+
+Under `Options > Keyboard Shortcuts` you can assign a keyboard shortcut for the following commands:
+
+- `Create Backup`
+
 ## What is backuped
 
 - Notebooks as JEX export (empty notbooks are not backed up)
