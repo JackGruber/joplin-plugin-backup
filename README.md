@@ -31,6 +31,7 @@ Backups can be created manually with the command `Tools > Create Backup` or are 
 Go to `Tools > Options > Backup`
 
 - `Backup Path`: Where to save the backups to.
+- `Single JEX`: Create only one JEX file for all notebooks. Default `false`
 - `Keep x Backups`: How many backups should be kept. Default `1`
 - `Backups interval in hours`: Create a backup every X hours. Default `24`
 - `Logfile` Log information to backup.log. Default `error`
