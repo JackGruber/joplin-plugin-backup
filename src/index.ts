@@ -5,12 +5,13 @@ import { MenuItem, MenuItemLocation, SettingItemType } from "api/types";
 const fs = require("fs-extra");
 
 // Configure logging
-const backupLog = require('electron-log');
+const backupLog = require("electron-log");
 backupLog.transports.file.level = false;
-backupLog.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}';
-backupLog.transports.console.level = 'verbose';
-backupLog.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}';
-
+backupLog.transports.file.format =
+  "[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}";
+backupLog.transports.console.level = "verbose";
+backupLog.transports.console.format =
+  "[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}";
 
 joplin.plugins.register({
   onStart: async function () {
@@ -69,18 +70,18 @@ joplin.plugins.register({
       label: "last backup run",
     });
 
-    await joplin.settings.registerSetting('fileLogLevel', {
-      value: 'error',
+    await joplin.settings.registerSetting("fileLogLevel", {
+      value: "error",
       type: SettingItemType.String,
-      section: 'backupSection',
+      section: "backupSection",
       isEnum: true,
       public: true,
-      label: 'Logfile',
+      label: "Logfile",
       options: {
-        false: 'Off',
-        'debug': 'Debug',
-        'info': 'Info',
-        'error': 'Error',
+        false: "Off",
+        debug: "Debug",
+        info: "Info",
+        error: "Error",
       },
     });
 
@@ -111,13 +112,13 @@ joplin.plugins.register({
             backupLog.error(e);
           }
         }
-        
+
         // Enable File logging
         const fileLogLevel = await joplin.settings.value("fileLogLevel");
-        backupLog.transports.file.resolvePath = () => baseBackupPath + "/backup.log";
+        backupLog.transports.file.resolvePath = () =>
+          baseBackupPath + "/backup.log";
         backupLog.transports.file.level = fileLogLevel;
 
-        
         backupLog.info("Start backup");
 
         const activeBackupPath = baseBackupPath + "/activeBackupJob";
@@ -125,7 +126,7 @@ joplin.plugins.register({
 
         // Create tmp dir for active backup
         try {
-          fs.emptyDirSync(activeBackupPath)
+          fs.emptyDirSync(activeBackupPath);
         } catch (e) {
           showError("Backup error", "Create activeBackupPath<br>" + e);
           backupLog.error("Create activeBackupPath");
@@ -135,7 +136,7 @@ joplin.plugins.register({
 
         // Create profile backupfolder
         try {
-          fs.emptyDirSync(activeBackupPath + "/profile")
+          fs.emptyDirSync(activeBackupPath + "/profile");
         } catch (e) {
           showError("Backup error", "Create activeBackupPath/profile<br>" + e);
           backupLog.error("Create activeBackupPath/profile");
@@ -218,7 +219,13 @@ joplin.plugins.register({
                 throw e;
               }
             } else {
-              backupLog.debug("Skip '" + noteBookInfo[folderId]["title"] + "' (" + folderId + ") since no notes in notebook");
+              backupLog.debug(
+                "Skip '" +
+                  noteBookInfo[folderId]["title"] +
+                  "' (" +
+                  folderId +
+                  ") since no notes in notebook"
+              );
             }
           }
         }
@@ -244,23 +251,33 @@ joplin.plugins.register({
           profileDir + "/userstyle.css",
           activeBackupPath + "/profile/userstyle.css"
         );
-        
+
         // Backup Templates
         const templateDir = await joplin.settings.globalValue("templateDir");
         await backupFolder(
           templateDir,
           activeBackupPath + "/profile/templates"
-        )
-        
-        const backupDst = await moveBackup(baseBackupPath, activeBackupPath, backupDate);
+        );
+
+        const backupDst = await moveBackup(
+          baseBackupPath,
+          activeBackupPath,
+          backupDate
+        );
         await joplin.settings.setValue("lastBackup", backupDate.getTime());
         backupLog.info("Backup finished to: " + backupDst);
-        
+
         // Disable file logging and move file
-        backupLog.transports.file.level = false; 
-        if (fs.existsSync(baseBackupPath + "/backup.log") && backupDst != baseBackupPath) {
+        backupLog.transports.file.level = false;
+        if (
+          fs.existsSync(baseBackupPath + "/backup.log") &&
+          backupDst != baseBackupPath
+        ) {
           try {
-            fs.moveSync(baseBackupPath + "/backup.log", backupDst + "/backup.log");
+            fs.moveSync(
+              baseBackupPath + "/backup.log",
+              backupDst + "/backup.log"
+            );
           } catch (e) {
             backupLog.error("move backup logfile");
             backupLog.error(e);
@@ -269,7 +286,10 @@ joplin.plugins.register({
         }
       } else {
         backupLog.error("Backup Path '" + baseBackupPath + "' does not exist");
-        showError("Backup error", "Backup Path '" + baseBackupPath + "' does not exist");
+        showError(
+          "Backup error",
+          "Backup Path '" + baseBackupPath + "' does not exist"
+        );
         return;
       }
 
@@ -282,7 +302,7 @@ joplin.plugins.register({
     async function backupFolder(src: string, dst: string) {
       if (fs.existsSync(src)) {
         try {
-          fs.copySync(src, dst)
+          fs.copySync(src, dst);
         } catch (e) {
           showError("Backup error", "backupFolder<br>" + e);
           backupLog.error("backupFolder");
@@ -295,16 +315,24 @@ joplin.plugins.register({
     }
 
     // Cleanup old backups / move created backup
-    async function moveBackup(baseBackupPath: string, activeBackupPath: string, backupDate: any): Promise<string> {
+    async function moveBackup(
+      baseBackupPath: string,
+      activeBackupPath: string,
+      backupDate: any
+    ): Promise<string> {
       const backupRetention = await joplin.settings.value("backupRetention");
       if (backupRetention > 1) {
-        const backupDateFolder = backupDate.getFullYear().toString() +
-        (backupDate.getMonth() + 1).toString().padStart(2, "0") +
-        backupDate.getDate().toString().padStart(2, "0") +
-        backupDate.getHours().toString().padStart(2, "0") +
-        backupDate.getMinutes().toString().padStart(2, "0");
+        const backupDateFolder =
+          backupDate.getFullYear().toString() +
+          (backupDate.getMonth() + 1).toString().padStart(2, "0") +
+          backupDate.getDate().toString().padStart(2, "0") +
+          backupDate.getHours().toString().padStart(2, "0") +
+          backupDate.getMinutes().toString().padStart(2, "0");
         try {
-          fs.renameSync(activeBackupPath, baseBackupPath + "/" + backupDateFolder);        
+          fs.renameSync(
+            activeBackupPath,
+            baseBackupPath + "/" + backupDateFolder
+          );
         } catch (e) {
           showError("Backup error", "moveBackup rename<br>" + e);
           backupLog.error("moveBackup rename");
@@ -313,7 +341,6 @@ joplin.plugins.register({
         }
         await removeOldBackups(baseBackupPath, backupRetention);
         return baseBackupPath + "/" + backupDateFolder;
-
       } else {
         await removeOldBackups(baseBackupPath, backupRetention);
 
@@ -322,7 +349,10 @@ joplin.plugins.register({
           .map((dirent) => dirent.name);
         for (const file of oldBackupData) {
           try {
-            fs.moveSync(activeBackupPath + "/" + file, baseBackupPath + "/" + file);
+            fs.moveSync(
+              activeBackupPath + "/" + file,
+              baseBackupPath + "/" + file
+            );
           } catch (e) {
             showError("Backup error", "moveBackup<br>" + e);
             backupLog.error("moveBackup");
@@ -346,7 +376,10 @@ joplin.plugins.register({
       }
     }
 
-    async function removeOldBackups(backupPath: string, backupRetention: number) {
+    async function removeOldBackups(
+      backupPath: string,
+      backupRetention: number
+    ) {
       if (backupRetention > 1) {
         // delete old backup sets
         const folders = fs
