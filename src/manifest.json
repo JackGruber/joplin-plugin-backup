@@ -6,7 +6,7 @@
 	"name": "Simple Backup",
 	"description": "Plugin to create manual and automatic backups.",
 	"author": "JackGruber",
-	"homepage_url": "https://github.com/JackGruber/joplin-plugin-backup",
+	"homepage_url": "https://github.com/JackGruber/joplin-plugin-backup/blob/master/README.md",
 	"repository_url": "https://github.com/JackGruber/joplin-plugin-backup",
 	"keywords": ["backup", "jex", "export"]
 }
