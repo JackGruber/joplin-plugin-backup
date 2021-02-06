@@ -26,5 +26,8 @@
   },
   "browser": {
     "fs": false
+  },
+  "dependencies": {
+    "electron-log": "^4.3.1"
   }
 }

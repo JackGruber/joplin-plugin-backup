@@ -33,6 +33,7 @@ Go to `Tools > Options > Backup`
 - `Backup Path`: Where to save the backups to.
 - `Keep x Backups`: How many backups should be kept. Default `1`
 - `Backups interval in hours`: Create a backup every X hours. Default `24`
+- `Logfile` Log information to backup.log. Default `error`
 
 ## What is backuped
 
