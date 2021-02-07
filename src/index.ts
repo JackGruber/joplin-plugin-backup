@@ -536,6 +536,7 @@ joplin.plugins.register({
         // Do not start backup directly after startup
         if (startTime.getTime() + (checkEver - 1) * 60 * 1000 < now.getTime()) {
           if (now.getTime() > lastBackup + backupInterval * 60 * 60 * 1000) {
+            backupLog.info("backup interval reached");
             const onlyOnChange = await joplin.settings.value("onlyOnChange");
             const lastChange = await getLastChangeDate();
             if (onlyOnChange === false || (onlyOnChange === true && (lastChange === 0 || lastBackup < lastChange)) ) {
