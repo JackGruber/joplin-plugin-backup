@@ -31,8 +31,17 @@ Backups can be created manually with the command `Tools > Create Backup` or are 
 Go to `Tools > Options > Backup`
 
 - `Backup Path`: Where to save the backups to.
+- `Single JEX`: Create only one JEX file for all notebooks. Default `false`
 - `Keep x Backups`: How many backups should be kept. Default `1`
 - `Backups interval in hours`: Create a backup every X hours. Default `24`
+- `Only on change`: Create a automatic/intervaled backup only if a `note`, `tag`, `resource` or `notebook` has changed. Default `false`
+- `Logfile` Log information to backup.log. Default `error`
+
+## Keyboard Shortcuts
+
+Under `Options > Keyboard Shortcuts` you can assign a keyboard shortcut for the following commands:
+
+- `Create Backup`
 
 ## What is backuped
 

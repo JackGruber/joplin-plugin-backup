@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.5.0 (2021-02-07)
+
+- Add: Option for Backuplogfile
+- Add: Option to create a backup only if something has changed #3
+
 ## v0.4.1 (2021-01-23)
 
 - Optimize: Store profile data in `profile` folder

@@ -3,10 +3,20 @@ import JoplinCommands from "api";
 import { MenuItem, MenuItemLocation, SettingItemType } from "api/types";
 
 const fs = require("fs-extra");
+const path = require("path");
+
+// Configure logging
+const backupLog = require("electron-log");
+backupLog.transports.file.level = false;
+backupLog.transports.file.format =
+  "[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}";
+backupLog.transports.console.level = "verbose";
+backupLog.transports.console.format =
+  "[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}";
 
 joplin.plugins.register({
   onStart: async function () {
-    console.info("Backup plugin started");
+    backupLog.info("Backup plugin started");
 
     await joplin.settings.registerSection("backupSection", {
       label: "Backup",
@@ -53,12 +63,36 @@ joplin.plugins.register({
       description: "0 = disable automatic backup",
     });
 
+    await joplin.settings.registerSetting("onlyOnChange", {
+      value: false,
+      type: SettingItemType.Bool,
+      section: "backupSection",
+      public: true,
+      label: "Only on change",
+      description: "Create a automatic backup only on a change.",
+    });
+
     await joplin.settings.registerSetting("lastBackup", {
       value: 0,
       type: SettingItemType.Int,
       section: "backupSection",
       public: false,
       label: "last backup run",
+    });
+
+    await joplin.settings.registerSetting("fileLogLevel", {
+      value: "error",
+      type: SettingItemType.String,
+      section: "backupSection",
+      isEnum: true,
+      public: true,
+      label: "Logfile",
+      options: {
+        false: "Off",
+        debug: "Debug",
+        info: "Info",
+        error: "Error",
+      },
     });
 
     const backupDialog = await joplin.views.dialogs.create("backupDialog");
@@ -79,35 +113,51 @@ joplin.plugins.register({
     );
 
     async function startBackup(showMsg) {
-      console.info("Start backup");
-
       const baseBackupPath = await joplin.settings.value("path");
-
       if (fs.existsSync(baseBackupPath)) {
-        const activeBackupPath = baseBackupPath + "/activeBackupJob";
+        if (fs.existsSync(path.join(baseBackupPath, "backup.log"))) {
+          try {
+            await fs.unlinkSync(path.join(baseBackupPath, "backup.log"));
+          } catch (e) {
+            backupLog.error(e);
+          }
+        }
+
+        // Enable File logging
+        const fileLogLevel = await joplin.settings.value("fileLogLevel");
+        backupLog.transports.file.resolvePath = () =>
+          path.join(baseBackupPath, "backup.log");
+        backupLog.transports.file.level = fileLogLevel;
+
+        backupLog.info("Start backup");
+
+        const activeBackupPath = path.join(baseBackupPath, "activeBackupJob");
         const backupDate = new Date();
 
         // Create tmp dir for active backup
         try {
-          fs.emptyDirSync(activeBackupPath)
+          fs.emptyDirSync(activeBackupPath);
         } catch (e) {
           showError("Backup error", "Create activeBackupPath<br>" + e);
-          console.error(e);
+          backupLog.error("Create activeBackupPath");
+          backupLog.error(e);
           throw e;
         }
 
         // Create profile backupfolder
         try {
-          fs.emptyDirSync(activeBackupPath + "/profile")
+          fs.emptyDirSync(path.join(activeBackupPath, "profile"));
         } catch (e) {
           showError("Backup error", "Create activeBackupPath/profile<br>" + e);
-          console.error(e);
+          backupLog.error("Create activeBackupPath/profile");
+          backupLog.error(e);
           throw e;
         }
 
         const noteBookInfo = {};
         const noteBooksIds = [];
         let pageNum = 0;
+        backupLog.info("Select notebooks for export");
         do {
           var folders = await joplin.data.get(["folders"], {
             fields: "id, title, parent_id",
@@ -119,27 +169,30 @@ joplin.plugins.register({
             noteBookInfo[folder.id] = {};
             noteBookInfo[folder.id]["title"] = folder.title;
             noteBookInfo[folder.id]["parent_id"] = folder.parent_id;
+            backupLog.debug("Add '" + folder.title + "' (" + folder.id + ")");
           }
         } while (folders.has_more);
 
         const singleJex = await joplin.settings.value("singleJex");
         if (singleJex === true) {
           // Create on single file JEX backup
-          console.info("Create single file JEX backup");
+          backupLog.info("Create single file JEX backup");
           try {
             let status: string = await joplin.commands.execute(
               "exportFolders",
               noteBooksIds,
               "jex",
-              activeBackupPath + "/all_notebooks.jex"
+              path.join(activeBackupPath, "/all_notebooks.jex")
             );
           } catch (e) {
             showError("Backup error", "exportFolders single JEX<br>" + e);
-            console.error(e);
+            backupLog.error("exportFolders single JEX");
+            backupLog.error(e);
             throw e;
           }
         } else {
           // Backup notebooks with notes in seperatet JEX
+          backupLog.info("Export each notbook as JEX backup");
           for (const folderId of noteBooksIds) {
             let noteCheck = await joplin.data.get(
               ["folders", folderId, "notes"],
@@ -153,8 +206,8 @@ joplin.plugins.register({
                 noteBookInfo,
                 folderId
               );
-              console.info(
-                "Backup '" +
+              backupLog.debug(
+                "Export '" +
                   noteBookInfo[folderId]["title"] +
                   "' (" +
                   folderId +
@@ -167,90 +220,137 @@ joplin.plugins.register({
                   "exportFolders",
                   folderId,
                   "jex",
-                  activeBackupPath + "/" + name
+                  path.join(activeBackupPath, name)
                 );
               } catch (e) {
                 showError("Backup error", "exportFolders JEX<br>" + e);
-                console.error(e);
+                backupLog.error("exportFolders JEX");
+                backupLog.error(e);
                 throw e;
               }
+            } else {
+              backupLog.debug(
+                "Skip '" +
+                  noteBookInfo[folderId]["title"] +
+                  "' (" +
+                  folderId +
+                  ") since no notes in notebook"
+              );
             }
           }
         }
 
         const profileDir = await joplin.settings.globalValue("profileDir");
 
+        backupLog.info("Backup Profile Data");
+
         // Backup Keymap
         await backupFile(
-          profileDir + "/keymap-desktop.json",
-          activeBackupPath + "/profile/keymap-desktop.json"
+          path.join(profileDir, "keymap-desktop.json"),
+          path.join(activeBackupPath, "profile", "keymap-desktop.json")
         );
 
         // Backup userchrome.css
         await backupFile(
-          profileDir + "/userchrome.css",
-          activeBackupPath + "/profile/userchrome.css"
+          path.join(profileDir, "userchrome.css"),
+          path.join(activeBackupPath, "profile", "userchrome.css")
         );
 
         // Backup userstyle.css
         await backupFile(
-          profileDir + "/userstyle.css",
-          activeBackupPath + "/profile/userstyle.css"
+          path.join(profileDir, "userstyle.css"),
+          path.join(activeBackupPath, "profile", "userstyle.css")
         );
-        
+
         // Backup Templates
+        const templateDir = await joplin.settings.globalValue("templateDir");
         await backupFolder(
-          profileDir + "/templates",
-          activeBackupPath + "/profile/templates"
-        )
+          templateDir,
+          path.join(activeBackupPath, "profile", "templates")
+        );
 
-        await moveBackup(baseBackupPath, activeBackupPath, backupDate);
-
+        const backupDst = await moveBackup(
+          baseBackupPath,
+          activeBackupPath,
+          backupDate
+        );
         await joplin.settings.setValue("lastBackup", backupDate.getTime());
+        backupLog.info("Backup finished to: " + backupDst);
+
+        // Disable file logging and move file
+        backupLog.transports.file.level = false;
+        if (
+          fs.existsSync(path.join(baseBackupPath, "backup.log")) &&
+          backupDst != baseBackupPath
+        ) {
+          try {
+            fs.moveSync(
+              path.join(baseBackupPath, "backup.log"),
+              path.join(backupDst, "backup.log")
+            );
+          } catch (e) {
+            backupLog.error("move backup logfile");
+            backupLog.error(e);
+            throw e;
+          }
+        }
       } else {
-        console.error("Backup Path '" + baseBackupPath + "' does not exist");
-        showError("Backup error", "Backup Path '" + baseBackupPath + "' does not exist");
+        backupLog.error("Backup Path '" + baseBackupPath + "' does not exist");
+        showError(
+          "Backup error",
+          "Backup Path '" + baseBackupPath + "' does not exist"
+        );
         return;
       }
 
       if (showMsg === true) {
         showError("Backup finished", "The backup was created");
       }
-      console.info("End backup");
     }
 
     // Backup templates
     async function backupFolder(src: string, dst: string) {
       if (fs.existsSync(src)) {
         try {
-          fs.copySync(src, dst)
+          fs.copySync(src, dst);
         } catch (e) {
           showError("Backup error", "backupFolder<br>" + e);
-          console.error(e);
+          backupLog.error("backupFolder");
+          backupLog.error(e);
           throw e;
         }
       } else {
-        console.info("Automatic backup disabled");
+        backupLog.info("Automatic backup disabled");
       }
     }
 
     // Cleanup old backups / move created backup
-    async function moveBackup(baseBackupPath: string, activeBackupPath: string, backupDate: any) {
+    async function moveBackup(
+      baseBackupPath: string,
+      activeBackupPath: string,
+      backupDate: any
+    ): Promise<string> {
       const backupRetention = await joplin.settings.value("backupRetention");
       if (backupRetention > 1) {
-        const backupDateFolder = backupDate.getFullYear().toString() +
-        (backupDate.getMonth() + 1).toString().padStart(2, "0") +
-        backupDate.getDate().toString().padStart(2, "0") +
-        backupDate.getHours().toString().padStart(2, "0") +
-        backupDate.getMinutes().toString().padStart(2, "0");
+        const backupDateFolder =
+          backupDate.getFullYear().toString() +
+          (backupDate.getMonth() + 1).toString().padStart(2, "0") +
+          backupDate.getDate().toString().padStart(2, "0") +
+          backupDate.getHours().toString().padStart(2, "0") +
+          backupDate.getMinutes().toString().padStart(2, "0");
         try {
-          fs.renameSync(activeBackupPath, baseBackupPath + "/" + backupDateFolder);        
+          fs.renameSync(
+            activeBackupPath,
+            path.join(baseBackupPath, backupDateFolder)
+          );
         } catch (e) {
           showError("Backup error", "moveBackup rename<br>" + e);
-          console.error(e);
+          backupLog.error("moveBackup rename");
+          backupLog.error(e);
           throw e;
         }
         await removeOldBackups(baseBackupPath, backupRetention);
+        return path.join(baseBackupPath, backupDateFolder);
       } else {
         await removeOldBackups(baseBackupPath, backupRetention);
 
@@ -259,10 +359,14 @@ joplin.plugins.register({
           .map((dirent) => dirent.name);
         for (const file of oldBackupData) {
           try {
-            fs.moveSync(activeBackupPath + "/" + file, baseBackupPath + "/" + file);
+            fs.moveSync(
+              path.join(activeBackupPath, file),
+              path.join(baseBackupPath, file)
+            );
           } catch (e) {
             showError("Backup error", "moveBackup<br>" + e);
-            console.error(e);
+            backupLog.error("moveBackup");
+            backupLog.error(e);
             throw e;
           }
         }
@@ -273,13 +377,19 @@ joplin.plugins.register({
           });
         } catch (e) {
           showError("Backup error", "moveBackup rm activeBackupPath<br>" + e);
-          console.error(e);
+          backupLog.error("moveBackup rm activeBackupPath");
+          backupLog.error(e);
           throw e;
         }
+
+        return baseBackupPath;
       }
     }
 
-    async function removeOldBackups(backupPath: string, backupRetention: number) {
+    async function removeOldBackups(
+      backupPath: string,
+      backupRetention: number
+    ) {
       if (backupRetention > 1) {
         // delete old backup sets
         const folders = fs
@@ -298,12 +408,13 @@ joplin.plugins.register({
 
         for (let i = backupRetention; i < oldBackupSets.length; i++) {
           try {
-            fs.rmdirSync(backupPath + "/" + oldBackupSets[i], {
+            fs.rmdirSync(path.join(backupPath, oldBackupSets[i]), {
               recursive: true,
             });
           } catch (e) {
             showError("Backup error", "removeOldBackups folder<br>" + e);
-            console.error(e);
+            backupLog.error("removeOldBackups folder");
+            backupLog.error(e);
             throw e;
           }
         }
@@ -316,27 +427,30 @@ joplin.plugins.register({
           .reverse();
         for (const file of oldBackupData) {
           try {
-            fs.removeSync(backupPath + "/" + file);
+            fs.removeSync(path.join(backupPath, file));
           } catch (e) {
             showError("Backup error", "removeOldBackups files<br>" + e);
-            console.error(e);
+            backupLog.error("removeOldBackups files");
+            backupLog.error(e);
             throw e;
           }
         }
 
         try {
-          fs.removeSync(backupPath + "/templates");
+          fs.removeSync(path.join(backupPath, "templates"));
         } catch (e) {
           showError("Backup error", "removeOldBackups templates<br>" + e);
-          console.error(e);
+          backupLog.error("removeOldBackups templates");
+          backupLog.error(e);
           throw e;
         }
 
         try {
-          fs.removeSync(backupPath + "/profile");
+          fs.removeSync(path.join(backupPath, "profile"));
         } catch (e) {
           showError("Backup error", "removeOldBackups profile<br>" + e);
-          console.error(e);
+          backupLog.error("removeOldBackups profile");
+          backupLog.error(e);
           throw e;
         }
       }
@@ -348,12 +462,13 @@ joplin.plugins.register({
           fs.copyFileSync(src, dest);
         } catch (e) {
           showError("Backup error", "backupFile<br>" + e);
-          console.error(e);
+          backupLog.error("backupFile");
+          backupLog.error(e);
           throw e;
         }
         return true;
       } else {
-        console.info("No file '" + src);
+        backupLog.debug("No file '" + src);
         return false;
       }
     }
@@ -389,8 +504,29 @@ joplin.plugins.register({
       );
     }
 
+    // Get time of last changed item
+    async function getLastChangeDate(): Promise<number> {
+      let lastUpdate = 0;
+      const toCheck = ["folders", "notes", "resources", "tags"];
+      for (let check of toCheck) {
+        try {
+          let checkUpdated = await joplin.data.get([check], {
+            fields: "title, id, updated_time",
+            order_by: "updated_time",
+            order_dir: "DESC",
+            limit: 10,
+            page: 1,
+          });
+          if (checkUpdated.items[0].updated_time > lastUpdate) {
+            lastUpdate = checkUpdated.items[0].updated_time;
+          }
+        } catch (error) {}
+      }
+      return lastUpdate;
+    }
+
     async function checkBackupTime() {
-      console.info("Check for timed backup");
+      backupLog.info("Check for timed backup");
       const lastBackup = await joplin.settings.value("lastBackup");
       const backupInterval = await joplin.settings.value("backupInterval");
       const now = new Date();
@@ -400,13 +536,20 @@ joplin.plugins.register({
         // Do not start backup directly after startup
         if (startTime.getTime() + (checkEver - 1) * 60 * 1000 < now.getTime()) {
           if (now.getTime() > lastBackup + backupInterval * 60 * 60 * 1000) {
-            await startBackup(false);
+            backupLog.info("backup interval reached");
+            const onlyOnChange = await joplin.settings.value("onlyOnChange");
+            const lastChange = await getLastChangeDate();
+            if (onlyOnChange === false || (onlyOnChange === true && (lastChange === 0 || lastBackup < lastChange)) ) {
+              await startBackup(false);
+            } else {
+              backupLog.info("create no backup (no change)");
+            }
           }
         }
 
         window.setTimeout(checkBackupTime, 1000 * 60 * checkEver);
       } else {
-        console.info("Automatic backup disabled");
+        backupLog.info("Automatic backup disabled");
       }
     }
 
