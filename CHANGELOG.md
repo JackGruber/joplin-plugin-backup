@@ -1,6 +1,6 @@
 # Changelog
 
-## Not released
+## v0.5.0 (2021-02-07)
 
 - Add: Option for Backuplogfile
 - Add: Option to create a backup only if something has changed #3
