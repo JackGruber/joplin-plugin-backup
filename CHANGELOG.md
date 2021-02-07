@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.1 (2021-02-07)
+
+- Fix: Incomplete backup.log with only one backup set
+
 ## v0.5.0 (2021-02-07)
 
 - Add: Option for Backuplogfile
