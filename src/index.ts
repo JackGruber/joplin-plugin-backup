@@ -13,6 +13,7 @@ backupLog.transports.file.format =
 backupLog.transports.console.level = "verbose";
 backupLog.transports.console.format =
   "[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}";
+const backupLogFileName = "backup.log"
 
 joplin.plugins.register({
   onStart: async function () {
@@ -115,9 +116,9 @@ joplin.plugins.register({
     async function startBackup(showMsg) {
       const baseBackupPath = await joplin.settings.value("path");
       if (fs.existsSync(baseBackupPath)) {
-        if (fs.existsSync(path.join(baseBackupPath, "backup.log"))) {
+        if (fs.existsSync(path.join(baseBackupPath, backupLogFileName))) {
           try {
-            await fs.unlinkSync(path.join(baseBackupPath, "backup.log"));
+            await fs.unlinkSync(path.join(baseBackupPath, backupLogFileName));
           } catch (e) {
             backupLog.error(e);
           }
@@ -126,7 +127,7 @@ joplin.plugins.register({
         // Enable File logging
         const fileLogLevel = await joplin.settings.value("fileLogLevel");
         backupLog.transports.file.resolvePath = () =>
-          path.join(baseBackupPath, "backup.log");
+          path.join(baseBackupPath, backupLogFileName);
         backupLog.transports.file.level = fileLogLevel;
 
         backupLog.info("Start backup");
@@ -280,13 +281,13 @@ joplin.plugins.register({
         // Disable file logging and move file
         backupLog.transports.file.level = false;
         if (
-          fs.existsSync(path.join(baseBackupPath, "backup.log")) &&
+          fs.existsSync(path.join(baseBackupPath, backupLogFileName)) &&
           backupDst != baseBackupPath
         ) {
           try {
             fs.moveSync(
-              path.join(baseBackupPath, "backup.log"),
-              path.join(backupDst, "backup.log")
+              path.join(baseBackupPath, backupLogFileName),
+              path.join(backupDst, backupLogFileName)
             );
           } catch (e) {
             backupLog.error("move backup logfile");
@@ -426,13 +427,15 @@ joplin.plugins.register({
           .map((dirent) => dirent.name)
           .reverse();
         for (const file of oldBackupData) {
-          try {
-            fs.removeSync(path.join(backupPath, file));
-          } catch (e) {
-            showError("Backup error", "removeOldBackups files<br>" + e);
-            backupLog.error("removeOldBackups files");
-            backupLog.error(e);
-            throw e;
+          if (file != backupLogFileName) {
+            try {
+              fs.removeSync(path.join(backupPath, file));
+            } catch (e) {
+              showError("Backup error", "removeOldBackups files<br>" + e);
+              backupLog.error("removeOldBackups files");
+              backupLog.error(e);
+              throw e;
+            }
           }
         }
 
