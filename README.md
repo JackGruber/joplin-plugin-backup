@@ -34,7 +34,7 @@ Go to `Tools > Options > Backup`
 - `Single JEX`: Create only one JEX file for all notebooks. Default `false`
 - `Keep x Backups`: How many backups should be kept. Default `1`
 - `Backups interval in hours`: Create a backup every X hours. Default `24`
-- `Only on change`: Create a automatic/intervaled backup only if a `note`, `tag`, `resource` or `notebook` has changed. Default `false`
+- `Only on change`: Creates a backup at the specified backup interval only if there was a change to a `note`, `tag`, `resource` or `notebook`. Default `false`
 - `Logfile` Log information to backup.log. Default `error`
 
 ## Keyboard Shortcuts
