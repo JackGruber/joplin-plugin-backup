@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.2 (2021-02-13)
+
+- Only internal changes
+
 ## v0.5.1 (2021-02-07)
 
 - Fix: Incomplete backup.log with only one backup set

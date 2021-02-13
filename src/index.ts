@@ -70,7 +70,8 @@ joplin.plugins.register({
       section: "backupSection",
       public: true,
       label: "Only on change",
-      description: "Create a automatic backup only on a change.",
+      description:
+        "Creates a backup at the specified backup interval only if there was a change.",
     });
 
     await joplin.settings.registerSetting("lastBackup", {
