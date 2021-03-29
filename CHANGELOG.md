@@ -1,5 +1,9 @@
 # Changelog
 
+## not released
+
+- Add: Backup settings.json
+
 ## v0.5.2 (2021-02-13)
 
 - Only internal changes

@@ -246,6 +246,12 @@ joplin.plugins.register({
 
         backupLog.info("Backup Profile Data");
 
+        // Backup Joplin settings
+        await backupFile(
+          path.join(profileDir, "settings.json"),
+          path.join(activeBackupPath, "profile", "settings.json")
+        );
+
         // Backup Keymap
         await backupFile(
           path.join(profileDir, "keymap-desktop.json"),
