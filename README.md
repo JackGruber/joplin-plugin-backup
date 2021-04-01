@@ -48,6 +48,10 @@ Under `Options > Keyboard Shortcuts` you can assign a keyboard shortcut for the 
 - Notebooks as JEX export (empty notbooks are not backed up)
 - The `settings.json` (Joplin settings)
 - The `keymap-desktop.json` (Keyboard Shortcuts)
+- The `userchrome.css` (Your Joplin Customization)
+- The `userstyle.css` (Your Joplin Customization)
+- The `templates` folder (Note templates)
+
 
 ## Changelog
 
