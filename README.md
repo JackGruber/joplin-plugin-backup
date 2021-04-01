@@ -25,6 +25,7 @@ A plugin to extend Joplin with a manual and automatic backup function.
 First configure the Plugin under `Tools > Options > Backup`!
 
 Backups can be created manually with the command `Tools > Create Backup` or are created automatically based on the configured interval.
+The backup started manually by `Create Backup` respects all the settings except for the `Backups interval in hours`.
 
 ## Options
 
