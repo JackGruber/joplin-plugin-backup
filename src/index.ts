@@ -468,6 +468,7 @@ joplin.plugins.register({
 
     async function backupFile(src: string, dest: string): Promise<boolean> {
       if (fs.existsSync(src)) {
+        backupLog.debug("Copy " + src);
         try {
           fs.copyFileSync(src, dest);
         } catch (e) {
