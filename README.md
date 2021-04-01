@@ -46,10 +46,8 @@ Under `Options > Keyboard Shortcuts` you can assign a keyboard shortcut for the 
 ## What is backuped
 
 - Notebooks as JEX export (empty notbooks are not backed up)
-- The `keymap-desktop.json`
-- The `userchrome.css`
-- The `userstyle.css`
-- The `templates` folder
+- The `settings.json` (Joplin settings)
+- The `keymap-desktop.json` (Keyboard Shortcuts)
 
 ## Changelog
 
