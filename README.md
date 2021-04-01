@@ -52,6 +52,22 @@ Under `Options > Keyboard Shortcuts` you can assign a keyboard shortcut for the 
 - The `userstyle.css` (Your Joplin Customization)
 - The `templates` folder (Note templates)
 
+## Restore
+
+### Settings
+
+To restore the Settings, copy the desired files from `<Backup Path>\Profile` to the Joplin directory `.config\joplin-desktop`.  
+The exact path can be found in Joplin under `Tools > Options > Generla`:
+
+<img src=img/joplin_path_in_gui.jpg>
+
+### Notes
+
+The notes are imported via `File > Import > JEX - Joplin Export File`.
+> Individual notes cannot be restored from the JEX file!
+
+The notes are imported additionally, no check for duplicates is performed.
+If the folder in which the note was located already exists in you Joplin, than the folder name is extended by one (1).
 
 ## Changelog
 
