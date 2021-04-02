@@ -136,6 +136,29 @@ joplin.plugins.register({
         const activeBackupPath = path.join(baseBackupPath, "activeBackupJob");
         const backupDate = new Date();
 
+        // Folder with date for backup retention
+        const backupDateFolder =
+          backupDate.getFullYear().toString() +
+          (backupDate.getMonth() + 1).toString().padStart(2, "0") +
+          backupDate.getDate().toString().padStart(2, "0") +
+          backupDate.getHours().toString().padStart(2, "0") +
+          backupDate.getMinutes().toString().padStart(2, "0");
+
+        const backupRetention = await joplin.settings.value("backupRetention");
+        if (
+          backupRetention > 1 &&
+          fs.existsSync(path.join(baseBackupPath, backupDateFolder))
+        ) {
+          showError(
+            "Backup error",
+            "Backup set " + backupDateFolder + " exists already!"
+          );
+          backupLog.error(
+            "Backup set " + backupDateFolder + " exists already!"
+          );
+          return;
+        }
+
         // Create tmp dir for active backup
         try {
           fs.emptyDirSync(activeBackupPath);
@@ -280,7 +303,7 @@ joplin.plugins.register({
         const backupDst = await moveBackup(
           baseBackupPath,
           activeBackupPath,
-          backupDate
+          backupDateFolder
         );
         await joplin.settings.setValue("lastBackup", backupDate.getTime());
         backupLog.info("Backup finished to: " + backupDst);
@@ -336,16 +359,10 @@ joplin.plugins.register({
     async function moveBackup(
       baseBackupPath: string,
       activeBackupPath: string,
-      backupDate: any
+      backupDateFolder: string
     ): Promise<string> {
       const backupRetention = await joplin.settings.value("backupRetention");
       if (backupRetention > 1) {
-        const backupDateFolder =
-          backupDate.getFullYear().toString() +
-          (backupDate.getMonth() + 1).toString().padStart(2, "0") +
-          backupDate.getDate().toString().padStart(2, "0") +
-          backupDate.getHours().toString().padStart(2, "0") +
-          backupDate.getMinutes().toString().padStart(2, "0");
         try {
           fs.renameSync(
             activeBackupPath,
