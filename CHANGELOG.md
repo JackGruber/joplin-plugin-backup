@@ -1,6 +1,6 @@
 # Changelog
 
-## not released
+## v0.5.3 (2021-04-03)
 
 - Add: Backup settings.json
 - Optimize: #7 Better error message when a backup is created twice in a row in the same minute
