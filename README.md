@@ -25,17 +25,20 @@ A plugin to extend Joplin with a manual and automatic backup function.
 First configure the Plugin under `Tools > Options > Backup`!
 
 Backups can be created manually with the command `Tools > Create Backup` or are created automatically based on the configured interval.
+The backup started manually by `Create Backup` respects all the settings except for the `Backups interval in hours`.
 
 ## Options
 
 Go to `Tools > Options > Backup`
 
-- `Backup Path`: Where to save the backups to.
-- `Single JEX`: Create only one JEX file for all notebooks. Default `false`
-- `Keep x Backups`: How many backups should be kept. Default `1`
-- `Backups interval in hours`: Create a backup every X hours. Default `24`
-- `Only on change`: Creates a backup at the specified backup interval only if there was a change to a `note`, `tag`, `resource` or `notebook`. Default `false`
-- `Logfile` Log information to backup.log. Default `error`
+| Option | Description | Default |
+| --- | --- | --- |
+| `Backup Path` | Where to save the backups to. <br>This path is exclusive for the Joplin backups, there should be no other data in it! | |
+| `Single JEX` | Create only one JEX file for all notebooks | `false` |
+| `Keep x Backups` | How many backups should be kept | `1` |
+| `Backups interval in hours` | Create a backup every X hours | `24` |
+| `Only on change` | Creates a backup at the specified backup interval only if there was a change to a `note`, `tag`, `resource` or `notebook` | `false` |
+| `Logfile` | Loglevel for backup.log | `error` |
 
 ## Keyboard Shortcuts
 
@@ -46,10 +49,28 @@ Under `Options > Keyboard Shortcuts` you can assign a keyboard shortcut for the 
 ## What is backuped
 
 - Notebooks as JEX export (empty notbooks are not backed up)
-- The `keymap-desktop.json`
-- The `userchrome.css`
-- The `userstyle.css`
-- The `templates` folder
+- The `settings.json` (Joplin settings)
+- The `keymap-desktop.json` (Keyboard Shortcuts)
+- The `userchrome.css` (Your Joplin Customization)
+- The `userstyle.css` (Your Joplin Customization)
+- The `templates` folder (Note templates)
+
+## Restore
+
+### Settings
+
+To restore the Settings, copy the desired files from `<Backup Path>\Profile` to the Joplin directory `.config\joplin-desktop`.  
+The exact path can be found in Joplin under `Tools > Options > Generla`:
+
+<img src=img/joplin_path_in_gui.jpg>
+
+### Notes
+
+The notes are imported via `File > Import > JEX - Joplin Export File`.
+> Individual notes cannot be restored from the JEX file!
+
+The notes are imported additionally, no check for duplicates is performed.
+If the folder in which the note was located already exists in you Joplin, than the folder name is extended by one (1).
 
 ## Changelog
 
