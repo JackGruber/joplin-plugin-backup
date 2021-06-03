@@ -31,14 +31,14 @@ The backup started manually by `Create Backup` respects all the settings except 
 
 Go to `Tools > Options > Backup`
 
-| Option | Description | Default |
-| --- | --- | --- |
-| `Backup Path` | Where to save the backups to. <br>This path is exclusive for the Joplin backups, there should be no other data in it! | |
-| `Single JEX` | Create only one JEX file for all notebooks | `false` |
-| `Keep x Backups` | How many backups should be kept | `1` |
-| `Backups interval in hours` | Create a backup every X hours | `24` |
-| `Only on change` | Creates a backup at the specified backup interval only if there was a change to a `note`, `tag`, `resource` or `notebook` | `false` |
-| `Logfile` | Loglevel for backup.log | `error` |
+| Option                      | Description                                                                                                               | Default |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------- |
+| `Backup Path`               | Where to save the backups to. <br>This path is exclusive for the Joplin backups, there should be no other data in it!     |         |
+| `Single JEX`                | Create only one JEX file for all notebooks                                                                                | `false` |
+| `Keep x Backups`            | How many backups should be kept                                                                                           | `1`     |
+| `Backups interval in hours` | Create a backup every X hours                                                                                             | `24`    |
+| `Only on change`            | Creates a backup at the specified backup interval only if there was a change to a `note`, `tag`, `resource` or `notebook` | `false` |
+| `Logfile`                   | Loglevel for backup.log                                                                                                   | `error` |
 
 ## Keyboard Shortcuts
 
@@ -67,6 +67,7 @@ The exact path can be found in Joplin under `Tools > Options > Generla`:
 ### Notes
 
 The notes are imported via `File > Import > JEX - Joplin Export File`.
+
 > Individual notes cannot be restored from the JEX file!
 
 The notes are imported additionally, no check for duplicates is performed.

@@ -13,7 +13,7 @@ backupLog.transports.file.format =
 backupLog.transports.console.level = "verbose";
 backupLog.transports.console.format =
   "[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}";
-const backupLogFileName = "backup.log"
+const backupLogFileName = "backup.log";
 
 joplin.plugins.register({
   onStart: async function () {
@@ -567,7 +567,11 @@ joplin.plugins.register({
             backupLog.info("backup interval reached");
             const onlyOnChange = await joplin.settings.value("onlyOnChange");
             const lastChange = await getLastChangeDate();
-            if (onlyOnChange === false || (onlyOnChange === true && (lastChange === 0 || lastBackup < lastChange)) ) {
+            if (
+              onlyOnChange === false ||
+              (onlyOnChange === true &&
+                (lastChange === 0 || lastBackup < lastChange))
+            ) {
               await startBackup(false);
             } else {
               backupLog.info("create no backup (no change)");

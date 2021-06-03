@@ -1,12 +1,12 @@
 {
-	"manifest_version": 1,
-	"id": "io.github.jackgruber.backup",
-	"app_min_version": "1.6.5",
-	"version": "0.5.3",
-	"name": "Simple Backup",
-	"description": "Plugin to create manual and automatic backups.",
-	"author": "JackGruber",
-	"homepage_url": "https://github.com/JackGruber/joplin-plugin-backup/blob/master/README.md",
-	"repository_url": "https://github.com/JackGruber/joplin-plugin-backup",
-	"keywords": ["backup", "jex", "export"]
+  "manifest_version": 1,
+  "id": "io.github.jackgruber.backup",
+  "app_min_version": "1.6.5",
+  "version": "0.5.3",
+  "name": "Simple Backup",
+  "description": "Plugin to create manual and automatic backups.",
+  "author": "JackGruber",
+  "homepage_url": "https://github.com/JackGruber/joplin-plugin-backup/blob/master/README.md",
+  "repository_url": "https://github.com/JackGruber/joplin-plugin-backup",
+  "keywords": ["backup", "jex", "export"]
 }
