@@ -1,0 +1,16 @@
+{
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": false,
+  "endOfLine": "auto",
+  "overrides": [
+    {
+      "files": ["tsconfig.json"],
+      "options": {
+        "tabWidth": 4,
+        "useTabs": true
+      }
+    }
+  ]
+}
