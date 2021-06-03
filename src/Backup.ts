@@ -2,10 +2,8 @@ import { Settings } from "./settings";
 import { MenuItemLocation } from "api/types";
 import joplin from "api";
 import * as path from "path";
-import backupLog from "electron-log";
+import logging from "electron-log";
 import * as fs from "fs-extra";
-
-//const fs = require("fs-extra");
 
 class Backup {
   private errorDialog: any;
@@ -16,7 +14,7 @@ class Backup {
   private backupRetention: number;
 
   constructor() {
-    this.log = backupLog;
+    this.log = logging;
   }
 
   public async init() {
@@ -47,7 +45,7 @@ class Backup {
     if (enable === true) {
       const fileLogLevel = await joplin.settings.value("fileLogLevel");
       this.log.transports.file.resolvePath = () => this.logFile;
-      backupLog.transports.file.level = fileLogLevel;
+      this.log.transports.file.level = fileLogLevel;
     } else {
       this.log.transports.file.level = false;
     }
@@ -202,7 +200,7 @@ class Backup {
         ) {
           await this.start(false);
         } else {
-          backupLog.info("create no backup (no change)");
+          this.log.info("create no backup (no change)");
         }
       }
       window.setTimeout(this.backupTime, 1000 * 60 * checkEver);
