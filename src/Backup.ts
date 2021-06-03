@@ -78,8 +78,26 @@ class Backup {
     );
   }
 
+  private async loadBackupPath() {
+    const pathSetting = await joplin.settings.value("path");
+    const profileDir = await joplin.settings.globalValue("profileDir");
+    if (path.isAbsolute(pathSetting)) {
+      this.backupBasePath = path.normalize(pathSetting);
+    } else {
+      console.log(profileDir);
+      this.backupBasePath = path.join(
+        path.normalize(profileDir),
+        path.normalize(pathSetting)
+      );
+    }
+
+    if (path.normalize(profileDir) === path.normalize(pathSetting)) {
+      this.backupBasePath = "";
+    }
+  }
+
   public async loadSettings() {
-    this.backupBasePath = path.normalize(await joplin.settings.value("path"));
+    await this.loadBackupPath();
   }
 
   private async createErrorDialog() {
