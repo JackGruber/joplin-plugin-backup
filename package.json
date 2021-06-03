@@ -3,7 +3,7 @@
   "version": "0.5.3",
   "scripts": {
     "dist": "webpack --joplin-plugin-config buildMain && webpack --joplin-plugin-config buildExtraScripts && webpack --joplin-plugin-config createArchive",
-    "prepare": "npm run dist",
+    "prepare": "npm run dist && husky install",
     "update": "npm install -g generator-joplin && yo joplin --update"
   },
   "license": "MIT",
