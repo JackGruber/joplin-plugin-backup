@@ -1,6 +1,5 @@
 import joplin from "api";
-import JoplinCommands from "api";
-import { MenuItem, MenuItemLocation, SettingItemType } from "api/types";
+import { MenuItemLocation, SettingItemType } from "api/types";
 
 const fs = require("fs-extra");
 const path = require("path");
