@@ -7,9 +7,9 @@ const path = require("path");
 const backupLog = require("electron-log");
 
 class Backup {
-  private errorDialog;
+  private errorDialog: any;
   private backupBasePath: string;
-  private log;
+  private log: any;
   private logFile: string;
 
   constructor() {
