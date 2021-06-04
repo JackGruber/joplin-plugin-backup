@@ -51,11 +51,6 @@ class Backup {
     }
   }
 
-  public setLogLevel(consoleLevel: string, fileLevel: string) {
-    this.log.transports.console.level = consoleLevel;
-    this.log.transports.file.level = fileLevel;
-  }
-
   private async deleteLogFile() {
     if (fs.existsSync(this.logFile)) {
       try {

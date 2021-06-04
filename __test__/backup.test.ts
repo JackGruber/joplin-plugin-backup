@@ -25,7 +25,8 @@ describe("Backup", function () {
   beforeEach(async () => {
     await createTestStructure();
     backup = new Backup() as any;
-    backup.setLogLevel("warn", "warn");
+    backup.log.transports.console.level = "warn";
+    backup.log.transports.file.level = "warn";
   });
 
   it(`File`, async () => {
