@@ -31,11 +31,14 @@ describe("Backup", function () {
 
   it(`File`, async () => {
     const testPath = await getTestPaths();
-    const src = path.join(testPath.joplinProfile, "settings.json");
+    const src1 = path.join(testPath.joplinProfile, "settings.json");
+    const src2 = path.join(testPath.joplinProfile, "doesNotExist.json");
     const dst = path.join(testPath.backupDest, "settings.json");
-    fs.writeFileSync(src, "data");
+    fs.writeFileSync(src1, "data");
 
-    expect(await backup.backupFile(src, dst)).toBe(true);
+    expect(await backup.backupFile(src1, dst)).toBe(true);
     expect(fs.existsSync(dst)).toBe(true);
+
+    expect(await backup.backupFile(src2, dst)).toBe(false);
   });
 });
