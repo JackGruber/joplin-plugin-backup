@@ -40,6 +40,27 @@ describe("Div", function () {
     expect(folder).toBe(check);
     expect(fs.existsSync(check)).toBe(true);
   });
+
+  it(`Delete log`, async () => {
+    const testPath = await getTestPaths();
+    backup.logFile = path.join(testPath.backupDest, "test.log");
+    fs.writeFileSync(backup.logFile, "data");
+
+    expect(fs.existsSync(backup.logFile)).toBe(true);
+    await backup.deleteLogFile();
+    expect(fs.existsSync(backup.logFile)).toBe(false);
+  });
+
+  it(`Get Retention folder name`, async () => {
+    const now = new Date();
+    const test =
+      now.getFullYear().toString() +
+      (now.getMonth() + 1).toString().padStart(2, "0") +
+      now.getDate().toString().padStart(2, "0") +
+      now.getHours().toString().padStart(2, "0") +
+      now.getMinutes().toString().padStart(2, "0");
+    expect(await backup.getBackupSetFolderName()).toBe(test);
+  });
 });
 
 describe("Backup", function () {
