@@ -21,6 +21,27 @@ async function createTestStructure() {
   fs.emptyDirSync(test.templates);
 }
 
+describe("Div", function () {
+  beforeEach(async () => {
+    await createTestStructure();
+    backup = new Backup() as any;
+    backup.log.transports.console.level = "warn";
+    backup.log.transports.file.level = "warn";
+  });
+
+  it(`Create empty folder`, async () => {
+    const testPath = await getTestPaths();
+
+    const folder = await backup.createEmptyFolder(
+      testPath.backupDest,
+      "profile"
+    );
+    const check = path.join(testPath.backupDest, "profile");
+    expect(folder).toBe(check);
+    expect(fs.existsSync(check)).toBe(true);
+  });
+});
+
 describe("Backup", function () {
   beforeEach(async () => {
     await createTestStructure();
