@@ -41,4 +41,25 @@ describe("Backup", function () {
 
     expect(await backup.backupFile(src2, dst)).toBe(false);
   });
+
+  it(`Folder`, async () => {
+    const testPath = await getTestPaths();
+    const file1 = path.join(testPath.templates, "template1.md");
+    const file2 = path.join(testPath.templates, "template2.md");
+
+    const doesNotExist = path.join(testPath.base, "doesNotExist");
+
+    const dst = path.join(testPath.backupDest, "templates");
+    const checkFile1 = path.join(dst, "template1.md");
+    const checkFile2 = path.join(dst, "template2.md");
+
+    fs.writeFileSync(file1, "template1");
+    fs.writeFileSync(file2, "template2");
+
+    expect(await backup.backupFolder(testPath.templates, dst)).toBe(true);
+    expect(fs.existsSync(checkFile1)).toBe(true);
+    expect(fs.existsSync(checkFile2)).toBe(true);
+
+    expect(await backup.backupFolder(doesNotExist, dst)).toBe(false);
+  });
 });
