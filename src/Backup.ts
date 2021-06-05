@@ -275,16 +275,18 @@ class Backup {
     );
   }
 
-  private async backupFolder(src: string, dst: string) {
+  private async backupFolder(src: string, dst: string): Promise<boolean> {
     if (fs.existsSync(src)) {
       try {
         fs.copySync(src, dst);
+        return true;
       } catch (e) {
         this.showError("backupFolder: " + e.message);
         throw e;
       }
     } else {
       this.log.info("no folder " + src);
+      return false;
     }
   }
 
@@ -293,11 +295,11 @@ class Backup {
       this.log.debug("Copy " + src);
       try {
         fs.copyFileSync(src, dest);
+        return true;
       } catch (e) {
         this.log.error("backupFile: " + e.message);
         throw e;
       }
-      return true;
     } else {
       this.log.debug("No file '" + src);
       return false;
