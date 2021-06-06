@@ -33,12 +33,11 @@ class Backup {
   }
 
   private async setupLog() {
+    const logFormat = "[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}";
     this.log.transports.file.level = false;
-    this.log.transports.file.format =
-      "[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}";
+    this.log.transports.file.format = logFormat;
     this.log.transports.console.level = "verbose";
-    this.log.transports.console.format =
-      "[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}";
+    this.log.transports.console.format = logFormat;
   }
 
   private async fileLogging(enable: boolean) {
