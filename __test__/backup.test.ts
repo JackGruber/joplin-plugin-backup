@@ -2,7 +2,7 @@ import { Backup } from "../src/Backup";
 import * as fs from "fs-extra";
 import * as path from "path";
 
-async function getTestPaths(): Promise<any> {
+function getTestPaths(): any {
   const testPath: any = {};
   testPath.base = path.join(__dirname, "tests");
   testPath.backupDest = path.join(testPath.base, "Backup");
@@ -21,6 +21,8 @@ async function createTestStructure() {
   fs.emptyDirSync(test.templates);
 }
 
+const testPath = getTestPaths();
+
 describe("Backup", function () {
   beforeEach(async () => {
     await createTestStructure();
@@ -33,8 +35,6 @@ describe("Backup", function () {
     beforeEach(async () => {});
 
     it(`Create empty folder`, async () => {
-      const testPath = await getTestPaths();
-
       const folder = await backup.createEmptyFolder(
         testPath.backupDest,
         "profile"
@@ -45,7 +45,6 @@ describe("Backup", function () {
     });
 
     it(`Delete log`, async () => {
-      const testPath = await getTestPaths();
       backup.logFile = path.join(testPath.backupDest, "test.log");
       fs.writeFileSync(backup.logFile, "data");
 
@@ -88,7 +87,6 @@ describe("Backup", function () {
     beforeEach(async () => {});
 
     it(`File`, async () => {
-      const testPath = await getTestPaths();
       const src1 = path.join(testPath.joplinProfile, "settings.json");
       const src2 = path.join(testPath.joplinProfile, "doesNotExist.json");
       const dst = path.join(testPath.backupDest, "settings.json");
@@ -101,7 +99,6 @@ describe("Backup", function () {
     });
 
     it(`Folder`, async () => {
-      const testPath = await getTestPaths();
       const file1 = path.join(testPath.templates, "template1.md");
       const file2 = path.join(testPath.templates, "template2.md");
 
