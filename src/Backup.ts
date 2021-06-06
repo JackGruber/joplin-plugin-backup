@@ -52,6 +52,7 @@ class Backup {
   }
 
   private async deleteLogFile() {
+    this.log.verbose("Delete log file");
     if (fs.existsSync(this.logFile)) {
       try {
         await fs.unlinkSync(this.logFile);
@@ -80,6 +81,7 @@ class Backup {
   }
 
   private async loadBackupPath() {
+    this.log.verbose("loadBackupPath");
     const pathSetting = await joplinWrapper.settingsValue("path");
     const profileDir = await joplinWrapper.settingsGlobalValue("profileDir");
 
@@ -98,6 +100,7 @@ class Backup {
   }
 
   public async loadSettings() {
+    this.log.verbose("loadSettings");
     await this.loadBackupPath();
     this.backupRetention = await joplin.settings.value("backupRetention");
   }
@@ -125,6 +128,7 @@ class Backup {
   }
 
   public async start(showDoneMsg: boolean = false) {
+    this.log.verbose("start");
     const backupStartTime = new Date();
 
     if (this.backupBasePath === null) {
@@ -153,13 +157,15 @@ class Backup {
       this.log.info("Backup completed");
       await this.fileLogging(false);
     } else {
-      this.showError(
+      await this.showError(
         `The Backup path '${this.backupBasePath}' does not exist!`
       );
     }
   }
 
   private async getLastChangeDate(): Promise<number> {
+    this.log.verbose("getLastChangeDate");
+
     let lastUpdate = 0;
     const toCheck = ["folders", "notes", "resources", "tags"];
     for (let check of toCheck) {
@@ -182,6 +188,8 @@ class Backup {
   }
 
   private async backupTime() {
+    this.log.verbose("backupTime");
+
     const checkEver = 5;
     const backupInterval = await joplin.settings.value("backupInterval");
     const lastBackup = await joplin.settings.value("lastBackup");
@@ -225,6 +233,7 @@ class Backup {
     folder: string
   ): Promise<string> {
     const dir = path.join(inPath, folder);
+    this.log.verbose("Create folder " + dir);
     try {
       fs.emptyDirSync(dir);
       return dir;
@@ -276,6 +285,7 @@ class Backup {
 
   private async backupFolder(src: string, dst: string): Promise<boolean> {
     if (fs.existsSync(src)) {
+      this.log.verbose("Copy " + src);
       try {
         fs.copySync(src, dst);
         return true;
@@ -291,7 +301,7 @@ class Backup {
 
   private async backupFile(src: string, dest: string): Promise<boolean> {
     if (fs.existsSync(src)) {
-      this.log.debug("Copy " + src);
+      this.log.verbose("Copy " + src);
       try {
         fs.copyFileSync(src, dest);
         return true;
@@ -300,7 +310,7 @@ class Backup {
         throw e;
       }
     } else {
-      this.log.debug("No file '" + src);
+      this.log.verbose("No file '" + src);
       return false;
     }
   }
