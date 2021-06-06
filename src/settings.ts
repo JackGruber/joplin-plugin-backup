@@ -75,7 +75,7 @@ export namespace Settings {
       label: "Logfile",
       options: {
         false: "Off",
-        debug: "Debug",
+        verbose: "Verbose",
         info: "Info",
         error: "Error",
       },
