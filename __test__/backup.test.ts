@@ -1,6 +1,8 @@
 import { Backup } from "../src/Backup";
 import * as fs from "fs-extra";
 import * as path from "path";
+import { joplinWrapper } from "../src/joplinWrapper";
+import { when } from "jest-when";
 
 function getTestPaths(): any {
   const testPath: any = {};
@@ -12,6 +14,9 @@ function getTestPaths(): any {
 }
 
 let backup = null;
+
+const spyOnsSttingsValue = jest.spyOn(joplinWrapper, "settingsValue");
+const spyOnGlobalValue = jest.spyOn(joplinWrapper, "settingsGlobalValue");
 
 async function createTestStructure() {
   const test = await getTestPaths();
