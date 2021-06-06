@@ -129,7 +129,7 @@ class Backup {
     const backupStartTime = new Date();
 
     if (this.backupBasePath === null) {
-      this.showError(
+      await this.showError(
         "Please configure backup path in Joplin Tools > Options > Backup"
       );
       return;
@@ -145,8 +145,7 @@ class Backup {
         "activeBackupJob"
       );
 
-      this.backupProfileData();
-
+      await this.backupProfileData();
       const backupDst = await this.moveFinishedBackup();
 
       await joplin.settings.setValue("lastBackup", backupStartTime.getTime());
@@ -231,7 +230,7 @@ class Backup {
       fs.emptyDirSync(dir);
       return dir;
     } catch (e) {
-      this.showError("createEmptyFolder: " + e.message);
+      await this.showError("createEmptyFolder: " + e.message);
       throw e;
     }
   }
@@ -282,7 +281,7 @@ class Backup {
         fs.copySync(src, dst);
         return true;
       } catch (e) {
-        this.showError("backupFolder: " + e.message);
+        await this.showError("backupFolder: " + e.message);
         throw e;
       }
     } else {
@@ -315,7 +314,7 @@ class Backup {
       try {
         fs.renameSync(this.activeBackupPath, backupDestination);
       } catch (e) {
-        this.showError("moveFinishedBackup: " + e.message);
+        await this.showError("moveFinishedBackup: " + e.message);
         throw e;
       }
     } else {
@@ -329,7 +328,7 @@ class Backup {
             path.join(this.backupBasePath, file)
           );
         } catch (e) {
-          this.showError("moveFinishedBackup: " + e.message);
+          await this.showError("moveFinishedBackup: " + e.message);
           throw e;
         }
       }
@@ -347,7 +346,10 @@ class Backup {
     return backupDestination;
   }
 
-  private deleteOldBackupSets(backupPath: string, backupRetention: number) {
+  private async deleteOldBackupSets(
+    backupPath: string,
+    backupRetention: number
+  ) {
     if (backupRetention > 1) {
       const folders = fs
         .readdirSync(backupPath, { withFileTypes: true })
@@ -369,7 +371,7 @@ class Backup {
             recursive: true,
           });
         } catch (e) {
-          this.showError("deleteOldBackupSets" + e.message);
+          await this.showError("deleteOldBackupSets" + e.message);
           throw e;
         }
       }
@@ -385,7 +387,7 @@ class Backup {
           try {
             fs.removeSync(path.join(backupPath, file));
           } catch (e) {
-            this.showError("" + e.message);
+            await this.showError("" + e.message);
             throw e;
           }
         }
@@ -394,14 +396,14 @@ class Backup {
       try {
         fs.removeSync(path.join(backupPath, "templates"));
       } catch (e) {
-        this.showError("deleteOldBackupSets" + e.message);
+        await this.showError("deleteOldBackupSets" + e.message);
         throw e;
       }
 
       try {
         fs.removeSync(path.join(backupPath, "profile"));
       } catch (e) {
-        this.showError("deleteOldBackupSets" + e.message);
+        await this.showError("deleteOldBackupSets" + e.message);
         throw e;
       }
     }
