@@ -37,8 +37,6 @@ describe("Backup", function () {
   });
 
   describe("Div", function () {
-    beforeEach(async () => {});
-
     it(`Create empty folder`, async () => {
       const folder = await backup.createEmptyFolder(
         testPath.backupDest,
