@@ -4,6 +4,7 @@ import joplin from "api";
 import * as path from "path";
 import logging from "electron-log";
 import * as fs from "fs-extra";
+import { joplinWrapper } from "./joplinWrapper";
 
 class Backup {
   private errorDialog: any;
@@ -43,7 +44,7 @@ class Backup {
   private async fileLogging(enable: boolean) {
     if (enable === true) {
       this.logFile = path.join(this.backupBasePath, "backup.log");
-      const fileLogLevel = await joplin.settings.value("fileLogLevel");
+      const fileLogLevel = await joplinWrapper.settingsValue("fileLogLevel");
       this.log.transports.file.resolvePath = () => this.logFile;
       this.log.transports.file.level = fileLogLevel;
     } else {
@@ -80,8 +81,8 @@ class Backup {
   }
 
   private async loadBackupPath() {
-    const pathSetting = await joplin.settings.value("path");
-    const profileDir = await joplin.settings.globalValue("profileDir");
+    const pathSetting = await joplinWrapper.settingsValue("path");
+    const profileDir = await joplinWrapper.settingsGlobalValue("profileDir");
 
     if (path.isAbsolute(pathSetting)) {
       this.backupBasePath = path.normalize(pathSetting);
