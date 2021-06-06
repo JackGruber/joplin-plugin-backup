@@ -52,14 +52,11 @@ describe("Div", function () {
   });
 
   it(`Get Retention folder name`, async () => {
-    const now = new Date();
-    const test =
-      now.getFullYear().toString() +
-      (now.getMonth() + 1).toString().padStart(2, "0") +
-      now.getDate().toString().padStart(2, "0") +
-      now.getHours().toString().padStart(2, "0") +
-      now.getMinutes().toString().padStart(2, "0");
-    expect(await backup.getBackupSetFolderName()).toBe(test);
+    const testEpoch = new Date(2021, 0, 2, 16, 30, 45, 0).getTime();
+    const spyOnDateNow = jest
+      .spyOn(Date, "now")
+      .mockImplementation(() => testEpoch);
+    expect(await backup.getBackupSetFolderName()).toBe("202101021630");
   });
 });
 

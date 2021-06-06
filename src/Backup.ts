@@ -211,7 +211,7 @@ class Backup {
 
   private async getBackupSetFolderName(): Promise<string> {
     // Folder with date for backup retention
-    const now = new Date();
+    const now = new Date(Date.now());
     return (
       now.getFullYear().toString() +
       (now.getMonth() + 1).toString().padStart(2, "0") +
