@@ -74,12 +74,14 @@ describe("Backup", function () {
       expect(backup.log.transports.file.level).toBe(false);
     });
 
-    // it(`Toggel file`, async () => {
-    //   backup.fileLogging(false);
-    //   expect(backup.log.transports.file.level).toBe(false);
-    //   backup.fileLogging(true);
-    //   expect(backup.log.transports.file).toBe(true);
-    // });
+    it(`Toggel file`, async () => {
+      await backup.fileLogging(false);
+      expect(backup.log.transports.file.level).toBe(false);
+
+      // backup.backupBasePath = "c:/";
+      // await backup.fileLogging(true);
+      // expect(backup.log.transports.file).toBe(true);
+    });
   });
 
   describe("Backup", function () {
