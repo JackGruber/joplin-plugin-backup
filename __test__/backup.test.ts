@@ -82,9 +82,21 @@ describe("Backup", function () {
       await backup.fileLogging(false);
       expect(backup.log.transports.file.level).toBe(false);
 
-      // backup.backupBasePath = "c:/";
-      // await backup.fileLogging(true);
-      // expect(backup.log.transports.file).toBe(true);
+      /* prettier-ignore */
+      when(spyOnsSttingsValue)
+        .calledWith("fileLogLevel").mockImplementation(() => Promise.resolve("verbose"));
+
+      backup.backupBasePath = "./";
+      await backup.fileLogging(true);
+      expect(backup.log.transports.file.level).toBe("verbose");
+
+      /* prettier-ignore */
+      when(spyOnsSttingsValue)
+        .calledWith("fileLogLevel").mockImplementation(() => Promise.resolve("error"));
+
+      backup.backupBasePath = "./";
+      await backup.fileLogging(true);
+      expect(backup.log.transports.file.level).toBe("error");
     });
   });
 
