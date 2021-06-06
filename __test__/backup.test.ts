@@ -47,6 +47,38 @@ describe("Backup", function () {
     backup.log.transports.file.level = false;
   });
 
+  describe("Backup path", function () {
+    it(`Backup path != Profile`, async () => {
+      await backup.loadBackupPath();
+      expect(backup.backupBasePath).toBe(testPath.backupDest);
+      expect(backup.backupBasePath).not.toBe(testPath.joplinProfile);
+
+      /* prettier-ignore */
+      when(spyOnsSttingsValue)
+      .calledWith("path").mockImplementation(() => Promise.resolve(""));
+      await backup.loadBackupPath();
+      expect(backup.backupBasePath).not.toBe(testPath.joplinProfile);
+      expect(backup.backupBasePath).toBe(null);
+
+      /* prettier-ignore */
+      when(spyOnsSttingsValue)
+      .calledWith("path").mockImplementation(() => Promise.resolve(testPath.joplinProfile));
+      await backup.loadBackupPath();
+      expect(backup.backupBasePath).not.toBe(testPath.joplinProfile);
+      expect(backup.backupBasePath).toBe(null);
+    });
+
+    it(`relative paths`, async () => {
+      const backupPath = "../";
+      /* prettier-ignore */
+      when(spyOnsSttingsValue)
+      .calledWith("path").mockImplementation(() => Promise.resolve(backupPath));
+      await backup.loadBackupPath();
+      const toBe = path.normalize(path.join(testPath.backupDest, backupPath));
+      expect(backup.backupBasePath).toBe(toBe);
+    });
+  });
+
   describe("Div", function () {
     it(`Create empty folder`, async () => {
       const folder = await backup.createEmptyFolder(
