@@ -30,6 +30,17 @@ const testPath = getTestPaths();
 
 describe("Backup", function () {
   beforeEach(async () => {
+    /* prettier-ignore */
+    when(spyOnsSttingsValue)
+      .mockImplementation(() => Promise.resolve("no mockImplementation"))
+      .calledWith("fileLogLevel").mockImplementation(() => Promise.resolve("error"))
+      .calledWith("path").mockImplementation(() => Promise.resolve(testPath.backupDest));
+
+    /* prettier-ignore */
+    when(spyOnGlobalValue)
+      .mockImplementation(() => Promise.resolve("no mockImplementation"))
+      .calledWith("profileDir").mockImplementation(() => Promise.resolve(testPath.joplinProfile));
+
     await createTestStructure();
     backup = new Backup() as any;
     backup.log.transports.console.level = "warn";
