@@ -2,7 +2,7 @@ import { Settings } from "./settings";
 import { MenuItemLocation } from "api/types";
 import joplin from "api";
 import * as path from "path";
-import logging from "electron-log";
+import backupLogging from "electron-log";
 import * as fs from "fs-extra";
 import { joplinWrapper } from "./joplinWrapper";
 
@@ -15,7 +15,7 @@ class Backup {
   private backupRetention: number;
 
   constructor() {
-    this.log = logging;
+    this.log = backupLogging;
   }
 
   public async init() {
