@@ -150,6 +150,9 @@ class Backup {
       );
 
       await this.backupProfileData();
+
+      const notebooks = await this.selectNotebooks();
+
       const backupDst = await this.moveFinishedBackup();
 
       await joplin.settings.setValue("lastBackup", backupStartTime.getTime());
@@ -162,6 +165,32 @@ class Backup {
         `The Backup path '${this.backupBasePath}' does not exist!`
       );
     }
+  }
+
+  private async selectNotebooks(): Promise<any> {
+    const noteBookInfo = {};
+    const noteBooksIds = [];
+    let pageNum = 0;
+    this.log.info("Select notebooks for export");
+    do {
+      var folders = await joplin.data.get(["folders"], {
+        fields: "id, title, parent_id",
+        limit: 50,
+        page: pageNum++,
+      });
+      for (const folder of folders.items) {
+        noteBooksIds.push(folder.id);
+        noteBookInfo[folder.id] = {};
+        noteBookInfo[folder.id]["title"] = folder.title;
+        noteBookInfo[folder.id]["parent_id"] = folder.parent_id;
+        this.log.debug("Add '" + folder.title + "' (" + folder.id + ")");
+      }
+    } while (folders.has_more);
+
+    return {
+      ids: noteBooksIds,
+      info: noteBookInfo,
+    };
   }
 
   private async getLastChangeDate(): Promise<number> {
