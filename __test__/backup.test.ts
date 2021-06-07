@@ -127,6 +127,33 @@ describe("Backup", function () {
       expect(backup.log.error).toHaveBeenCalledTimes(0);
       expect(backup.log.warn).toHaveBeenCalledTimes(0);
     });
+
+    it(`moveFinishedBackup no retention`, async () => {
+      const emptyFolder = path.join(testPath.activeBackupJob, "emptyFolder");
+      const emptyFolderCheck = path.join(testPath.backupDest, "emptyFolder");
+      const folder = path.join(testPath.activeBackupJob, "folder");
+      const folderCheck = path.join(testPath.backupDest, "folder");
+      const file1 = path.join(folder, "file.txt");
+      const file1Check = path.join(folderCheck, "file.txt");
+      const file2 = path.join(testPath.activeBackupJob, "file.txt");
+      const file2Check = path.join(testPath.backupDest, "file.txt");
+      backup.backupBasePath = testPath.backupDest;
+      backup.activeBackupPath = testPath.activeBackupJob;
+
+      fs.emptyDirSync(testPath.activeBackupJob);
+      fs.emptyDirSync(emptyFolder);
+      fs.emptyDirSync(folder);
+      fs.writeFileSync(file1, "file");
+      fs.writeFileSync(file2, "file");
+
+      expect(await backup.moveFinishedBackup()).toBe(testPath.backupDest);
+      expect(fs.existsSync(folderCheck)).toBe(true);
+      expect(fs.existsSync(emptyFolderCheck)).toBe(true);
+      expect(fs.existsSync(file1Check)).toBe(true);
+      expect(fs.existsSync(file2Check)).toBe(true);
+      expect(backup.log.error).toHaveBeenCalledTimes(0);
+      expect(backup.log.warn).toHaveBeenCalledTimes(0);
+    });
   });
 
   describe("Logging", function () {
