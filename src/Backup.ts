@@ -167,6 +167,86 @@ class Backup {
     }
   }
 
+  private async backupNotebooks() {
+    const notebooks = await this.selectNotebooks();
+
+    const singleJex = await joplin.settings.value("singleJex");
+    if (singleJex === true) {
+      this.log.info("Create single file JEX backup");
+      await this.jexExport(
+        notebooks,
+        path.join(this.activeBackupPath, "all_notebooks.jex")
+      );
+    } else {
+      this.log.info("Export each notbook as JEX backup");
+      for (const folderId of notebooks.ids) {
+        if ((await this.notebookHasNotes(folderId)) === true) {
+          this.log.verbose(
+            `Export ${notebooks.info[folderId]["title"]} (${folderId})`
+          );
+          const notebookFile = await this.getNotebookFileName(
+            notebooks.info,
+            folderId
+          );
+          await this.jexExport(
+            folderId,
+            path.join(this.activeBackupPath, notebookFile)
+          );
+        } else {
+          this.log.verbose(
+            `Skip ${notebooks.info[folderId]["title"]} (${folderId}) since no notes in notebook`
+          );
+        }
+      }
+    }
+  }
+
+  private async getNotebookFileName(
+    notebooks: any,
+    id: string
+  ): Promise<string> {
+    const names = [];
+    let parentId = "";
+
+    do {
+      names.push(notebooks[id].title);
+      parentId = notebooks[id].parent_id;
+      id = parentId;
+    } while (parentId != "");
+    return (
+      names
+        .reverse()
+        .join("_")
+        .replace(/[/\\?%*:|"<>]/g, "_") + ".jex"
+    );
+  }
+
+  private async notebookHasNotes(notebookId: string): Promise<boolean> {
+    let noteCheck = await joplin.data.get(["folders", notebookId, "notes"], {
+      fields: "title, id",
+    });
+
+    if (noteCheck.items.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private async jexExport(notebookIds: string[], file: string) {
+    try {
+      let status: string = await joplin.commands.execute(
+        "exportFolders",
+        notebookIds,
+        "jex",
+        file
+      );
+    } catch (e) {
+      this.showError("Backup error", "jexExport: " + e.message);
+      throw e;
+    }
+  }
+
   private async selectNotebooks(): Promise<any> {
     const noteBookInfo = {};
     const noteBooksIds = [];
