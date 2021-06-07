@@ -177,7 +177,10 @@ class Backup {
           limit: 10,
           page: 1,
         });
-        if (checkUpdated.items[0].updated_time > lastUpdate) {
+        if (
+          checkUpdated.items.length > 0 &&
+          checkUpdated.items[0].updated_time > lastUpdate
+        ) {
           lastUpdate = checkUpdated.items[0].updated_time;
         }
       } catch (error) {
