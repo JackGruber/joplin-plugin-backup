@@ -7,8 +7,11 @@ import { when } from "jest-when";
 function getTestPaths(): any {
   const testPath: any = {};
   testPath.base = path.join(__dirname, "tests");
-  testPath.backupDest = path.join(testPath.base, "Backup");
-  testPath.activeBackupJob = path.join(testPath.backupDest, "activeBackupJob");
+  testPath.backupBasePath = path.join(testPath.base, "Backup");
+  testPath.activeBackupJob = path.join(
+    testPath.backupBasePath,
+    "activeBackupJob"
+  );
   testPath.joplinProfile = path.join(testPath.base, "joplin-desktop");
   testPath.templates = path.join(testPath.joplinProfile, "templates");
   return testPath;
@@ -22,7 +25,7 @@ const spyOnGlobalValue = jest.spyOn(joplinWrapper, "settingsGlobalValue");
 async function createTestStructure() {
   const test = await getTestPaths();
   fs.emptyDirSync(test.base);
-  fs.emptyDirSync(test.backupDest);
+  fs.emptyDirSync(test.backupBasePath);
   fs.emptyDirSync(test.joplinProfile);
   fs.emptyDirSync(test.templates);
 }
@@ -35,7 +38,7 @@ describe("Backup", function () {
     when(spyOnsSttingsValue)
       .mockImplementation(() => Promise.resolve("no mockImplementation"))
       .calledWith("fileLogLevel").mockImplementation(() => Promise.resolve("error"))
-      .calledWith("path").mockImplementation(() => Promise.resolve(testPath.backupDest));
+      .calledWith("path").mockImplementation(() => Promise.resolve(testPath.backupBasePath));
 
     /* prettier-ignore */
     when(spyOnGlobalValue)
@@ -59,7 +62,7 @@ describe("Backup", function () {
   describe("Backup path", function () {
     it(`Backup path != Profile`, async () => {
       await backup.loadBackupPath();
-      expect(backup.backupBasePath).toBe(testPath.backupDest);
+      expect(backup.backupBasePath).toBe(testPath.backupBasePath);
       expect(backup.backupBasePath).not.toBe(testPath.joplinProfile);
 
       /* prettier-ignore */
@@ -86,7 +89,9 @@ describe("Backup", function () {
       when(spyOnsSttingsValue)
       .calledWith("path").mockImplementation(() => Promise.resolve(backupPath));
       await backup.loadBackupPath();
-      const toBe = path.normalize(path.join(testPath.backupDest, backupPath));
+      const toBe = path.normalize(
+        path.join(testPath.backupBasePath, backupPath)
+      );
       expect(backup.backupBasePath).toBe(toBe);
       expect(backup.log.error).toHaveBeenCalledTimes(0);
       expect(backup.log.warn).toHaveBeenCalledTimes(0);
@@ -96,10 +101,10 @@ describe("Backup", function () {
   describe("Div", function () {
     it(`Create empty folder`, async () => {
       const folder = await backup.createEmptyFolder(
-        testPath.backupDest,
+        testPath.backupBasePath,
         "profile"
       );
-      const check = path.join(testPath.backupDest, "profile");
+      const check = path.join(testPath.backupBasePath, "profile");
       expect(folder).toBe(check);
       expect(fs.existsSync(check)).toBe(true);
       expect(backup.log.error).toHaveBeenCalledTimes(0);
@@ -107,7 +112,7 @@ describe("Backup", function () {
     });
 
     it(`Delete log`, async () => {
-      backup.logFile = path.join(testPath.backupDest, "test.log");
+      backup.logFile = path.join(testPath.backupBasePath, "test.log");
       fs.writeFileSync(backup.logFile, "data");
 
       expect(fs.existsSync(backup.logFile)).toBe(true);
@@ -192,7 +197,7 @@ describe("Backup", function () {
     it(`File`, async () => {
       const src1 = path.join(testPath.joplinProfile, "settings.json");
       const src2 = path.join(testPath.joplinProfile, "doesNotExist.json");
-      const dst = path.join(testPath.backupDest, "settings.json");
+      const dst = path.join(testPath.backupBasePath, "settings.json");
       fs.writeFileSync(src1, "data");
 
       expect(await backup.backupFile(src1, dst)).toBe(true);
@@ -210,7 +215,7 @@ describe("Backup", function () {
 
       const doesNotExist = path.join(testPath.base, "doesNotExist");
 
-      const dst = path.join(testPath.backupDest, "templates");
+      const dst = path.join(testPath.backupBasePath, "templates");
       const checkFile1 = path.join(dst, "template1.md");
       const checkFile2 = path.join(dst, "template2.md");
 
