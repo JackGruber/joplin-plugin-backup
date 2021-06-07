@@ -19,6 +19,7 @@ class Backup {
   }
 
   public async init() {
+    this.log.info("Backup Plugin init");
     await this.registerSettings();
     await this.registerCommands();
     await this.registerMenues();
