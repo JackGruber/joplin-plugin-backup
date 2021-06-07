@@ -162,8 +162,6 @@ describe("Backup", function () {
   });
 
   describe("Backup", function () {
-    beforeEach(async () => {});
-
     it(`File`, async () => {
       const src1 = path.join(testPath.joplinProfile, "settings.json");
       const src2 = path.join(testPath.joplinProfile, "doesNotExist.json");
