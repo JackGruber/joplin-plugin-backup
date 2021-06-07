@@ -135,14 +135,17 @@ describe("Backup", function () {
 
     it(`moveFinishedBackup no retention`, async () => {
       const emptyFolder = path.join(testPath.activeBackupJob, "emptyFolder");
-      const emptyFolderCheck = path.join(testPath.backupDest, "emptyFolder");
+      const emptyFolderCheck = path.join(
+        testPath.backupBasePath,
+        "emptyFolder"
+      );
       const folder = path.join(testPath.activeBackupJob, "folder");
-      const folderCheck = path.join(testPath.backupDest, "folder");
+      const folderCheck = path.join(testPath.backupBasePath, "folder");
       const file1 = path.join(folder, "file.txt");
       const file1Check = path.join(folderCheck, "file.txt");
       const file2 = path.join(testPath.activeBackupJob, "file.txt");
-      const file2Check = path.join(testPath.backupDest, "file.txt");
-      backup.backupBasePath = testPath.backupDest;
+      const file2Check = path.join(testPath.backupBasePath, "file.txt");
+      backup.backupBasePath = testPath.backupBasePath;
       backup.activeBackupPath = testPath.activeBackupJob;
 
       fs.emptyDirSync(testPath.activeBackupJob);
@@ -151,13 +154,52 @@ describe("Backup", function () {
       fs.writeFileSync(file1, "file");
       fs.writeFileSync(file2, "file");
 
-      expect(await backup.moveFinishedBackup()).toBe(testPath.backupDest);
+      backup.backupRetention = 1;
+
+      expect(await backup.moveFinishedBackup()).toBe(testPath.backupBasePath);
       expect(fs.existsSync(folderCheck)).toBe(true);
       expect(fs.existsSync(emptyFolderCheck)).toBe(true);
       expect(fs.existsSync(file1Check)).toBe(true);
       expect(fs.existsSync(file2Check)).toBe(true);
       expect(backup.log.error).toHaveBeenCalledTimes(0);
       expect(backup.log.warn).toHaveBeenCalledTimes(0);
+    });
+
+    it(`moveFinishedBackup retention > 1`, async () => {
+      const backupDst = path.join(testPath.backupBasePath, "202101021630");
+      const testEpoch = new Date(2021, 0, 2, 16, 30, 45, 0).getTime();
+      const spyOnDateNow = jest
+        .spyOn(Date, "now")
+        .mockImplementation(() => testEpoch);
+
+      const emptyFolder = path.join(testPath.activeBackupJob, "emptyFolder");
+      const emptyFolderCheck = path.join(backupDst, "emptyFolder");
+      const folder = path.join(testPath.activeBackupJob, "folder");
+      const folderCheck = path.join(backupDst, "folder");
+      const file1 = path.join(folder, "file.txt");
+      const file1Check = path.join(folderCheck, "file.txt");
+      const file2 = path.join(testPath.activeBackupJob, "file.txt");
+      const file2Check = path.join(backupDst, "file.txt");
+      backup.backupBasePath = testPath.backupBasePath;
+      backup.activeBackupPath = testPath.activeBackupJob;
+
+      fs.emptyDirSync(testPath.activeBackupJob);
+      fs.emptyDirSync(emptyFolder);
+      fs.emptyDirSync(folder);
+      fs.writeFileSync(file1, "file");
+      fs.writeFileSync(file2, "file");
+
+      backup.backupRetention = 2;
+
+      expect(await backup.moveFinishedBackup()).toBe(backupDst);
+      expect(fs.existsSync(folderCheck)).toBe(true);
+      expect(fs.existsSync(emptyFolderCheck)).toBe(true);
+      expect(fs.existsSync(file1Check)).toBe(true);
+      expect(fs.existsSync(file2Check)).toBe(true);
+      expect(backup.log.error).toHaveBeenCalledTimes(0);
+      expect(backup.log.warn).toHaveBeenCalledTimes(0);
+
+      spyOnDateNow.mockRestore();
     });
   });
 
