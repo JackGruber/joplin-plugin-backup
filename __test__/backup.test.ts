@@ -245,7 +245,7 @@ describe("Backup", function () {
       backup.activeBackupPath = testPath.activeBackupJob;
       await backup.backupProfileData();
 
-      //expect(fs.existsSync(backupTemplate)).toBe(true);
+      expect(fs.existsSync(backupTemplate)).toBe(true);
       expect(fs.existsSync(backupSettings)).toBe(true);
       expect(fs.existsSync(backupUserstyle)).toBe(true);
       expect(fs.existsSync(backupUserchrome)).toBe(true);
