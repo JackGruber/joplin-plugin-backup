@@ -102,7 +102,7 @@ class Backup {
   public async loadSettings() {
     this.log.verbose("loadSettings");
     await this.loadBackupPath();
-    this.backupRetention = await joplin.settings.value("backupRetention");
+    this.backupRetention = await joplinWrapper.settingsValue("backupRetention");
   }
 
   private async createErrorDialog() {
@@ -194,9 +194,9 @@ class Backup {
     this.log.verbose("backupTime");
 
     const checkEver = 5;
-    const backupInterval = await joplin.settings.value("backupInterval");
-    const lastBackup = await joplin.settings.value("lastBackup");
-    const onlyOnChange = await joplin.settings.value("onlyOnChange");
+    const backupInterval = await joplinWrapper.settingsValue("backupInterval");
+    const lastBackup = await joplinWrapper.settingsValue("lastBackup");
+    const onlyOnChange = await joplinWrapper.settingsValue("onlyOnChange");
     const lastChange = await this.getLastChangeDate();
     const now = new Date();
 
@@ -253,7 +253,7 @@ class Backup {
       this.activeBackupPath,
       "profile"
     );
-    const profileDir = await joplin.settings.globalValue("profileDir");
+    const profileDir = await joplinWrapper.settingsGlobalValue("profileDir");
 
     // Backup Joplin settings
     await this.backupFile(
@@ -281,7 +281,7 @@ class Backup {
 
     // Backup Templates
     await this.backupFolder(
-      await joplin.settings.globalValue("templateDir"),
+      await await joplinWrapper.settingsGlobalValue("templateDir"),
       path.join(activeBackupFolderProfile, "templates")
     );
   }
