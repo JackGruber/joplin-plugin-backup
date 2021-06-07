@@ -47,6 +47,10 @@ describe("Backup", function () {
     backup.log.transports.file.level = false;
   });
 
+  afterAll(async () => {
+    fs.removeSync(testPath.base);
+  });
+
   describe("Backup path", function () {
     it(`Backup path != Profile`, async () => {
       await backup.loadBackupPath();
