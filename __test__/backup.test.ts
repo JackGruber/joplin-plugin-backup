@@ -43,8 +43,11 @@ describe("Backup", function () {
 
     await createTestStructure();
     backup = new Backup() as any;
-    backup.log.transports.console.level = "warn";
-    backup.log.transports.file.level = false;
+
+    jest.spyOn(backup.log, "verbose").mockImplementation(() => {});
+    jest.spyOn(backup.log, "info").mockImplementation(() => {});
+    jest.spyOn(backup.log, "warn").mockImplementation(() => {});
+    jest.spyOn(backup.log, "error").mockImplementation(() => {});
   });
 
   afterAll(async () => {
@@ -70,6 +73,9 @@ describe("Backup", function () {
       await backup.loadBackupPath();
       expect(backup.backupBasePath).not.toBe(testPath.joplinProfile);
       expect(backup.backupBasePath).toBe(null);
+
+      expect(backup.log.error).toHaveBeenCalledTimes(0);
+      expect(backup.log.warn).toHaveBeenCalledTimes(0);
     });
 
     it(`relative paths`, async () => {
@@ -80,6 +86,8 @@ describe("Backup", function () {
       await backup.loadBackupPath();
       const toBe = path.normalize(path.join(testPath.backupDest, backupPath));
       expect(backup.backupBasePath).toBe(toBe);
+      expect(backup.log.error).toHaveBeenCalledTimes(0);
+      expect(backup.log.warn).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -92,6 +100,8 @@ describe("Backup", function () {
       const check = path.join(testPath.backupDest, "profile");
       expect(folder).toBe(check);
       expect(fs.existsSync(check)).toBe(true);
+      expect(backup.log.error).toHaveBeenCalledTimes(0);
+      expect(backup.log.warn).toHaveBeenCalledTimes(0);
     });
 
     it(`Delete log`, async () => {
@@ -101,6 +111,8 @@ describe("Backup", function () {
       expect(fs.existsSync(backup.logFile)).toBe(true);
       await backup.deleteLogFile();
       expect(fs.existsSync(backup.logFile)).toBe(false);
+      expect(backup.log.error).toHaveBeenCalledTimes(0);
+      expect(backup.log.warn).toHaveBeenCalledTimes(0);
     });
 
     it(`Get Retention folder name`, async () => {
@@ -110,6 +122,8 @@ describe("Backup", function () {
         .mockImplementation(() => testEpoch);
       expect(await backup.getBackupSetFolderName()).toBe("202101021630");
       spyOnDateNow.mockRestore();
+      expect(backup.log.error).toHaveBeenCalledTimes(0);
+      expect(backup.log.warn).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -158,6 +172,9 @@ describe("Backup", function () {
       expect(fs.existsSync(dst)).toBe(true);
 
       expect(await backup.backupFile(src2, dst)).toBe(false);
+
+      expect(backup.log.error).toHaveBeenCalledTimes(0);
+      expect(backup.log.warn).toHaveBeenCalledTimes(0);
     });
 
     it(`Folder`, async () => {
@@ -178,6 +195,9 @@ describe("Backup", function () {
       expect(fs.existsSync(checkFile2)).toBe(true);
 
       expect(await backup.backupFolder(doesNotExist, dst)).toBe(false);
+
+      expect(backup.log.error).toHaveBeenCalledTimes(0);
+      expect(backup.log.warn).toHaveBeenCalledTimes(0);
     });
   });
 });
