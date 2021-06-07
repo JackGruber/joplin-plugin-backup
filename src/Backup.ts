@@ -440,6 +440,8 @@ class Backup {
         throw e;
       }
     } else {
+      backupDestination = path.join(this.backupBasePath);
+
       const oldBackupData = fs
         .readdirSync(this.activeBackupPath, { withFileTypes: true })
         .map((dirent) => dirent.name);
@@ -447,7 +449,7 @@ class Backup {
         try {
           fs.moveSync(
             path.join(this.activeBackupPath, file),
-            path.join(this.backupBasePath, file)
+            path.join(backupDestination, file)
           );
         } catch (e) {
           await this.showError("moveFinishedBackup: " + e.message);
@@ -464,7 +466,7 @@ class Backup {
         throw e;
       }
     }
-    await this.deleteOldBackupSets(this.backupBasePath, this.backupRetention);
+
     return backupDestination;
   }
 
