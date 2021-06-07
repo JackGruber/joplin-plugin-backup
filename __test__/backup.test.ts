@@ -122,17 +122,6 @@ describe("Backup", function () {
       expect(backup.log.warn).toHaveBeenCalledTimes(0);
     });
 
-    it(`Get Retention folder name`, async () => {
-      const testEpoch = new Date(2021, 0, 2, 16, 30, 45, 0).getTime();
-      const spyOnDateNow = jest
-        .spyOn(Date, "now")
-        .mockImplementation(() => testEpoch);
-      expect(await backup.getBackupSetFolderName()).toBe("202101021630");
-      spyOnDateNow.mockRestore();
-      expect(backup.log.error).toHaveBeenCalledTimes(0);
-      expect(backup.log.warn).toHaveBeenCalledTimes(0);
-    });
-
     it(`moveFinishedBackup no retention`, async () => {
       const emptyFolder = path.join(testPath.activeBackupJob, "emptyFolder");
       const emptyFolderCheck = path.join(
@@ -203,6 +192,89 @@ describe("Backup", function () {
     });
   });
 
+  describe("Backup retention", function () {
+    it(`Get Retention folder name`, async () => {
+      const testEpoch = new Date(2021, 0, 2, 16, 30, 45, 0).getTime();
+      const spyOnDateNow = jest
+        .spyOn(Date, "now")
+        .mockImplementation(() => testEpoch);
+      expect(await backup.getBackupSetFolderName()).toBe("202101021630");
+      spyOnDateNow.mockRestore();
+      expect(backup.log.error).toHaveBeenCalledTimes(0);
+      expect(backup.log.warn).toHaveBeenCalledTimes(0);
+    });
+
+    it(`Backups < retention`, async () => {
+      const backupRetention = 3;
+      const folder1 = path.join(testPath.backupBasePath, "202101011630");
+      const folder2 = path.join(testPath.backupBasePath, "202101021630");
+
+      fs.emptyDirSync(folder1);
+      fs.emptyDirSync(folder2);
+
+      backup.deleteOldBackupSets(testPath.backupBasePath, backupRetention);
+
+      const folderAnz = fs
+        .readdirSync(testPath.backupBasePath, { withFileTypes: true })
+        .filter((dirent) => dirent.isDirectory()).length;
+
+      expect(folderAnz).toBe(2);
+
+      expect(fs.existsSync(folder1)).toBe(true);
+      expect(fs.existsSync(folder2)).toBe(true);
+    });
+
+    it(`Backups = retention`, async () => {
+      const backupRetention = 3;
+      const folder1 = path.join(testPath.backupBasePath, "202101011630");
+      const folder2 = path.join(testPath.backupBasePath, "202101021630");
+      const folder3 = path.join(testPath.backupBasePath, "202101031630");
+
+      fs.emptyDirSync(folder1);
+      fs.emptyDirSync(folder2);
+      fs.emptyDirSync(folder3);
+
+      backup.deleteOldBackupSets(testPath.backupBasePath, backupRetention);
+      const folderAnz = fs
+        .readdirSync(testPath.backupBasePath, { withFileTypes: true })
+        .filter((dirent) => dirent.isDirectory()).length;
+
+      expect(folderAnz).toBe(3);
+
+      expect(fs.existsSync(folder1)).toBe(true);
+      expect(fs.existsSync(folder2)).toBe(true);
+      expect(fs.existsSync(folder3)).toBe(true);
+    });
+
+    it(`Backups > retention`, async () => {
+      const backupRetention = 3;
+      const folder1 = path.join(testPath.backupBasePath, "202101011630");
+      const folder2 = path.join(testPath.backupBasePath, "202101021630");
+      const folder3 = path.join(testPath.backupBasePath, "202101031630");
+      const folder4 = path.join(testPath.backupBasePath, "202101041630");
+      const folder5 = path.join(testPath.backupBasePath, "202101051630");
+
+      fs.emptyDirSync(folder1);
+      fs.emptyDirSync(folder2);
+      fs.emptyDirSync(folder3);
+      fs.emptyDirSync(folder4);
+      fs.emptyDirSync(folder5);
+
+      backup.deleteOldBackupSets(testPath.backupBasePath, backupRetention);
+
+      const folderAnz = fs
+        .readdirSync(testPath.backupBasePath, { withFileTypes: true })
+        .filter((dirent) => dirent.isDirectory()).length;
+
+      expect(folderAnz).toBe(3);
+      expect(fs.existsSync(folder1)).toBe(false);
+      expect(fs.existsSync(folder2)).toBe(false);
+      expect(fs.existsSync(folder3)).toBe(true);
+      expect(fs.existsSync(folder4)).toBe(true);
+      expect(fs.existsSync(folder5)).toBe(true);
+    });
+  });
+
   describe("Logging", function () {
     beforeEach(async () => {
       backup.setupLog();
@@ -235,7 +307,7 @@ describe("Backup", function () {
     });
   });
 
-  describe("Backup", function () {
+  describe("Backup action", function () {
     it(`File`, async () => {
       const src1 = path.join(testPath.joplinProfile, "settings.json");
       const src2 = path.join(testPath.joplinProfile, "doesNotExist.json");
