@@ -44,7 +44,7 @@ export namespace Settings {
       type: SettingItemType.Int,
       section: "backupSection",
       public: true,
-      label: "Backups interval in hours",
+      label: "Backup interval in hours",
       description: "0 = disable automatic backup",
     });
 
