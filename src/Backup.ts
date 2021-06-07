@@ -25,7 +25,7 @@ class Backup {
     await this.createErrorDialog();
     await this.setupLog();
     await this.loadSettings();
-    window.setTimeout(this.backupTime, 1000 * 60 * 5);
+    setTimeout(this.backupTime.bind(this), 1000 * 60 * 1);
   }
 
   public async registerSettings() {
@@ -213,7 +213,7 @@ class Backup {
           this.log.info("create no backup (no change)");
         }
       }
-      window.setTimeout(this.backupTime, 1000 * 60 * checkEver);
+      setTimeout(this.backupTime.bind(this), 1000 * 60 * checkEver);
     } else {
       this.log.info("Automatic backup disabled");
     }
