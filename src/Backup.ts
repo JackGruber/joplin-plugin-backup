@@ -16,15 +16,15 @@ class Backup {
 
   constructor() {
     this.log = backupLogging;
+    this.setupLog();
   }
 
   public async init() {
-    this.log.info("Backup Plugin init");
+    this.log.verbose("Backup Plugin init");
     await this.registerSettings();
     await this.registerCommands();
     await this.registerMenues();
     await this.createErrorDialog();
-    await this.setupLog();
     await this.loadSettings();
     setTimeout(this.backupTime.bind(this), 1000 * 60 * 1);
   }
