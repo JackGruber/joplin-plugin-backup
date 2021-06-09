@@ -13,6 +13,7 @@ class Backup {
   private log: any;
   private logFile: string;
   private backupRetention: number;
+  private timer: any;
 
   constructor() {
     this.log = backupLogging;
@@ -26,7 +27,7 @@ class Backup {
     await this.registerMenues();
     await this.createErrorDialog();
     await this.loadSettings();
-    setTimeout(this.backupTime.bind(this), 1000 * 60 * 1);
+    await this.startTimer();
   }
 
   public async registerSettings() {
@@ -131,6 +132,7 @@ class Backup {
   public async start(showDoneMsg: boolean = false) {
     this.log.verbose("start");
     const backupStartTime = new Date();
+    await this.loadSettings();
 
     if (this.backupBasePath === null) {
       await this.showError(
@@ -300,6 +302,12 @@ class Backup {
     return lastUpdate;
   }
 
+  public async startTimer() {
+    if (this.timer === undefined || this.timer === null) {
+      this.timer = setTimeout(this.backupTime.bind(this), 1000 * 60 * 1);
+    }
+  }
+
   private async backupTime() {
     this.log.verbose("backupTime");
 
@@ -323,9 +331,13 @@ class Backup {
           this.log.info("create no backup (no change)");
         }
       }
-      setTimeout(this.backupTime.bind(this), 1000 * 60 * checkEver);
+      this.timer = setTimeout(
+        this.backupTime.bind(this),
+        1000 * 60 * checkEver
+      );
     } else {
       this.log.info("Automatic backup disabled");
+      this.timer = null;
     }
   }
 
