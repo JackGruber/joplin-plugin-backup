@@ -265,7 +265,7 @@ class Backup {
         noteBookInfo[folder.id] = {};
         noteBookInfo[folder.id]["title"] = folder.title;
         noteBookInfo[folder.id]["parent_id"] = folder.parent_id;
-        this.log.debug("Add '" + folder.title + "' (" + folder.id + ")");
+        this.log.verbose("Add '" + folder.title + "' (" + folder.id + ")");
       }
     } while (folders.has_more);
 
