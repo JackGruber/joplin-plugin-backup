@@ -176,7 +176,7 @@ class Backup {
     if (singleJex === true) {
       this.log.info("Create single file JEX backup");
       await this.jexExport(
-        notebooks,
+        notebooks.ids,
         path.join(this.activeBackupPath, "all_notebooks.jex")
       );
     } else {
