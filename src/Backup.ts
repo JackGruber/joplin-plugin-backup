@@ -155,7 +155,20 @@ class Backup {
 
       const notebooks = await this.selectNotebooks();
 
-      const backupDst = await this.moveFinishedBackup();
+      let backupDst = "";
+      if (this.backupRetention > 1) {
+        backupDst = await this.moveFinishedBackup();
+        await this.deleteOldBackupSets(
+          this.backupBasePath,
+          this.backupRetention
+        );
+      } else {
+        await this.deleteOldBackupSets(
+          this.backupBasePath,
+          this.backupRetention
+        );
+        backupDst = await this.moveFinishedBackup();
+      }
 
       await joplin.settings.setValue("lastBackup", backupStartTime.getTime());
       this.log.info("Backup finished to: " + backupDst);
