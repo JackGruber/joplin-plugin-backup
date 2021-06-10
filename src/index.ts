@@ -9,8 +9,10 @@ joplin.plugins.register({
     await backup.init();
 
     joplin.settings.onChange(async (event: any) => {
-      console.log("Settings changed");
-      await backup.startTimer();
+      if (event.keys.indexOf("lastBackup") === -1) {
+        console.log("Backup settings changed");
+        await backup.startTimer();
+      }
     });
   },
 });
