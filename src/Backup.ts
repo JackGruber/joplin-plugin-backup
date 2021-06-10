@@ -184,23 +184,14 @@ class Backup {
     }
   }
 
-  private async moveLogFile(logPath: string) {
-    if (fs.existsSync(this.logFile) && logPath != this.backupBasePath) {
-      const logfileName = "backup.log";
-      if (this.backupRetention > 1) {
-        try {
-          fs.moveSync(this.logFile, path.join(logPath, logfileName));
-        } catch (e) {
-          await this.showError("moveLogFile: " + e.message);
-          throw e;
-        }
-      } else {
-        try {
-          fs.renameSync(this.logFile, path.join(logPath, logfileName));
-        } catch (e) {
-          await this.showError("moveLogFile: " + e.message);
-          throw e;
-        }
+  private async moveLogFile(logDst: string) {
+    const logfileName = "backup.log";
+    if (fs.existsSync(this.logFile)) {
+      try {
+        fs.moveSync(this.logFile, path.join(logDst, logfileName));
+      } catch (e) {
+        await this.showError("moveLogFile: " + e.message);
+        throw e;
       }
     }
   }
