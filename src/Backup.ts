@@ -162,10 +162,33 @@ class Backup {
 
       this.log.info("Backup completed");
       await this.fileLogging(false);
+
+      this.moveLogFile(backupDst);
     } else {
       await this.showError(
         `The Backup path '${this.backupBasePath}' does not exist!`
       );
+    }
+  }
+
+  private async moveLogFile(logPath: string) {
+    if (fs.existsSync(this.logFile) && logPath != this.backupBasePath) {
+      const logfileName = "backup.log";
+      if (this.backupRetention > 1) {
+        try {
+          fs.moveSync(this.logFile, path.join(logPath, logfileName));
+        } catch (e) {
+          await this.showError("moveLogFile: " + e.message);
+          throw e;
+        }
+      } else {
+        try {
+          fs.renameSync(this.logFile, path.join(logPath, logfileName));
+        } catch (e) {
+          await this.showError("moveLogFile: " + e.message);
+          throw e;
+        }
+      }
     }
   }
 
