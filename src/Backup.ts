@@ -153,7 +153,7 @@ class Backup {
 
       await this.backupProfileData();
 
-      const notebooks = await this.selectNotebooks();
+      await this.backupNotebooks();
 
       let backupDst = "";
       if (this.backupRetention > 1) {
