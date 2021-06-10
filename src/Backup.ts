@@ -519,7 +519,7 @@ class Backup {
         .map((dirent) => dirent.name)
         .reverse();
       for (const file of oldBackupData) {
-        if (file != path.basename(this.logFile)) {
+        if (file !== path.basename(this.logFile)) {
           try {
             fs.removeSync(path.join(backupPath, file));
           } catch (e) {
