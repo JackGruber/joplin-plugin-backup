@@ -322,6 +322,26 @@ describe("Backup", function () {
       await backup.fileLogging(true);
       expect(backup.log.transports.file.level).toBe("error");
     });
+
+    it(`move logfile`, async () => {
+      const srcLog1 = path.join(testPath.backupBasePath, "test1.log");
+      const dstLog1 = path.join(testPath.backupBasePath, "backup.log");
+      fs.writeFileSync(srcLog1, "log1");
+      backup.logFile = srcLog1;
+      backup.moveLogFile(testPath.backupBasePath);
+      expect(fs.existsSync(srcLog1)).toBe(false);
+      expect(fs.existsSync(dstLog1)).toBe(true);
+
+      const srcLog2 = path.join(testPath.backupBasePath, "test2.log");
+      const dstPath = path.join(testPath.backupBasePath, "test");
+      const dstLog2 = path.join(dstPath, "backup.log");
+      fs.writeFileSync(srcLog2, "log1");
+      fs.emptyDirSync(dstPath);
+      backup.logFile = srcLog2;
+      backup.moveLogFile(dstPath);
+      expect(fs.existsSync(srcLog2)).toBe(false);
+      expect(fs.existsSync(dstLog2)).toBe(true);
+    });
   });
 
   describe("Backup action", function () {
