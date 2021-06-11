@@ -3,7 +3,7 @@
 ## Not released
 
 - Add: Relative path could be used for `Backup Path`
-- Fix: Error a error with `Only on change`, which was not working properly
+- Fix: An error with `Only on change`, which was not working properly
 
 ## v0.5.3 (2021-04-03)
 
