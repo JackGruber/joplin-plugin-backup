@@ -19,6 +19,10 @@ function getTestPaths(): any {
 
 let backup = null;
 
+let spyOnLogVerbose = null;
+let spyOnLogInfo = null;
+let spyOnLogWarn = null;
+let spyOnLogError = null;
 const spyOnsSttingsValue = jest.spyOn(joplinWrapper, "settingsValue");
 const spyOnGlobalValue = jest.spyOn(joplinWrapper, "settingsGlobalValue");
 
@@ -49,10 +53,23 @@ describe("Backup", function () {
     await createTestStructure();
     backup = new Backup() as any;
 
-    jest.spyOn(backup.log, "verbose").mockImplementation(() => {});
-    jest.spyOn(backup.log, "info").mockImplementation(() => {});
-    jest.spyOn(backup.log, "warn").mockImplementation(() => {});
-    jest.spyOn(backup.log, "error").mockImplementation(() => {});
+    spyOnLogVerbose = jest
+      .spyOn(backup.log, "verbose")
+      .mockImplementation(() => {});
+    spyOnLogInfo = jest.spyOn(backup.log, "info").mockImplementation(() => {});
+    spyOnLogWarn = jest.spyOn(backup.log, "warn").mockImplementation(() => {});
+    spyOnLogError = jest
+      .spyOn(backup.log, "error")
+      .mockImplementation(() => {});
+  });
+
+  afterEach(async () => {
+    spyOnLogVerbose.mockReset();
+    spyOnLogInfo.mockReset();
+    spyOnLogWarn.mockReset();
+    spyOnLogError.mockReset();
+    spyOnsSttingsValue.mockReset();
+    spyOnGlobalValue.mockReset();
   });
 
   afterAll(async () => {
