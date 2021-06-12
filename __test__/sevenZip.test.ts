@@ -2,7 +2,7 @@ import { sevenZip } from "../src/sevenZip";
 import * as path from "path";
 import * as fs from "fs-extra";
 
-const testBaseDir = path.join(__dirname, "tests");
+const testBaseDir = path.join(__dirname, "ziptests");
 
 describe("Test sevenZip", function () {
   beforeAll(async () => {});
