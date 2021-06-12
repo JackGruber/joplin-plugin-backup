@@ -12,6 +12,10 @@ export namespace sevenZip {
     );
   }
 
+  async function getPasswordForOptions(password: string): Promise<string> {
+    return `-p"${password}"`;
+  }
+
   export async function add(
     archive: string,
     src: string,
@@ -25,7 +29,7 @@ export namespace sevenZip {
     }
 
     if (password) {
-      _7zOptions.push("-p" + password);
+      _7zOptions.push(await getPasswordForOptions(password));
       _7zOptions.push("-mhe");
     }
 
