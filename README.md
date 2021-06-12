@@ -46,13 +46,13 @@ Under `Options > Keyboard Shortcuts` you can assign a keyboard shortcut for the 
 
 - `Create Backup`
 
-## What is backuped
+## What is backed up
 
-- Notebooks as JEX export (empty notbooks are not backed up)
+- Notebooks as JEX export (Empty notbooks are not backed up)
 - The `settings.json` (Joplin settings)
-- The `keymap-desktop.json` (Keyboard Shortcuts)
-- The `userchrome.css` (Your Joplin Customization)
-- The `userstyle.css` (Your Joplin Customization)
+- The `keymap-desktop.json` (Keyboard shortcuts)
+- The `userchrome.css` (Your Joplin customization)
+- The `userstyle.css` (Your Joplin customization)
 - The `templates` folder (Note templates)
 
 ## Restore
