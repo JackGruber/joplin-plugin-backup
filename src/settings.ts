@@ -44,7 +44,7 @@ export namespace Settings {
       type: SettingItemType.Int,
       section: "backupSection",
       public: true,
-      label: "Backups interval in hours",
+      label: "Backup interval in hours",
       description: "0 = disable automatic backup",
     });
 
@@ -75,7 +75,7 @@ export namespace Settings {
       label: "Logfile",
       options: {
         false: "Off",
-        debug: "Debug",
+        verbose: "Verbose",
         info: "Info",
         error: "Error",
       },

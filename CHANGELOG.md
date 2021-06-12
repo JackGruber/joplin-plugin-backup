@@ -1,5 +1,10 @@
 # Changelog
 
+## Not released
+
+- Add: Relative path could be used for `Backup Path`
+- Fix: An error with `Only on change`, which was not working properly
+
 ## v0.5.3 (2021-04-03)
 
 - Add: Backup settings.json
