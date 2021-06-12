@@ -53,5 +53,29 @@ export namespace sevenZip {
 
   async function hash() {}
 
-  async function integrity() {}
+  export async function test(
+    archive: string,
+    password: string = null
+  ): Promise<any> {
+    let _7zOptions = ["t", archive];
+
+    if (password) {
+      _7zOptions.push(await getPasswordForOptions(password));
+    }
+
+    const promise = new Promise((resolve, reject) => {
+      _7z.cmd(_7zOptions, (err, result) => {
+        if (err) return reject(err);
+        resolve(result);
+      });
+    });
+
+    return await promise
+      .then((data) => {
+        return data;
+      })
+      .catch((err) => {
+        return err.message;
+      });
+  }
 }
