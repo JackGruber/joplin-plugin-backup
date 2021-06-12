@@ -5,7 +5,7 @@ import { joplinWrapper } from "./joplinWrapper";
 import * as path from "path";
 
 export namespace sevenZip {
-  async function updateBinPath() {
+  export async function updateBinPath() {
     const path7z = _7z.getPath7za();
     _7z.setPath7za(
       path.join(await joplinWrapper.installationDir(), "7zip-bin", path7z)
