@@ -146,6 +146,15 @@ const pluginConfig = Object.assign({}, baseConfig, {
 			patterns: [
 				{
 					from: '**/*',
+					context: path.resolve(__dirname, 'node_modules','7zip-bin'),
+					to: path.resolve(__dirname, 'dist/7zip-bin/'),
+				},
+			]
+		}),
+		new CopyPlugin({
+			patterns: [
+				{
+					from: '**/*',
 					context: path.resolve(__dirname, 'src'),
 					to: path.resolve(__dirname, 'dist'),
 					globOptions: {
