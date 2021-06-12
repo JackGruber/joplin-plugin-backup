@@ -1,3 +1,5 @@
+// https://sevenzip.osdn.jp/chm/cmdline/exit_codes.htm
+// https://sevenzip.osdn.jp/chm/cmdline/commands/index.htm
 import * as _7z from "7zip-min";
 import { joplinWrapper } from "./joplinWrapper";
 import * as path from "path";
