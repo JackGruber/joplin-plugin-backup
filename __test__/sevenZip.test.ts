@@ -15,6 +15,30 @@ describe("Test sevenZip", function () {
     fs.removeSync(testBaseDir);
   });
 
+  it(`List`, async () => {
+    const file1Name = "file1.txt";
+    const file2Name = "file2.txt";
+    const file3Name = "file3.txt";
+    const file1 = path.join(testBaseDir, file1Name);
+    fs.emptyDirSync(path.join(testBaseDir, "sub"));
+    const file2 = path.join(testBaseDir, "sub", file2Name);
+    const file3 = path.join(testBaseDir, file3Name);
+    const zip = path.join(testBaseDir, "file.7z");
+    fs.writeFileSync(file1, "file");
+    fs.writeFileSync(file2, "file");
+    fs.writeFileSync(file3, "file");
+    expect(fs.existsSync(file1)).toBe(true);
+    expect(fs.existsSync(file2)).toBe(true);
+    expect(fs.existsSync(file3)).toBe(true);
+    expect(fs.existsSync(zip)).toBe(false);
+
+    expect(await sevenZip.add(zip, testBaseDir + "\\*", "secret")).toBe(true);
+    expect(fs.existsSync(zip)).toBe(true);
+
+    const fileList = await sevenZip.list(zip, "secret");
+    expect(fileList.length).toBe(4);
+  });
+
   describe("Add", function () {
     it(`File`, async () => {
       const fileName = "file.txt";
