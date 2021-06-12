@@ -50,23 +50,4 @@ export namespace sevenZip {
   async function hash() {}
 
   async function integrity() {}
-
-  async function test() {
-    _7z.pack("C:\\temp\\note.md", "C:\\temp\\note.7z", (err) => {
-      if (err) {
-        console.error(err);
-      }
-      console.error("JA");
-    });
-
-    _7z.cmd(
-      ["a", "C:\\temp\\note_p.7z", "-psecret", "-mhe", "C:\\temp\\note.md"],
-      (err) => {
-        if (err) {
-          console.error(err);
-        }
-        console.error("JA2");
-      }
-    );
-  }
 }
