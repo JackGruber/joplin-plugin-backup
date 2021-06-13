@@ -28,6 +28,59 @@ class Backup {
     await this.createErrorDialog();
     await this.loadSettings();
     await this.startTimer();
+    await this.upgradeBackupTargetVersion();
+  }
+
+  private async upgradeBackupTargetVersion() {
+    let version = await joplinWrapper.settingsValue("backupVersion");
+    const targetVersion = 1;
+    for (
+      let checkVersion = version + 1;
+      checkVersion <= targetVersion;
+      checkVersion++
+    ) {
+      try {
+        if (checkVersion === 1) {
+          if (this.backupBasePath !== "" && this.backupRetention > 1) {
+            await this.saveOldBackupInfp();
+          }
+        }
+
+        version = checkVersion;
+        await joplin.settings.setValue("backupVersion", version);
+      } catch (e) {
+        await this.showError(`Upgrade error ${checkVersion}: ${e.message}`);
+      }
+    }
+  }
+
+  private async saveOldBackupInfp() {
+    const folders = fs
+      .readdirSync(this.backupBasePath, { withFileTypes: true })
+      .filter((dirent) => dirent.isDirectory())
+      .map((dirent) => dirent.name)
+      .reverse();
+
+    for (let folder of folders) {
+      if (parseInt(folder) > 202100000000) {
+        let date = new Date(
+          folder.substring(0, 4),
+          folder.substring(4, 6) - 1,
+          folder.substring(6, 8),
+          folder.substring(8, 10),
+          folder.substring(10, 12)
+        );
+
+        await this.saveBackupInfo(folder, date.getTime());
+      }
+    }
+  }
+
+  private async saveBackupInfo(folder: string, date: number) {
+    const info = JSON.parse(await joplinWrapper.settingsValue("backupInfo"));
+    const backup = { name: folder, date: date };
+    info.push(backup);
+    await joplin.settings.setValue("backupInfo", JSON.stringify(info));
   }
 
   public async registerSettings() {
@@ -482,6 +535,11 @@ class Backup {
         await this.showError("moveFinishedBackup: " + e.message);
         throw e;
       }
+
+      await this.saveBackupInfo(
+        path.basename(backupDestination),
+        this.backupStartTime.getTime()
+      );
     } else {
       backupDestination = path.join(this.backupBasePath);
 
@@ -518,29 +576,26 @@ class Backup {
     backupRetention: number
   ) {
     if (backupRetention > 1) {
-      const folders = fs
-        .readdirSync(backupPath, { withFileTypes: true })
-        .filter((dirent) => dirent.isDirectory())
-        .map((dirent) => dirent.name)
-        .reverse();
-
-      // Check if folder is a old backupset
-      const oldBackupSets = [];
-      for (let folder of folders) {
-        if (parseInt(folder) > 202100000000) {
-          oldBackupSets.push(folder);
-        }
+      let info = JSON.parse(await joplinWrapper.settingsValue("backupInfo"));
+      if (info.length > backupRetention) {
+        info.sort((a, b) => b.date - a.date);
       }
 
-      for (let i = backupRetention; i < oldBackupSets.length; i++) {
-        try {
-          fs.rmdirSync(path.join(backupPath, oldBackupSets[i]), {
-            recursive: true,
-          });
-        } catch (e) {
-          await this.showError("deleteOldBackupSets" + e.message);
-          throw e;
+      while (info.length > backupRetention) {
+        const del = info.splice(backupRetention, 1);
+        const folder = path.join(backupPath, del[0].name);
+        if (fs.existsSync(folder)) {
+          try {
+            fs.rmdirSync(folder, {
+              recursive: true,
+            });
+          } catch (e) {
+            await this.showError("deleteOldBackupSets" + e.message);
+            throw e;
+          }
         }
+
+        await joplin.settings.setValue("backupInfo", JSON.stringify(info));
       }
     } else {
       // Remove only files

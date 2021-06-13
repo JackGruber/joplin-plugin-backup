@@ -101,5 +101,12 @@ export namespace Settings {
         error: "Error",
       },
     });
+    await joplin.settings.registerSetting("backupInfo", {
+      value: "[]",
+      type: SettingItemType.String,
+      section: "backupSection",
+      public: false,
+      label: "Backup info",
+    });
   }
 }
