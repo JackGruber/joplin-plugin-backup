@@ -14,6 +14,9 @@ class Backup {
   private logFile: string;
   private backupRetention: number;
   private timer: any;
+  private passwordEnabled: boolean;
+  private password: string;
+  private passwordRepeat: string;
 
   constructor() {
     this.log = backupLogging;
@@ -87,6 +90,24 @@ class Backup {
     await Settings.register();
   }
 
+  private async enablePassword() {
+    if ((await this.checkPassword()) === 1) {
+      this.passwordEnabled = true;
+    } else {
+      this.passwordEnabled = false;
+    }
+  }
+
+  private async checkPassword(): Promise<number> {
+    if (this.password === "") {
+      return 0;
+    } else if (this.password !== "" && this.password === this.passwordRepeat) {
+      return 1;
+    } else {
+      return -1;
+    }
+  }
+
   private async setupLog() {
     const logFormat = "[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}";
     this.log.transports.file.level = false;
@@ -158,6 +179,13 @@ class Backup {
     this.log.verbose("loadSettings");
     await this.loadBackupPath();
     this.backupRetention = await joplinWrapper.settingsValue("backupRetention");
+
+    this.passwordRepeat = (
+      await joplinWrapper.settingsValue("passwordRepeat")
+    ).trim();
+    this.password = (await joplinWrapper.settingsValue("password")).trim();
+
+    await this.enablePassword();
   }
 
   private async createErrorDialog() {
@@ -203,10 +231,12 @@ class Backup {
       await this.fileLogging(true);
       this.log.info("Backup started");
 
-      this.activeBackupPath = await this.createEmptyFolder(
-        this.backupBasePath,
-        "activeBackupJob"
-      );
+      if ((await this.checkPassword()) === -1) {
+        await this.showError("Passwords do not match!");
+        return;
+      } else {
+        this.log.info("Enable password protection: " + this.passwordEnabled);
+      }
 
       await this.backupProfileData();
 

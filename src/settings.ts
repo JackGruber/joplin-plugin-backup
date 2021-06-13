@@ -62,7 +62,7 @@ export namespace Settings {
       value: "",
       type: SettingItemType.String,
       section: "backupSection",
-      public: true,
+      public: false,
       secure: true,
       label: "Password",
       description:
@@ -73,7 +73,7 @@ export namespace Settings {
       value: "",
       type: SettingItemType.String,
       section: "backupSection",
-      public: true,
+      public: false,
       secure: true,
       label: "Password (Repeat)",
       description: "Repeat password to validate.",
