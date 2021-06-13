@@ -115,7 +115,11 @@ class Backup {
   private async showError(msg: string, title: string = null) {
     const html = [];
 
-    this.log.error(`${title} ${msg}`);
+    if (title !== null) {
+      this.log.error(`${title}: ${msg}`);
+    } else {
+      this.log.error(`${msg}`);
+    }
 
     html.push('<div id="backuperror" style="backuperror">');
     html.push(`<h3>Backup plugin</h3>`);
