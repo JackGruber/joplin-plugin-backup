@@ -113,6 +113,14 @@ export namespace Settings {
         "Temporary path for note export before they are password protected.",
     });
 
+    await joplin.settings.registerSetting("backupVersion", {
+      value: 0,
+      type: SettingItemType.Int,
+      section: "backupSection",
+      public: false,
+      label: "Backup Version",
+    });
+
     await joplin.settings.registerSetting("backupInfo", {
       value: "[]",
       type: SettingItemType.String,
