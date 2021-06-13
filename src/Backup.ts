@@ -17,6 +17,7 @@ class Backup {
   private passwordEnabled: boolean;
   private password: string;
   private passwordRepeat: string;
+  private backupStartTime: Date;
 
   constructor() {
     this.log = backupLogging;
@@ -216,7 +217,7 @@ class Backup {
 
   public async start(showDoneMsg: boolean = false) {
     this.log.verbose("start");
-    const backupStartTime = new Date();
+    this.backupStartTime = new Date();
     await this.loadSettings();
 
     if (this.backupBasePath === null) {
@@ -257,7 +258,10 @@ class Backup {
         backupDst = await this.moveFinishedBackup();
       }
 
-      await joplin.settings.setValue("lastBackup", backupStartTime.getTime());
+      await joplin.settings.setValue(
+        "lastBackup",
+        this.backupStartTime.getTime()
+      );
       this.log.info("Backup finished to: " + backupDst);
 
       this.log.info("Backup completed");
