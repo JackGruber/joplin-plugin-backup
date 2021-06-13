@@ -187,6 +187,7 @@ class Backup {
     this.password = (await joplinWrapper.settingsValue("password")).trim();
 
     await this.enablePassword();
+    await this.setActiveBackupPath();
   }
 
   private async createErrorDialog() {
@@ -215,6 +216,36 @@ class Backup {
     await joplin.views.dialogs.open(this.errorDialog);
   }
 
+  public async setActiveBackupPath() {
+    let exportPath = await joplinWrapper.settingsValue("exportPath");
+    const profileDir = await joplinWrapper.settingsGlobalValue("profileDir");
+    const tempDir = await joplinWrapper.settingsGlobalValue("tempDir");
+
+    if (exportPath !== "") {
+      if (path.isAbsolute(exportPath)) {
+        exportPath = path.normalize(exportPath);
+      } else {
+        exportPath = path.join(
+          path.normalize(profileDir),
+          path.normalize(exportPath)
+        );
+      }
+    }
+
+    const folderName = "joplin_active_backup_job";
+    if (this.backupBasePath !== null) {
+      if (exportPath !== "") {
+        this.activeBackupPath = path.join(exportPath, folderName);
+      } else if (this.passwordEnabled === true) {
+        this.activeBackupPath = path.join(tempDir, folderName);
+      } else {
+        this.activeBackupPath = path.join(this.backupBasePath, folderName);
+      }
+    } else {
+      this.activeBackupPath = null;
+    }
+  }
+
   public async start(showDoneMsg: boolean = false) {
     this.log.verbose("start");
     this.backupStartTime = new Date();
@@ -238,6 +269,8 @@ class Backup {
       } else {
         this.log.info("Enable password protection: " + this.passwordEnabled);
       }
+
+      await this.createEmptyFolder(this.activeBackupPath, "");
 
       await this.backupProfileData();
 

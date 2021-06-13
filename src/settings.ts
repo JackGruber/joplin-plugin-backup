@@ -101,6 +101,18 @@ export namespace Settings {
         error: "Error",
       },
     });
+
+    await joplin.settings.registerSetting("exportPath", {
+      value: "",
+      type: SettingItemType.String,
+      section: "backupSection",
+      public: true,
+      advanced: true,
+      label: "Temporary export path",
+      description:
+        "Temporary path for note export before they are password protected.",
+    });
+
     await joplin.settings.registerSetting("backupInfo", {
       value: "[]",
       type: SettingItemType.String,
