@@ -273,6 +273,8 @@ class Backup {
         `The Backup path '${this.backupBasePath}' does not exist!`
       );
     }
+
+    this.backupStartTime = null;
   }
 
   private async moveLogFile(logDst: string) {
