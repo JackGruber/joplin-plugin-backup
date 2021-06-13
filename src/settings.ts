@@ -58,6 +58,27 @@ export namespace Settings {
         "Creates a backup at the specified backup interval only if there was a change.",
     });
 
+    await joplin.settings.registerSetting("password", {
+      value: "",
+      type: SettingItemType.String,
+      section: "backupSection",
+      public: true,
+      secure: true,
+      label: "Password",
+      description:
+        "If a password has been entered, the backups are protected with a password.",
+    });
+
+    await joplin.settings.registerSetting("passwordRepeat", {
+      value: "",
+      type: SettingItemType.String,
+      section: "backupSection",
+      public: true,
+      secure: true,
+      label: "Password (Repeat)",
+      description: "Repeat password to validate.",
+    });
+
     await joplin.settings.registerSetting("lastBackup", {
       value: 0,
       type: SettingItemType.Int,
