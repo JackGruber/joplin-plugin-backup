@@ -46,7 +46,7 @@ class Backup {
       try {
         if (checkVersion === 1) {
           if (this.backupBasePath !== "" && this.backupRetention > 1) {
-            await this.saveOldBackupInfp();
+            await this.saveOldBackupInfo();
           }
         }
 
@@ -58,7 +58,7 @@ class Backup {
     }
   }
 
-  private async saveOldBackupInfp() {
+  private async saveOldBackupInfo() {
     const folders = fs
       .readdirSync(this.backupBasePath, { withFileTypes: true })
       .filter((dirent) => dirent.isDirectory())
