@@ -102,6 +102,23 @@ export namespace Settings {
       },
     });
 
+    await joplin.settings.registerSetting("zipArchive", {
+      value: "no",
+      type: SettingItemType.String,
+      section: "backupSection",
+      isEnum: true,
+      public: true,
+      label: "Create zip archive",
+      advanced: true,
+      options: {
+        no: "No",
+        yes: "Yes",
+        yesone: "Yes, one archives",
+      },
+      description:
+        "If a password is set, a zip archive is always created, regardless of this setting.",
+    });
+
     await joplin.settings.registerSetting("exportPath", {
       value: "",
       type: SettingItemType.String,
