@@ -23,8 +23,12 @@ let spyOnLogVerbose = null;
 let spyOnLogInfo = null;
 let spyOnLogWarn = null;
 let spyOnLogError = null;
+let spyOnSaveBackupInfo = null;
 const spyOnsSttingsValue = jest.spyOn(joplinWrapper, "settingsValue");
 const spyOnGlobalValue = jest.spyOn(joplinWrapper, "settingsGlobalValue");
+const spyOnSettingsSetValue = jest
+  .spyOn(joplinWrapper, "settingsSetValue")
+  .mockImplementation();
 
 async function createTestStructure() {
   const test = await getTestPaths();
@@ -52,6 +56,11 @@ describe("Backup", function () {
 
     await createTestStructure();
     backup = new Backup() as any;
+    backup.backupStartTime = new Date();
+
+    spyOnSaveBackupInfo = jest
+      .spyOn(backup, "saveBackupInfo")
+      .mockImplementation(() => {});
 
     spyOnLogVerbose = jest
       .spyOn(backup.log, "verbose")
