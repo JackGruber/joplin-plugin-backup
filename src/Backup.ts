@@ -319,7 +319,7 @@ class Backup {
           this.backupRetention
         );
       } else {
-        await this.clearOldBackupTarget(this.backupBasePath);
+        await this.clearBackupTarget(this.backupBasePath);
         backupDst = await this.moveFinishedBackup();
       }
     } else {
@@ -337,7 +337,7 @@ class Backup {
           this.backupRetention
         );
       } else {
-        await this.clearOldBackupTarget(this.backupBasePath);
+        await this.clearBackupTarget(this.backupBasePath);
         backupDst = await this.moveFinishedBackup(zipFile);
       }
     }
@@ -742,7 +742,7 @@ class Backup {
     return backupDestination;
   }
 
-  private async clearOldBackupTarget(backupPath: string) {
+  private async clearBackupTarget(backupPath: string) {
     this.log.verbose(`Clear backup target`);
 
     // Remove only files
