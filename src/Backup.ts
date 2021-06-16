@@ -5,6 +5,7 @@ import * as path from "path";
 import backupLogging from "electron-log";
 import * as fs from "fs-extra";
 import { joplinWrapper } from "./joplinWrapper";
+import { sevenZip } from "./sevenZip";
 
 class Backup {
   private errorDialog: any;
@@ -18,6 +19,8 @@ class Backup {
   private password: string;
   private passwordRepeat: string;
   private backupStartTime: Date;
+  private zipArchive: string;
+  private singleJex: boolean;
 
   constructor() {
     this.log = backupLogging;
@@ -33,6 +36,7 @@ class Backup {
     await this.loadSettings();
     await this.startTimer();
     await this.upgradeBackupTargetVersion();
+    await sevenZip.updateBinPath();
   }
 
   private async upgradeBackupTargetVersion() {
@@ -96,6 +100,7 @@ class Backup {
       this.passwordEnabled = true;
     } else {
       this.passwordEnabled = false;
+      this.password = null;
     }
   }
 
@@ -185,6 +190,9 @@ class Backup {
       await joplinWrapper.settingsValue("passwordRepeat")
     ).trim();
     this.password = (await joplinWrapper.settingsValue("password")).trim();
+
+    this.zipArchive = await joplinWrapper.settingsValue("zipArchive");
+    this.singleJex = await joplin.settings.value("singleJex");
 
     await this.enablePassword();
     await this.setActiveBackupPath();
@@ -277,18 +285,19 @@ class Backup {
       await this.backupNotebooks();
 
       let backupDst = "";
-      if (this.backupRetention > 1) {
-        backupDst = await this.moveFinishedBackup();
-        await this.deleteOldBackupSets(
-          this.backupBasePath,
-          this.backupRetention
-        );
+      if (this.zipArchive === "no") {
+        if (this.backupRetention > 1) {
+          backupDst = await this.moveFinishedBackup();
+          await this.deleteOldBackupSets(
+            this.backupBasePath,
+            this.backupRetention
+          );
+        } else {
+          await this.clearOldBackupTarget(this.backupBasePath);
+          backupDst = await this.moveFinishedBackup();
+        }
       } else {
-        await this.deleteOldBackupSets(
-          this.backupBasePath,
-          this.backupRetention
-        );
-        backupDst = await this.moveFinishedBackup();
+        await this.createZipArchive();
       }
 
       await joplin.settings.setValue(
@@ -310,6 +319,39 @@ class Backup {
     this.backupStartTime = null;
   }
 
+  private async createZipArchive() {
+    this.log.info(`Create zip archive`);
+
+    let backupDst = "";
+    if (this.zipArchive === "yesone" || this.singleJex === true) {
+      backupDst = await this.addToZipArchive(
+        path.join(this.backupBasePath, "backup.7z"),
+        path.join(this.activeBackupPath, "*"),
+        this.password
+      );
+    } else {
+      if (this.backupRetention === 1) {
+      }
+      // Loop ordner
+    }
+  }
+
+  private async addToZipArchive(
+    zipFile: string,
+    addFile: string,
+    password: string
+  ): Promise<string> {
+    this.log.verbose(`Add to zip ${zipFile}`);
+    this.log.verbose(`   Src: ${addFile}`);
+    const status = await sevenZip.add(zipFile, addFile, password);
+    if (status !== true) {
+      await this.showError("createZipArchive: " + status);
+      throw new Error("createZipArchive: " + status);
+    }
+
+    return zipFile;
+  }
+
   private async moveLogFile(logDst: string) {
     const logfileName = "backup.log";
     if (fs.existsSync(this.logFile)) {
@@ -325,8 +367,7 @@ class Backup {
   private async backupNotebooks() {
     const notebooks = await this.selectNotebooks();
 
-    const singleJex = await joplin.settings.value("singleJex");
-    if (singleJex === true) {
+    if (this.singleJex === true) {
       this.log.info("Create single file JEX backup");
       await this.jexExport(
         notebooks.ids,
