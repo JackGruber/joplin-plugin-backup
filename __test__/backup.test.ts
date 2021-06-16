@@ -229,6 +229,14 @@ describe("Backup", function () {
       fs.emptyDirSync(folder1);
       fs.emptyDirSync(folder2);
 
+      const backupInfo = [
+        { name: "202101011630", date: 1 },
+        { name: "202101021630", date: 2 },
+      ];
+      /* prettier-ignore */
+      when(spyOnsSttingsValue)
+            .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
+
       backup.deleteOldBackupSets(testPath.backupBasePath, backupRetention);
 
       const folderAnz = fs
@@ -250,6 +258,15 @@ describe("Backup", function () {
       fs.emptyDirSync(folder1);
       fs.emptyDirSync(folder2);
       fs.emptyDirSync(folder3);
+
+      const backupInfo = [
+        { name: "202101011630", date: 1 },
+        { name: "202101021630", date: 2 },
+        { name: "202101031630", date: 3 },
+      ];
+      /* prettier-ignore */
+      when(spyOnsSttingsValue)
+            .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
 
       backup.deleteOldBackupSets(testPath.backupBasePath, backupRetention);
       const folderAnz = fs
@@ -277,7 +294,21 @@ describe("Backup", function () {
       fs.emptyDirSync(folder4);
       fs.emptyDirSync(folder5);
 
-      backup.deleteOldBackupSets(testPath.backupBasePath, backupRetention);
+      const backupInfo = [
+        { name: "202101011630", date: 1 },
+        { name: "202101021630", date: 2 },
+        { name: "202101031630", date: 3 },
+        { name: "202101041630", date: 4 },
+        { name: "202101051630", date: 5 },
+      ];
+      /* prettier-ignore */
+      when(spyOnsSttingsValue)
+            .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
+
+      await backup.deleteOldBackupSets(
+        testPath.backupBasePath,
+        backupRetention
+      );
 
       const folderAnz = fs
         .readdirSync(testPath.backupBasePath, { withFileTypes: true })
