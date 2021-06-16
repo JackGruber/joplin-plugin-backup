@@ -338,7 +338,7 @@ class Backup {
         );
       } else {
         await this.clearOldBackupTarget(this.backupBasePath);
-        backupDst = await this.moveFinishedBackup();
+        backupDst = await this.moveFinishedBackup(zipFile);
       }
     }
 
@@ -346,7 +346,7 @@ class Backup {
   }
 
   private async createZipArchive() {
-    this.log.info(`Create zip archive`);
+    this.log.info(`Create zip archive, option: ${this.zipArchive}`);
 
     let zipFile = null;
     if (
@@ -684,9 +684,9 @@ class Backup {
   }
 
   private async moveFinishedBackup(zipFile: string = null): Promise<string> {
-    const backupSetFolder = await this.getBackupSetFolderName();
     let backupDestination = null;
     if (this.backupRetention > 1) {
+      const backupSetFolder = await this.getBackupSetFolderName();
       backupDestination = zipFile
         ? path.join(this.backupBasePath, backupSetFolder + ".7z")
         : path.join(this.backupBasePath, backupSetFolder);
@@ -703,20 +703,29 @@ class Backup {
         this.backupStartTime.getTime()
       );
     } else {
-      backupDestination = path.join(this.backupBasePath);
-
-      const oldBackupData = fs
-        .readdirSync(this.activeBackupPath, { withFileTypes: true })
-        .map((dirent) => dirent.name);
-      for (const file of oldBackupData) {
+      if (zipFile) {
+        backupDestination = path.join(this.backupBasePath, "JoplinBackup.7z");
         try {
-          fs.moveSync(
-            path.join(this.activeBackupPath, file),
-            path.join(backupDestination, file)
-          );
+          fs.moveSync(zipFile, backupDestination);
         } catch (e) {
           await this.showError("moveFinishedBackup: " + e.message);
           throw e;
+        }
+      } else {
+        backupDestination = this.backupBasePath;
+        const oldBackupData = fs
+          .readdirSync(this.activeBackupPath, { withFileTypes: true })
+          .map((dirent) => dirent.name);
+        for (const file of oldBackupData) {
+          try {
+            fs.moveSync(
+              path.join(this.activeBackupPath, file),
+              path.join(backupDestination, file)
+            );
+          } catch (e) {
+            await this.showError("moveFinishedBackup: " + e.message);
+            throw e;
+          }
         }
       }
 
@@ -734,6 +743,8 @@ class Backup {
   }
 
   private async clearOldBackupTarget(backupPath: string) {
+    this.log.verbose(`Clear backup target`);
+
     // Remove only files
     const oldBackupData = fs
       .readdirSync(backupPath, { withFileTypes: true })
@@ -741,7 +752,10 @@ class Backup {
       .map((dirent) => dirent.name)
       .reverse();
     for (const file of oldBackupData) {
-      if (file !== path.basename(this.logFile)) {
+      if (
+        file !== path.basename(this.logFile) &&
+        file !== "newJoplinBackup.7z"
+      ) {
         try {
           fs.removeSync(path.join(backupPath, file));
         } catch (e) {
