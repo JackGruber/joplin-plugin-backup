@@ -105,12 +105,16 @@ class Backup {
   }
 
   private async checkPassword(): Promise<number> {
-    if (this.password === "") {
-      return 0;
-    } else if (this.password !== "" && this.password === this.passwordRepeat) {
-      return 1;
+    if (
+      this.password === "" ||
+      this.password === null ||
+      this.password === undefined
+    ) {
+      return 0; // Not set
+    } else if (this.password === this.passwordRepeat) {
+      return 1; // OK
     } else {
-      return -1;
+      return -1; // PWs not OK
     }
   }
 
