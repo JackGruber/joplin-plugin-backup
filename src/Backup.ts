@@ -640,63 +640,63 @@ class Backup {
     return backupDestination;
   }
 
+  private async clearOldBackupTarget(backupPath: string) {
+    // Remove only files
+    const oldBackupData = fs
+      .readdirSync(backupPath, { withFileTypes: true })
+      .filter((dirent) => dirent.isFile())
+      .map((dirent) => dirent.name)
+      .reverse();
+    for (const file of oldBackupData) {
+      if (file !== path.basename(this.logFile)) {
+        try {
+          fs.removeSync(path.join(backupPath, file));
+        } catch (e) {
+          await this.showError("" + e.message);
+          throw e;
+        }
+      }
+    }
+
+    try {
+      fs.removeSync(path.join(backupPath, "templates"));
+    } catch (e) {
+      await this.showError("deleteOldBackupSets" + e.message);
+      throw e;
+    }
+
+    try {
+      fs.removeSync(path.join(backupPath, "profile"));
+    } catch (e) {
+      await this.showError("deleteOldBackupSets" + e.message);
+      throw e;
+    }
+  }
+
   private async deleteOldBackupSets(
     backupPath: string,
     backupRetention: number
   ) {
-    if (backupRetention > 1) {
-      let info = JSON.parse(await joplinWrapper.settingsValue("backupInfo"));
-      if (info.length > backupRetention) {
-        info.sort((a, b) => b.date - a.date);
-      }
+    let info = JSON.parse(await joplinWrapper.settingsValue("backupInfo"));
+    if (info.length > backupRetention) {
+      info.sort((a, b) => b.date - a.date);
+    }
 
-      while (info.length > backupRetention) {
-        const del = info.splice(backupRetention, 1);
-        const folder = path.join(backupPath, del[0].name);
-        if (fs.existsSync(folder)) {
-          try {
-            fs.rmdirSync(folder, {
-              recursive: true,
-            });
-          } catch (e) {
-            await this.showError("deleteOldBackupSets" + e.message);
-            throw e;
-          }
-        }
-
-        await joplin.settings.setValue("backupInfo", JSON.stringify(info));
-      }
-    } else {
-      // Remove only files
-      const oldBackupData = fs
-        .readdirSync(backupPath, { withFileTypes: true })
-        .filter((dirent) => dirent.isFile())
-        .map((dirent) => dirent.name)
-        .reverse();
-      for (const file of oldBackupData) {
-        if (file !== path.basename(this.logFile)) {
-          try {
-            fs.removeSync(path.join(backupPath, file));
-          } catch (e) {
-            await this.showError("" + e.message);
-            throw e;
-          }
+    while (info.length > backupRetention) {
+      const del = info.splice(backupRetention, 1);
+      const folder = path.join(backupPath, del[0].name);
+      if (fs.existsSync(folder)) {
+        try {
+          fs.rmdirSync(folder, {
+            recursive: true,
+          });
+        } catch (e) {
+          await this.showError("deleteOldBackupSets" + e.message);
+          throw e;
         }
       }
 
-      try {
-        fs.removeSync(path.join(backupPath, "templates"));
-      } catch (e) {
-        await this.showError("deleteOldBackupSets" + e.message);
-        throw e;
-      }
-
-      try {
-        fs.removeSync(path.join(backupPath, "profile"));
-      } catch (e) {
-        await this.showError("deleteOldBackupSets" + e.message);
-        throw e;
-      }
+      await joplin.settings.setValue("backupInfo", JSON.stringify(info));
     }
   }
 }
