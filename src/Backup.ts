@@ -288,7 +288,7 @@ class Backup {
 
       await this.backupNotebooks();
 
-      const backupDst = await this.makebackupSet();
+      const backupDst = await this.makeBackupSet();
 
       await joplin.settings.setValue(
         "lastBackup",
@@ -309,7 +309,7 @@ class Backup {
     this.backupStartTime = null;
   }
 
-  private async makebackupSet(): Promise<string> {
+  private async makeBackupSet(): Promise<string> {
     let backupDst = "";
     if (this.zipArchive === "no") {
       if (this.backupRetention > 1) {
