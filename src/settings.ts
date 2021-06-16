@@ -110,7 +110,7 @@ export namespace Settings {
       advanced: true,
       label: "Temporary export path",
       description:
-        "Temporary path for note export before they are password protected.",
+        "Temporary path for note export from Joplin, before they are copyed to backup destination.",
     });
 
     await joplin.settings.registerSetting("backupVersion", {
