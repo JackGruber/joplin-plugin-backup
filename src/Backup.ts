@@ -802,8 +802,7 @@ class Backup {
           throw e;
         }
       }
-
-      await joplin.settings.setValue("backupInfo", JSON.stringify(info));
+      await joplinWrapper.settingsSetValue("backupInfo", JSON.stringify(info));
     }
   }
 }
