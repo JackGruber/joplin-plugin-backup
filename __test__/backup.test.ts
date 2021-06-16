@@ -24,7 +24,8 @@ let spyOnLogInfo = null;
 let spyOnLogWarn = null;
 let spyOnLogError = null;
 let spyOnSaveBackupInfo = null;
-const spyOnsSttingsValue = jest.spyOn(joplinWrapper, "settingsValue");
+
+const spyOnsSettingsValue = jest.spyOn(joplinWrapper, "settingsValue");
 const spyOnGlobalValue = jest.spyOn(joplinWrapper, "settingsGlobalValue");
 const spyOnSettingsSetValue = jest
   .spyOn(joplinWrapper, "settingsSetValue")
@@ -43,7 +44,7 @@ const testPath = getTestPaths();
 describe("Backup", function () {
   beforeEach(async () => {
     /* prettier-ignore */
-    when(spyOnsSttingsValue)
+    when(spyOnsSettingsValue)
       .mockImplementation(() => Promise.resolve("no mockImplementation"))
       .calledWith("fileLogLevel").mockImplementation(() => Promise.resolve("error"))
       .calledWith("path").mockImplementation(() => Promise.resolve(testPath.backupBasePath));
@@ -77,8 +78,9 @@ describe("Backup", function () {
     spyOnLogInfo.mockReset();
     spyOnLogWarn.mockReset();
     spyOnLogError.mockReset();
-    spyOnsSttingsValue.mockReset();
+    spyOnsSettingsValue.mockReset();
     spyOnGlobalValue.mockReset();
+    spyOnSaveBackupInfo.mockReset();
   });
 
   afterAll(async () => {
@@ -92,14 +94,14 @@ describe("Backup", function () {
       expect(backup.backupBasePath).not.toBe(testPath.joplinProfile);
 
       /* prettier-ignore */
-      when(spyOnsSttingsValue)
+      when(spyOnsSettingsValue)
       .calledWith("path").mockImplementation(() => Promise.resolve(""));
       await backup.loadBackupPath();
       expect(backup.backupBasePath).not.toBe(testPath.joplinProfile);
       expect(backup.backupBasePath).toBe(null);
 
       /* prettier-ignore */
-      when(spyOnsSttingsValue)
+      when(spyOnsSettingsValue)
       .calledWith("path").mockImplementation(() => Promise.resolve(testPath.joplinProfile));
       await backup.loadBackupPath();
       expect(backup.backupBasePath).not.toBe(testPath.joplinProfile);
@@ -112,7 +114,7 @@ describe("Backup", function () {
     it(`relative paths`, async () => {
       const backupPath = "../";
       /* prettier-ignore */
-      when(spyOnsSttingsValue)
+      when(spyOnsSettingsValue)
       .calledWith("path").mockImplementation(() => Promise.resolve(backupPath));
       await backup.loadBackupPath();
       const toBe = path.normalize(
@@ -243,7 +245,7 @@ describe("Backup", function () {
         { name: "202101021630", date: 2 },
       ];
       /* prettier-ignore */
-      when(spyOnsSttingsValue)
+      when(spyOnsSettingsValue)
             .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
 
       backup.deleteOldBackupSets(testPath.backupBasePath, backupRetention);
@@ -274,7 +276,7 @@ describe("Backup", function () {
         { name: "202101031630", date: 3 },
       ];
       /* prettier-ignore */
-      when(spyOnsSttingsValue)
+      when(spyOnsSettingsValue)
             .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
 
       backup.deleteOldBackupSets(testPath.backupBasePath, backupRetention);
@@ -311,7 +313,7 @@ describe("Backup", function () {
         { name: "202101051630", date: 5 },
       ];
       /* prettier-ignore */
-      when(spyOnsSttingsValue)
+      when(spyOnsSettingsValue)
             .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
 
       await backup.deleteOldBackupSets(
@@ -347,7 +349,7 @@ describe("Backup", function () {
       expect(backup.log.transports.file.level).toBe(false);
 
       /* prettier-ignore */
-      when(spyOnsSttingsValue)
+      when(spyOnsSettingsValue)
         .calledWith("fileLogLevel").mockImplementation(() => Promise.resolve("verbose"));
 
       backup.backupBasePath = "./";
@@ -355,7 +357,7 @@ describe("Backup", function () {
       expect(backup.log.transports.file.level).toBe("verbose");
 
       /* prettier-ignore */
-      when(spyOnsSttingsValue)
+      when(spyOnsSettingsValue)
         .calledWith("fileLogLevel").mockImplementation(() => Promise.resolve("error"));
 
       backup.backupBasePath = "./";
