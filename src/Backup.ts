@@ -288,21 +288,7 @@ class Backup {
 
       await this.backupNotebooks();
 
-      let backupDst = "";
-      if (this.zipArchive === "no") {
-        if (this.backupRetention > 1) {
-          backupDst = await this.moveFinishedBackup();
-          await this.deleteOldBackupSets(
-            this.backupBasePath,
-            this.backupRetention
-          );
-        } else {
-          await this.clearOldBackupTarget(this.backupBasePath);
-          backupDst = await this.moveFinishedBackup();
-        }
-      } else {
-        await this.createZipArchive();
-      }
+      const backupDst = await this.makebackupSet();
 
       await joplin.settings.setValue(
         "lastBackup",
@@ -323,31 +309,90 @@ class Backup {
     this.backupStartTime = null;
   }
 
+  private async makebackupSet(): Promise<string> {
+    let backupDst = "";
+    if (this.zipArchive === "no") {
+      if (this.backupRetention > 1) {
+        backupDst = await this.moveFinishedBackup();
+        await this.deleteOldBackupSets(
+          this.backupBasePath,
+          this.backupRetention
+        );
+      } else {
+        await this.clearOldBackupTarget(this.backupBasePath);
+        backupDst = await this.moveFinishedBackup();
+      }
+    } else {
+      const zipFile = await this.createZipArchive();
+      if (this.backupRetention > 1) {
+        backupDst = await this.moveFinishedBackup(zipFile);
+        try {
+          fs.removeSync(this.activeBackupPath);
+        } catch (e) {
+          await this.showError("" + e.message);
+          throw e;
+        }
+        await this.deleteOldBackupSets(
+          this.backupBasePath,
+          this.backupRetention
+        );
+      } else {
+        await this.clearOldBackupTarget(this.backupBasePath);
+        backupDst = await this.moveFinishedBackup();
+      }
+    }
+
+    return backupDst;
+  }
+
   private async createZipArchive() {
     this.log.info(`Create zip archive`);
 
-    let backupDst = "";
-    if (this.zipArchive === "yesone" || this.singleJex === true) {
-      backupDst = await this.addToZipArchive(
-        path.join(this.backupBasePath, "backup.7z"),
+    let zipFile = null;
+    if (
+      this.zipArchive === "yesone" ||
+      (this.singleJex === true && this.zipArchive === "yes")
+    ) {
+      zipFile = await this.addToZipArchive(
+        path.join(this.backupBasePath, "newJoplinBackup.7z"),
         path.join(this.activeBackupPath, "*"),
         this.password
       );
     } else {
-      if (this.backupRetention === 1) {
+      const content = fs.readdirSync(this.activeBackupPath, {
+        withFileTypes: true,
+      });
+
+      for (const file of content) {
+        await this.addToZipArchive(
+          path.join(this.activeBackupPath, file.name + ".7z"),
+          path.join(
+            this.activeBackupPath,
+            file.isFile() ? file.name : path.join(file.name, "*")
+          ),
+          this.password
+        );
+
+        try {
+          fs.removeSync(path.join(this.activeBackupPath, file.name));
+        } catch (e) {
+          await this.showError("" + e.message);
+          throw e;
+        }
       }
-      // Loop ordner
     }
+
+    return zipFile;
   }
 
   private async addToZipArchive(
     zipFile: string,
     addFile: string,
-    password: string
+    password: string,
+    options: string[] = null
   ): Promise<string> {
-    this.log.verbose(`Add to zip ${zipFile}`);
-    this.log.verbose(`   Src: ${addFile}`);
-    const status = await sevenZip.add(zipFile, addFile, password);
+    this.log.verbose(`Add ${addFile} to zip ${zipFile}`);
+    const status = await sevenZip.add(zipFile, addFile, password, options);
     if (status !== true) {
       await this.showError("createZipArchive: " + status);
       throw new Error("createZipArchive: " + status);
@@ -638,13 +683,16 @@ class Backup {
     }
   }
 
-  private async moveFinishedBackup(): Promise<string> {
+  private async moveFinishedBackup(zipFile: string = null): Promise<string> {
     const backupSetFolder = await this.getBackupSetFolderName();
     let backupDestination = null;
     if (this.backupRetention > 1) {
-      backupDestination = path.join(this.backupBasePath, backupSetFolder);
+      backupDestination = zipFile
+        ? path.join(this.backupBasePath, backupSetFolder + ".7z")
+        : path.join(this.backupBasePath, backupSetFolder);
+      const src = zipFile ? zipFile : this.activeBackupPath;
       try {
-        fs.renameSync(this.activeBackupPath, backupDestination);
+        fs.moveSync(src, backupDestination);
       } catch (e) {
         await this.showError("moveFinishedBackup: " + e.message);
         throw e;
