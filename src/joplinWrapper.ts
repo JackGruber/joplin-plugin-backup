@@ -12,4 +12,8 @@ export namespace joplinWrapper {
   export async function installationDir(): Promise<any> {
     return joplin.plugins.installationDir();
   }
+
+  export async function settingsSetValue(key: string, value: any) {
+    await joplin.settings.setValue(key, value);
+  }
 }
