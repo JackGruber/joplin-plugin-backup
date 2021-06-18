@@ -23,8 +23,13 @@ let spyOnLogVerbose = null;
 let spyOnLogInfo = null;
 let spyOnLogWarn = null;
 let spyOnLogError = null;
-const spyOnsSttingsValue = jest.spyOn(joplinWrapper, "settingsValue");
+let spyOnSaveBackupInfo = null;
+
+const spyOnsSettingsValue = jest.spyOn(joplinWrapper, "settingsValue");
 const spyOnGlobalValue = jest.spyOn(joplinWrapper, "settingsGlobalValue");
+const spyOnSettingsSetValue = jest
+  .spyOn(joplinWrapper, "settingsSetValue")
+  .mockImplementation();
 
 async function createTestStructure() {
   const test = await getTestPaths();
@@ -39,7 +44,7 @@ const testPath = getTestPaths();
 describe("Backup", function () {
   beforeEach(async () => {
     /* prettier-ignore */
-    when(spyOnsSttingsValue)
+    when(spyOnsSettingsValue)
       .mockImplementation(() => Promise.resolve("no mockImplementation"))
       .calledWith("fileLogLevel").mockImplementation(() => Promise.resolve("error"))
       .calledWith("path").mockImplementation(() => Promise.resolve(testPath.backupBasePath));
@@ -52,6 +57,11 @@ describe("Backup", function () {
 
     await createTestStructure();
     backup = new Backup() as any;
+    backup.backupStartTime = new Date();
+
+    spyOnSaveBackupInfo = jest
+      .spyOn(backup, "saveBackupInfo")
+      .mockImplementation(() => {});
 
     spyOnLogVerbose = jest
       .spyOn(backup.log, "verbose")
@@ -68,8 +78,9 @@ describe("Backup", function () {
     spyOnLogInfo.mockReset();
     spyOnLogWarn.mockReset();
     spyOnLogError.mockReset();
-    spyOnsSttingsValue.mockReset();
+    spyOnsSettingsValue.mockReset();
     spyOnGlobalValue.mockReset();
+    spyOnSaveBackupInfo.mockReset();
   });
 
   afterAll(async () => {
@@ -83,14 +94,14 @@ describe("Backup", function () {
       expect(backup.backupBasePath).not.toBe(testPath.joplinProfile);
 
       /* prettier-ignore */
-      when(spyOnsSttingsValue)
+      when(spyOnsSettingsValue)
       .calledWith("path").mockImplementation(() => Promise.resolve(""));
       await backup.loadBackupPath();
       expect(backup.backupBasePath).not.toBe(testPath.joplinProfile);
       expect(backup.backupBasePath).toBe(null);
 
       /* prettier-ignore */
-      when(spyOnsSttingsValue)
+      when(spyOnsSettingsValue)
       .calledWith("path").mockImplementation(() => Promise.resolve(testPath.joplinProfile));
       await backup.loadBackupPath();
       expect(backup.backupBasePath).not.toBe(testPath.joplinProfile);
@@ -103,7 +114,7 @@ describe("Backup", function () {
     it(`relative paths`, async () => {
       const backupPath = "../";
       /* prettier-ignore */
-      when(spyOnsSttingsValue)
+      when(spyOnsSettingsValue)
       .calledWith("path").mockImplementation(() => Promise.resolve(backupPath));
       await backup.loadBackupPath();
       const toBe = path.normalize(
@@ -208,6 +219,171 @@ describe("Backup", function () {
       spyOnDateNow.mockRestore();
     });
   });
+  it(`Backup set creation`, async () => {
+    const testEpoch = new Date(2021, 0, 2, 16, 30, 45, 0);
+    const spyOnDateNow = jest
+      .spyOn(Date, "now")
+      .mockImplementation(() => testEpoch.getTime());
+
+    const testCases = [
+      {
+        zipArchive: "no",
+        backupRetention: 1,
+        singleJex: false,
+        result: testPath.backupBasePath,
+        testFile: "testFile.txt",
+        checkFile: path.join(testPath.backupBasePath, "testFile.txt"),
+        saveBackupInfoCalled: 0,
+      },
+      {
+        zipArchive: "no",
+        backupRetention: 2,
+        singleJex: false,
+        result: path.join(testPath.backupBasePath, "202101021630"),
+        testFile: "testFile.txt",
+        checkFile: path.join(
+          testPath.backupBasePath,
+          "202101021630",
+          "testFile.txt"
+        ),
+        saveBackupInfoCalled: 1,
+      },
+      {
+        zipArchive: "yes",
+        backupRetention: 1,
+        singleJex: false,
+        result: testPath.backupBasePath,
+        testFile: "testFile.txt",
+        checkFile: path.join(testPath.backupBasePath, "testFile.txt.7z"),
+        saveBackupInfoCalled: 0,
+      },
+      {
+        zipArchive: "yes",
+        backupRetention: 2,
+        singleJex: false,
+        result: path.join(testPath.backupBasePath, "202101021630"),
+        testFile: "testFile.txt",
+        checkFile: path.join(
+          testPath.backupBasePath,
+          "202101021630",
+          "testFile.txt.7z"
+        ),
+        saveBackupInfoCalled: 1,
+      },
+      {
+        zipArchive: "yesone",
+        backupRetention: 1,
+        singleJex: false,
+        result: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+        testFile: "testFile.txt",
+        checkFile: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+        saveBackupInfoCalled: 0,
+      },
+      {
+        zipArchive: "yesone",
+        backupRetention: 2,
+        singleJex: false,
+        result: path.join(testPath.backupBasePath, "202101021630.7z"),
+        testFile: "testFile.txt",
+        checkFile: path.join(testPath.backupBasePath, "202101021630.7z"),
+        saveBackupInfoCalled: 1,
+      },
+      {
+        zipArchive: "no",
+        backupRetention: 1,
+        singleJex: true,
+        result: testPath.backupBasePath,
+        testFile: "testFile.txt",
+        checkFile: path.join(testPath.backupBasePath, "testFile.txt"),
+        saveBackupInfoCalled: 0,
+      },
+      {
+        zipArchive: "no",
+        backupRetention: 2,
+        singleJex: true,
+        result: path.join(testPath.backupBasePath, "202101021630"),
+        testFile: "testFile.txt",
+        checkFile: path.join(
+          testPath.backupBasePath,
+          "202101021630",
+          "testFile.txt"
+        ),
+        saveBackupInfoCalled: 1,
+      },
+      {
+        zipArchive: "yes",
+        backupRetention: 1,
+        singleJex: true,
+        result: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+        testFile: "testFile.txt",
+        checkFile: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+        saveBackupInfoCalled: 0,
+      },
+      {
+        zipArchive: "yes",
+        backupRetention: 2,
+        singleJex: true,
+        result: path.join(testPath.backupBasePath, "202101021630.7z"),
+        testFile: "testFile.txt",
+        checkFile: path.join(testPath.backupBasePath, "202101021630.7z"),
+        saveBackupInfoCalled: 1,
+      },
+      {
+        zipArchive: "yesone",
+        backupRetention: 1,
+        singleJex: true,
+        result: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+        testFile: "testFile.txt",
+        checkFile: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+        saveBackupInfoCalled: 0,
+      },
+      {
+        zipArchive: "yesone",
+        backupRetention: 2,
+        singleJex: true,
+        result: path.join(testPath.backupBasePath, "202101021630.7z"),
+        testFile: "testFile.txt",
+        checkFile: path.join(testPath.backupBasePath, "202101021630.7z"),
+        saveBackupInfoCalled: 1,
+      },
+    ];
+
+    backup.backupBasePath = testPath.backupBasePath;
+    backup.activeBackupPath = testPath.activeBackupJob;
+    backup.backupStartTime = testEpoch;
+    backup.logFile = path.join(testPath.backupBasePath, "test.log");
+
+    /* prettier-ignore */
+    when(spyOnsSettingsValue)
+            .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify([])));
+    jest.spyOn(backup, "saveBackupInfo").mockImplementation(() => {});
+
+    for (const testCase of testCases) {
+      await createTestStructure();
+      fs.emptyDirSync(testPath.activeBackupJob);
+      const fileName = testCase.testFile;
+      const file = path.join(testPath.activeBackupJob, fileName);
+      fs.writeFileSync(file, "testFile");
+      expect(fs.existsSync(file)).toBe(true);
+
+      backup.zipArchive = testCase.zipArchive;
+      backup.backupRetention = testCase.backupRetention;
+      backup.singleJex = testCase.singleJex;
+
+      const result = await backup.makeBackupSet();
+      expect(result).toBe(testCase.result);
+      expect(fs.existsSync(testCase.checkFile)).toBe(true);
+      expect(backup.saveBackupInfo).toHaveBeenCalledTimes(
+        testCase.saveBackupInfoCalled
+      );
+
+      backup.saveBackupInfo.mockReset();
+      fs.emptyDirSync(testPath.activeBackupJob);
+      expect(fs.existsSync(file)).toBe(false);
+    }
+
+    spyOnDateNow.mockRestore();
+  });
 
   describe("Backup retention", function () {
     it(`Get Retention folder name`, async () => {
@@ -228,6 +404,14 @@ describe("Backup", function () {
 
       fs.emptyDirSync(folder1);
       fs.emptyDirSync(folder2);
+
+      const backupInfo = [
+        { name: "202101011630", date: 1 },
+        { name: "202101021630", date: 2 },
+      ];
+      /* prettier-ignore */
+      when(spyOnsSettingsValue)
+            .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
 
       backup.deleteOldBackupSets(testPath.backupBasePath, backupRetention);
 
@@ -250,6 +434,15 @@ describe("Backup", function () {
       fs.emptyDirSync(folder1);
       fs.emptyDirSync(folder2);
       fs.emptyDirSync(folder3);
+
+      const backupInfo = [
+        { name: "202101011630", date: 1 },
+        { name: "202101021630", date: 2 },
+        { name: "202101031630", date: 3 },
+      ];
+      /* prettier-ignore */
+      when(spyOnsSettingsValue)
+            .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
 
       backup.deleteOldBackupSets(testPath.backupBasePath, backupRetention);
       const folderAnz = fs
@@ -277,7 +470,21 @@ describe("Backup", function () {
       fs.emptyDirSync(folder4);
       fs.emptyDirSync(folder5);
 
-      backup.deleteOldBackupSets(testPath.backupBasePath, backupRetention);
+      const backupInfo = [
+        { name: "202101011630", date: 1 },
+        { name: "202101021630", date: 2 },
+        { name: "202101031630", date: 3 },
+        { name: "202101041630", date: 4 },
+        { name: "202101051630", date: 5 },
+      ];
+      /* prettier-ignore */
+      when(spyOnsSettingsValue)
+            .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
+
+      await backup.deleteOldBackupSets(
+        testPath.backupBasePath,
+        backupRetention
+      );
 
       const folderAnz = fs
         .readdirSync(testPath.backupBasePath, { withFileTypes: true })
@@ -307,7 +514,7 @@ describe("Backup", function () {
       expect(backup.log.transports.file.level).toBe(false);
 
       /* prettier-ignore */
-      when(spyOnsSttingsValue)
+      when(spyOnsSettingsValue)
         .calledWith("fileLogLevel").mockImplementation(() => Promise.resolve("verbose"));
 
       backup.backupBasePath = "./";
@@ -315,7 +522,7 @@ describe("Backup", function () {
       expect(backup.log.transports.file.level).toBe("verbose");
 
       /* prettier-ignore */
-      when(spyOnsSttingsValue)
+      when(spyOnsSettingsValue)
         .calledWith("fileLogLevel").mockImplementation(() => Promise.resolve("error"));
 
       backup.backupBasePath = "./";

@@ -9,8 +9,8 @@ joplin.plugins.register({
     await backup.init();
 
     joplin.settings.onChange(async (event: any) => {
-      if (event.keys.indexOf("lastBackup") === -1) {
-        console.log("Backup settings changed");
+      if (event.keys.indexOf("backupInterval") !== -1) {
+        console.log("Backup interval changed");
         await backup.startTimer();
       }
     });

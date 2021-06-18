@@ -58,6 +58,27 @@ export namespace Settings {
         "Creates a backup at the specified backup interval only if there was a change.",
     });
 
+    await joplin.settings.registerSetting("password", {
+      value: "",
+      type: SettingItemType.String,
+      section: "backupSection",
+      public: false,
+      secure: true,
+      label: "Password",
+      description:
+        "If a password has been entered, the backups are protected with a password.",
+    });
+
+    await joplin.settings.registerSetting("passwordRepeat", {
+      value: "",
+      type: SettingItemType.String,
+      section: "backupSection",
+      public: false,
+      secure: true,
+      label: "Password (Repeat)",
+      description: "Repeat password to validate.",
+    });
+
     await joplin.settings.registerSetting("lastBackup", {
       value: 0,
       type: SettingItemType.Int,
@@ -79,6 +100,50 @@ export namespace Settings {
         info: "Info",
         error: "Error",
       },
+    });
+
+    await joplin.settings.registerSetting("zipArchive", {
+      value: "no",
+      type: SettingItemType.String,
+      section: "backupSection",
+      isEnum: true,
+      public: true,
+      label: "Create zip archive",
+      advanced: true,
+      options: {
+        no: "No",
+        yes: "Yes",
+        yesone: "Yes, one archives",
+      },
+      description:
+        "If a password is set, a zip archive is always created, regardless of this setting.",
+    });
+
+    await joplin.settings.registerSetting("exportPath", {
+      value: "",
+      type: SettingItemType.String,
+      section: "backupSection",
+      public: true,
+      advanced: true,
+      label: "Temporary export path",
+      description:
+        "Temporary path for note export from Joplin, before they are copyed to backup destination.",
+    });
+
+    await joplin.settings.registerSetting("backupVersion", {
+      value: 0,
+      type: SettingItemType.Int,
+      section: "backupSection",
+      public: false,
+      label: "Backup Version",
+    });
+
+    await joplin.settings.registerSetting("backupInfo", {
+      value: "[]",
+      type: SettingItemType.String,
+      section: "backupSection",
+      public: false,
+      label: "Backup info",
     });
   }
 }
