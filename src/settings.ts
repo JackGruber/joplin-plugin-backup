@@ -98,6 +98,7 @@ export namespace Settings {
         false: "Off",
         verbose: "Verbose",
         info: "Info",
+        warn: "Warning",
         error: "Error",
       },
     });

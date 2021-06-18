@@ -129,9 +129,10 @@ class Backup {
   }
 
   private async fileLogging(enable: boolean) {
-    if (enable === true) {
+    const fileLogLevel = await joplinWrapper.settingsValue("fileLogLevel");
+
+    if (enable === true && fileLogLevel !== "false") {
       this.logFile = path.join(this.backupBasePath, "activeBackup.log");
-      const fileLogLevel = await joplinWrapper.settingsValue("fileLogLevel");
       this.log.transports.file.resolvePath = () => this.logFile;
       this.log.transports.file.level = fileLogLevel;
     } else {
