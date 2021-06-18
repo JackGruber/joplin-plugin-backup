@@ -31,6 +31,10 @@ class Backup {
 
   public async init() {
     this.log.verbose("Backup Plugin init");
+
+    const installationDir = await joplin.plugins.installationDir();
+    this.logFile = path.join(installationDir, "activeBackup.log");
+
     await this.registerSettings();
     await this.registerCommands();
     await this.registerMenues();
@@ -132,7 +136,6 @@ class Backup {
     const fileLogLevel = await joplinWrapper.settingsValue("fileLogLevel");
 
     if (enable === true && fileLogLevel !== "false") {
-      this.logFile = path.join(this.backupBasePath, "activeBackup.log");
       this.log.transports.file.resolvePath = () => this.logFile;
       this.log.transports.file.level = fileLogLevel;
     } else {
