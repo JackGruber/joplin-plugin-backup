@@ -346,7 +346,7 @@ class Backup {
   }
 
   private async createZipArchive() {
-    this.log.info(`Create zip archive, option: ${this.zipArchive}`);
+    this.log.info(`Create zip archive`);
 
     let zipFile = null;
     if (
