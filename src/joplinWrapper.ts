@@ -10,7 +10,7 @@ export namespace joplinWrapper {
   }
 
   export async function installationDir(): Promise<any> {
-    return joplin.plugins.installationDir();
+    return await joplin.plugins.installationDir();
   }
 
   export async function settingsSetValue(key: string, value: any) {
