@@ -13,7 +13,7 @@ export namespace Settings {
       type: SettingItemType.String,
       section: "backupSection",
       public: true,
-      label: "Backup Path",
+      label: "Backup path",
     });
 
     await joplin.settings.registerSetting("singleJex", {
@@ -32,7 +32,7 @@ export namespace Settings {
       type: SettingItemType.Int,
       section: "backupSection",
       public: true,
-      label: "Keep x Backups",
+      label: "Keep x backups",
       description:
         "If more than one verison is configured, date (YYYYMMDDHHMM) folders are created in the Backup Path. ",
     });
@@ -113,7 +113,7 @@ export namespace Settings {
       options: {
         no: "No",
         yes: "Yes",
-        yesone: "Yes, one archives",
+        yesone: "Yes, one archive",
       },
       description:
         "If a password is set, a zip archive is always created, regardless of this setting.",

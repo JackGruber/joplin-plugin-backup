@@ -151,7 +151,7 @@ class Backup {
   public async registerCommands() {
     await joplin.commands.register({
       name: "CreateBackup",
-      label: "Create Backup",
+      label: "Create backup",
       execute: async () => {
         await this.start(true);
       },

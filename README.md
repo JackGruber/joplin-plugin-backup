@@ -24,8 +24,8 @@ A plugin to extend Joplin with a manual and automatic backup function.
 
 First configure the Plugin under `Tools > Options > Backup`!
 
-Backups can be created manually with the command `Tools > Create Backup` or are created automatically based on the configured interval.
-The backup started manually by `Create Backup` respects all the settings except for the `Backups interval in hours`.
+Backups can be created manually with the command `Tools > Create backup` or are created automatically based on the configured interval.
+The backup started manually by `Create backup` respects all the settings except for the `Backups interval in hours`.
 
 ## Options
 
@@ -33,9 +33,9 @@ Go to `Tools > Options > Backup`
 
 | Option                      | Description                                                                                                               | Default |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------- |
-| `Backup Path`               | Where to save the backups to. <br>This path is exclusive for the Joplin backups, there should be no other data in it!     |         |
+| `Backup path`               | Where to save the backups to. <br>This path is exclusive for the Joplin backups, there should be no other data in it!     |         |
 | `Single JEX`                | Create only one JEX file for all notebooks                                                                                | `false` |
-| `Keep x Backups`            | How many backups should be kept                                                                                           | `1`     |
+| `Keep x backups`            | How many backups should be kept                                                                                           | `1`     |
 | `Backups interval in hours` | Create a backup every X hours                                                                                             | `24`    |
 | `Only on change`            | Creates a backup at the specified backup interval only if there was a change to a `note`, `tag`, `resource` or `notebook` | `false` |
 | `Logfile`                   | Loglevel for backup.log                                                                                                   | `error` |
@@ -44,7 +44,7 @@ Go to `Tools > Options > Backup`
 
 Under `Options > Keyboard Shortcuts` you can assign a keyboard shortcut for the following commands:
 
-- `Create Backup`
+- `Create backup`
 
 ## What is backed up
 
