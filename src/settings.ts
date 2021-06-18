@@ -115,8 +115,8 @@ export namespace Settings {
         yes: "Yes",
         yesone: "Yes, one archive",
       },
-      description:
-        "If a password is set, a zip archive is always created, regardless of this setting.",
+      //description:
+      //  "If a password is set, a zip archive is always created, the option no then no longer has any effect.",
     });
 
     await joplin.settings.registerSetting("exportPath", {
