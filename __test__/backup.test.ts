@@ -219,170 +219,172 @@ describe("Backup", function () {
       spyOnDateNow.mockRestore();
     });
   });
-  it(`Backup set creation`, async () => {
-    const testEpoch = new Date(2021, 0, 2, 16, 30, 45, 0);
-    const spyOnDateNow = jest
-      .spyOn(Date, "now")
-      .mockImplementation(() => testEpoch.getTime());
+  describe("Backup set", function () {
+    it(`Creation`, async () => {
+      const testEpoch = new Date(2021, 0, 2, 16, 30, 45, 0);
+      const spyOnDateNow = jest
+        .spyOn(Date, "now")
+        .mockImplementation(() => testEpoch.getTime());
 
-    const testCases = [
-      {
-        zipArchive: "no",
-        backupRetention: 1,
-        singleJex: false,
-        result: testPath.backupBasePath,
-        testFile: "testFile.txt",
-        checkFile: path.join(testPath.backupBasePath, "testFile.txt"),
-        saveBackupInfoCalled: 0,
-      },
-      {
-        zipArchive: "no",
-        backupRetention: 2,
-        singleJex: false,
-        result: path.join(testPath.backupBasePath, "202101021630"),
-        testFile: "testFile.txt",
-        checkFile: path.join(
-          testPath.backupBasePath,
-          "202101021630",
-          "testFile.txt"
-        ),
-        saveBackupInfoCalled: 1,
-      },
-      {
-        zipArchive: "yes",
-        backupRetention: 1,
-        singleJex: false,
-        result: testPath.backupBasePath,
-        testFile: "testFile.txt",
-        checkFile: path.join(testPath.backupBasePath, "testFile.txt.7z"),
-        saveBackupInfoCalled: 0,
-      },
-      {
-        zipArchive: "yes",
-        backupRetention: 2,
-        singleJex: false,
-        result: path.join(testPath.backupBasePath, "202101021630"),
-        testFile: "testFile.txt",
-        checkFile: path.join(
-          testPath.backupBasePath,
-          "202101021630",
-          "testFile.txt.7z"
-        ),
-        saveBackupInfoCalled: 1,
-      },
-      {
-        zipArchive: "yesone",
-        backupRetention: 1,
-        singleJex: false,
-        result: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
-        testFile: "testFile.txt",
-        checkFile: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
-        saveBackupInfoCalled: 0,
-      },
-      {
-        zipArchive: "yesone",
-        backupRetention: 2,
-        singleJex: false,
-        result: path.join(testPath.backupBasePath, "202101021630.7z"),
-        testFile: "testFile.txt",
-        checkFile: path.join(testPath.backupBasePath, "202101021630.7z"),
-        saveBackupInfoCalled: 1,
-      },
-      {
-        zipArchive: "no",
-        backupRetention: 1,
-        singleJex: true,
-        result: testPath.backupBasePath,
-        testFile: "testFile.txt",
-        checkFile: path.join(testPath.backupBasePath, "testFile.txt"),
-        saveBackupInfoCalled: 0,
-      },
-      {
-        zipArchive: "no",
-        backupRetention: 2,
-        singleJex: true,
-        result: path.join(testPath.backupBasePath, "202101021630"),
-        testFile: "testFile.txt",
-        checkFile: path.join(
-          testPath.backupBasePath,
-          "202101021630",
-          "testFile.txt"
-        ),
-        saveBackupInfoCalled: 1,
-      },
-      {
-        zipArchive: "yes",
-        backupRetention: 1,
-        singleJex: true,
-        result: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
-        testFile: "testFile.txt",
-        checkFile: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
-        saveBackupInfoCalled: 0,
-      },
-      {
-        zipArchive: "yes",
-        backupRetention: 2,
-        singleJex: true,
-        result: path.join(testPath.backupBasePath, "202101021630.7z"),
-        testFile: "testFile.txt",
-        checkFile: path.join(testPath.backupBasePath, "202101021630.7z"),
-        saveBackupInfoCalled: 1,
-      },
-      {
-        zipArchive: "yesone",
-        backupRetention: 1,
-        singleJex: true,
-        result: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
-        testFile: "testFile.txt",
-        checkFile: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
-        saveBackupInfoCalled: 0,
-      },
-      {
-        zipArchive: "yesone",
-        backupRetention: 2,
-        singleJex: true,
-        result: path.join(testPath.backupBasePath, "202101021630.7z"),
-        testFile: "testFile.txt",
-        checkFile: path.join(testPath.backupBasePath, "202101021630.7z"),
-        saveBackupInfoCalled: 1,
-      },
-    ];
+      const testCases = [
+        {
+          zipArchive: "no",
+          backupRetention: 1,
+          singleJex: false,
+          result: testPath.backupBasePath,
+          testFile: "testFile.txt",
+          checkFile: path.join(testPath.backupBasePath, "testFile.txt"),
+          saveBackupInfoCalled: 0,
+        },
+        {
+          zipArchive: "no",
+          backupRetention: 2,
+          singleJex: false,
+          result: path.join(testPath.backupBasePath, "202101021630"),
+          testFile: "testFile.txt",
+          checkFile: path.join(
+            testPath.backupBasePath,
+            "202101021630",
+            "testFile.txt"
+          ),
+          saveBackupInfoCalled: 1,
+        },
+        {
+          zipArchive: "yes",
+          backupRetention: 1,
+          singleJex: false,
+          result: testPath.backupBasePath,
+          testFile: "testFile.txt",
+          checkFile: path.join(testPath.backupBasePath, "testFile.txt.7z"),
+          saveBackupInfoCalled: 0,
+        },
+        {
+          zipArchive: "yes",
+          backupRetention: 2,
+          singleJex: false,
+          result: path.join(testPath.backupBasePath, "202101021630"),
+          testFile: "testFile.txt",
+          checkFile: path.join(
+            testPath.backupBasePath,
+            "202101021630",
+            "testFile.txt.7z"
+          ),
+          saveBackupInfoCalled: 1,
+        },
+        {
+          zipArchive: "yesone",
+          backupRetention: 1,
+          singleJex: false,
+          result: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+          testFile: "testFile.txt",
+          checkFile: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+          saveBackupInfoCalled: 0,
+        },
+        {
+          zipArchive: "yesone",
+          backupRetention: 2,
+          singleJex: false,
+          result: path.join(testPath.backupBasePath, "202101021630.7z"),
+          testFile: "testFile.txt",
+          checkFile: path.join(testPath.backupBasePath, "202101021630.7z"),
+          saveBackupInfoCalled: 1,
+        },
+        {
+          zipArchive: "no",
+          backupRetention: 1,
+          singleJex: true,
+          result: testPath.backupBasePath,
+          testFile: "testFile.txt",
+          checkFile: path.join(testPath.backupBasePath, "testFile.txt"),
+          saveBackupInfoCalled: 0,
+        },
+        {
+          zipArchive: "no",
+          backupRetention: 2,
+          singleJex: true,
+          result: path.join(testPath.backupBasePath, "202101021630"),
+          testFile: "testFile.txt",
+          checkFile: path.join(
+            testPath.backupBasePath,
+            "202101021630",
+            "testFile.txt"
+          ),
+          saveBackupInfoCalled: 1,
+        },
+        {
+          zipArchive: "yes",
+          backupRetention: 1,
+          singleJex: true,
+          result: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+          testFile: "testFile.txt",
+          checkFile: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+          saveBackupInfoCalled: 0,
+        },
+        {
+          zipArchive: "yes",
+          backupRetention: 2,
+          singleJex: true,
+          result: path.join(testPath.backupBasePath, "202101021630.7z"),
+          testFile: "testFile.txt",
+          checkFile: path.join(testPath.backupBasePath, "202101021630.7z"),
+          saveBackupInfoCalled: 1,
+        },
+        {
+          zipArchive: "yesone",
+          backupRetention: 1,
+          singleJex: true,
+          result: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+          testFile: "testFile.txt",
+          checkFile: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+          saveBackupInfoCalled: 0,
+        },
+        {
+          zipArchive: "yesone",
+          backupRetention: 2,
+          singleJex: true,
+          result: path.join(testPath.backupBasePath, "202101021630.7z"),
+          testFile: "testFile.txt",
+          checkFile: path.join(testPath.backupBasePath, "202101021630.7z"),
+          saveBackupInfoCalled: 1,
+        },
+      ];
 
-    backup.backupBasePath = testPath.backupBasePath;
-    backup.activeBackupPath = testPath.activeBackupJob;
-    backup.backupStartTime = testEpoch;
-    backup.logFile = path.join(testPath.backupBasePath, "test.log");
+      backup.backupBasePath = testPath.backupBasePath;
+      backup.activeBackupPath = testPath.activeBackupJob;
+      backup.backupStartTime = testEpoch;
+      backup.logFile = path.join(testPath.backupBasePath, "test.log");
 
-    /* prettier-ignore */
-    when(spyOnsSettingsValue)
+      /* prettier-ignore */
+      when(spyOnsSettingsValue)
             .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify([])));
-    jest.spyOn(backup, "saveBackupInfo").mockImplementation(() => {});
+      jest.spyOn(backup, "saveBackupInfo").mockImplementation(() => {});
 
-    for (const testCase of testCases) {
-      await createTestStructure();
-      fs.emptyDirSync(testPath.activeBackupJob);
-      const fileName = testCase.testFile;
-      const file = path.join(testPath.activeBackupJob, fileName);
-      fs.writeFileSync(file, "testFile");
-      expect(fs.existsSync(file)).toBe(true);
+      for (const testCase of testCases) {
+        await createTestStructure();
+        fs.emptyDirSync(testPath.activeBackupJob);
+        const fileName = testCase.testFile;
+        const file = path.join(testPath.activeBackupJob, fileName);
+        fs.writeFileSync(file, "testFile");
+        expect(fs.existsSync(file)).toBe(true);
 
-      backup.zipArchive = testCase.zipArchive;
-      backup.backupRetention = testCase.backupRetention;
-      backup.singleJex = testCase.singleJex;
+        backup.zipArchive = testCase.zipArchive;
+        backup.backupRetention = testCase.backupRetention;
+        backup.singleJex = testCase.singleJex;
 
-      const result = await backup.makeBackupSet();
-      expect(result).toBe(testCase.result);
-      expect(fs.existsSync(testCase.checkFile)).toBe(true);
-      expect(backup.saveBackupInfo).toHaveBeenCalledTimes(
-        testCase.saveBackupInfoCalled
-      );
+        const result = await backup.makeBackupSet();
+        expect(result).toBe(testCase.result);
+        expect(fs.existsSync(testCase.checkFile)).toBe(true);
+        expect(backup.saveBackupInfo).toHaveBeenCalledTimes(
+          testCase.saveBackupInfoCalled
+        );
 
-      backup.saveBackupInfo.mockReset();
-      fs.emptyDirSync(testPath.activeBackupJob);
-      expect(fs.existsSync(file)).toBe(false);
-    }
+        backup.saveBackupInfo.mockReset();
+        fs.emptyDirSync(testPath.activeBackupJob);
+        expect(fs.existsSync(file)).toBe(false);
+      }
 
-    spyOnDateNow.mockRestore();
+      spyOnDateNow.mockRestore();
+    });
   });
 
   describe("Backup retention", function () {
