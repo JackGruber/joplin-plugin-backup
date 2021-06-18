@@ -415,15 +415,34 @@ class Backup {
     return zipFile;
   }
 
-  private async moveLogFile(logDst: string) {
+  private async moveLogFile(logDst: string): Promise<boolean> {
     const logfileName = "backup.log";
-    if (fs.existsSync(this.logFile)) {
-      try {
-        fs.moveSync(this.logFile, path.join(logDst, logfileName));
-      } catch (e) {
-        await this.showError("moveLogFile: " + e.message);
-        throw e;
+    let logFile = this.logFile;
+    if (fs.existsSync(logFile)) {
+      if (this.zipArchive === "yesone" || this.password !== null) {
+        if (fs.statSync(logDst).isDirectory()) {
+          logDst = path.join(logDst, "backuplog.7z");
+        }
+        try {
+          const newlogFile = path.join(path.dirname(logFile), logfileName);
+          fs.renameSync(logFile, newlogFile);
+          logFile = newlogFile;
+        } catch (e) {
+          await this.showError("moveLogFile: " + e.message);
+          throw e;
+        }
+        await this.addToZipArchive(logDst, logFile, this.password, ["-sdel"]);
+      } else {
+        try {
+          fs.moveSync(logFile, path.join(logDst, logfileName));
+        } catch (e) {
+          await this.showError("moveLogFile: " + e.message);
+          throw e;
+        }
       }
+      return true;
+    } else {
+      return false;
     }
   }
 
