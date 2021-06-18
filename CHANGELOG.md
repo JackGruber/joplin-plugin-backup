@@ -4,6 +4,7 @@
 
 - Add: Relative path could be used for `Backup Path`
 - Fix: An error with `Only on change`, which was not working properly
+- Add: Option to create zip archive
 
 ## v0.5.3 (2021-04-03)
 
