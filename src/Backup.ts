@@ -6,6 +6,7 @@ import backupLogging from "electron-log";
 import * as fs from "fs-extra";
 import { joplinWrapper } from "./joplinWrapper";
 import { sevenZip } from "./sevenZip";
+import * as moment from "moment";
 
 class Backup {
   private errorDialog: any;
@@ -21,6 +22,7 @@ class Backup {
   private backupStartTime: Date;
   private zipArchive: string;
   private singleJex: boolean;
+  private backupSetName: string;
 
   constructor() {
     this.log = backupLogging;
@@ -197,6 +199,14 @@ class Backup {
 
     this.zipArchive = await joplinWrapper.settingsValue("zipArchive");
     this.singleJex = await joplin.settings.value("singleJex");
+
+    this.backupSetName = await joplinWrapper.settingsValue("backupSetName");
+    if (
+      this.backupSetName.trim() === "" ||
+      (await this.getBackupSetFolderName()).trim() === ""
+    ) {
+      this.backupSetName = "{YYYYMMDDHHmm}";
+    }
 
     await this.enablePassword();
     await this.setActiveBackupPath();
@@ -584,16 +594,11 @@ class Backup {
     }
   }
 
-  private async getBackupSetFolderName(): Promise<string> {
-    // Folder with date for backup retention
-    const now = new Date(Date.now());
-    return (
-      now.getFullYear().toString() +
-      (now.getMonth() + 1).toString().padStart(2, "0") +
-      now.getDate().toString().padStart(2, "0") +
-      now.getHours().toString().padStart(2, "0") +
-      now.getMinutes().toString().padStart(2, "0")
-    );
+  private async getBackupSetFolderName(folder: string = null): Promise<string> {
+    return this.backupSetName.replace(/{(\w+)}/g, (match, groups) => {
+      const now = new Date(Date.now());
+      return moment(now.getTime()).format(groups);
+    });
   }
 
   private async createEmptyFolder(

@@ -58,6 +58,7 @@ describe("Backup", function () {
     await createTestStructure();
     backup = new Backup() as any;
     backup.backupStartTime = new Date();
+    backup.backupSetName = "{YYYYMMDDHHmm}";
 
     spyOnSaveBackupInfo = jest
       .spyOn(backup, "saveBackupInfo")
@@ -220,6 +221,44 @@ describe("Backup", function () {
     });
   });
   describe("Backup set", function () {
+    it(`Name`, async () => {
+      const testEpoch = new Date(2021, 0, 2, 16, 30, 45, 0).getTime();
+      /* prettier-ignore */
+      const spyOnDateNow = jest.spyOn(Date, "now").mockImplementation(() => testEpoch);
+
+      const testCases = [
+        {
+          backupSetName: "{YYYYMMDDHHmm}",
+          expected: "202101021630",
+        },
+        {
+          backupSetName: "Joplinbackup_{YYYYMMDDHHmm}",
+          expected: "Joplinbackup_202101021630",
+        },
+        {
+          backupSetName: "A {YYYY} b {MMDDHHmm}",
+          expected: "A 2021 b 01021630",
+        },
+        {
+          backupSetName: "j{j}j",
+          expected: "jjj",
+        },
+        {
+          backupSetName: "No var",
+          expected: "No var",
+        },
+      ];
+
+      for (const testCase of testCases) {
+        backup.backupSetName = testCase.backupSetName;
+        expect(await backup.getBackupSetFolderName()).toBe(testCase.expected);
+      }
+
+      spyOnDateNow.mockRestore();
+      expect(backup.log.error).toHaveBeenCalledTimes(0);
+      expect(backup.log.warn).toHaveBeenCalledTimes(0);
+    });
+
     it(`Creation`, async () => {
       const testEpoch = new Date(2021, 0, 2, 16, 30, 45, 0);
       const spyOnDateNow = jest
@@ -388,17 +427,6 @@ describe("Backup", function () {
   });
 
   describe("Backup retention", function () {
-    it(`Get Retention folder name`, async () => {
-      const testEpoch = new Date(2021, 0, 2, 16, 30, 45, 0).getTime();
-      const spyOnDateNow = jest
-        .spyOn(Date, "now")
-        .mockImplementation(() => testEpoch);
-      expect(await backup.getBackupSetFolderName()).toBe("202101021630");
-      spyOnDateNow.mockRestore();
-      expect(backup.log.error).toHaveBeenCalledTimes(0);
-      expect(backup.log.warn).toHaveBeenCalledTimes(0);
-    });
-
     it(`Backups < retention`, async () => {
       const backupRetention = 3;
       const folder1 = path.join(testPath.backupBasePath, "202101011630");

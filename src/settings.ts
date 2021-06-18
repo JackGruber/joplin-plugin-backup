@@ -34,7 +34,7 @@ export namespace Settings {
       public: true,
       label: "Keep x backups",
       description:
-        "If more than one verison is configured, date (YYYYMMDDHHMM) folders are created in the Backup Path. ",
+        "If more than one verison is configured, folders are created in the Backup Path acording to backupSetName setting.",
     });
 
     await joplin.settings.registerSetting("backupInterval", {
@@ -128,6 +128,16 @@ export namespace Settings {
       label: "Temporary export path",
       description:
         "Temporary path for note export from Joplin, before they are copyed to backup destination.",
+    });
+
+    await joplin.settings.registerSetting("backupSetName", {
+      value: "{YYYYMMDDHHmm}",
+      type: SettingItemType.String,
+      section: "backupSection",
+      public: true,
+      advanced: true,
+      label: "Backup set name",
+      description: "Name of the backup set if multiple backups are to be keep.",
     });
 
     await joplin.settings.registerSetting("backupVersion", {
