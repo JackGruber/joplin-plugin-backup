@@ -712,6 +712,7 @@ class Backup {
   }
 
   private async moveFinishedBackup(zipFile: string = null): Promise<string> {
+    this.log.info("Move finished backup");
     let backupDestination = null;
     if (this.backupRetention > 1) {
       const backupSetFolder = await this.getBackupSetFolderName();
@@ -721,10 +722,10 @@ class Backup {
       const src = zipFile ? zipFile : this.activeBackupPath;
 
       if (fs.existsSync(backupDestination)) {
+        this.log.warn(`Backupset already exists: ${backupDestination}`);
         let ext = "";
         let name = path.basename(backupDestination);
         if (fs.statSync(backupDestination).isFile()) {
-          console.log("OK");
           ext = path.extname(backupDestination);
           name = name.replace(ext, "");
         }
@@ -738,6 +739,7 @@ class Backup {
           );
         } while (fs.existsSync(newBackupDestination));
         backupDestination = newBackupDestination;
+        this.log.warn(`Backupset new name: ${backupDestination}`);
       }
 
       try {
