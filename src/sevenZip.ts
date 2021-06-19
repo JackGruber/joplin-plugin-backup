@@ -4,6 +4,7 @@ import * as _7z from "node-7z";
 import * as sevenBin from "7zip-bin";
 import { joplinWrapper } from "./joplinWrapper";
 import * as path from "path";
+import { exec } from "child_process";
 
 let pathTo7zip = sevenBin.path7za;
 
@@ -14,6 +15,18 @@ export namespace sevenZip {
       "7zip-bin",
       pathTo7zip
     );
+  }
+
+  export async function setExecutionFlag() {
+    console.log(process.platform);
+    if (process.platform !== "win32") {
+      exec(`chmod +x ${pathTo7zip}`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+      });
+    }
   }
 
   async function addPassword(
