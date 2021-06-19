@@ -18,7 +18,6 @@ export namespace sevenZip {
   }
 
   export async function setExecutionFlag() {
-    console.log(process.platform);
     if (process.platform !== "win32") {
       exec(`chmod +x ${pathTo7zip}`, (error, stdout, stderr) => {
         if (error) {
