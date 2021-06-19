@@ -637,7 +637,7 @@ describe("Backup", function () {
             testCase.logDst,
             testCase.password
           );
-          expect(fileList.map((f) => f.name)).toContain(testCase.testLogFile);
+          expect(fileList.map((f) => f.file)).toContain(testCase.testLogFile);
         } else {
           expect(fs.existsSync(testCase.testLogFile)).toBe(true);
         }

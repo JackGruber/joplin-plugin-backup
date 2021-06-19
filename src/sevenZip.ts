@@ -1,43 +1,52 @@
 // https://sevenzip.osdn.jp/chm/cmdline/exit_codes.htm
 // https://sevenzip.osdn.jp/chm/cmdline/commands/index.htm
-import * as _7z from "7zip-min";
+import * as _7z from "node-7z";
+import * as sevenBin from "7zip-bin";
 import { joplinWrapper } from "./joplinWrapper";
 import * as path from "path";
 
+let pathTo7zip = sevenBin.path7za;
+
 export namespace sevenZip {
   export async function updateBinPath() {
-    const path7z = _7z.getPath7za();
-    _7z.setPath7za(
-      path.join(await joplinWrapper.installationDir(), "7zip-bin", path7z)
+    pathTo7zip = path.join(
+      await joplinWrapper.installationDir(),
+      "7zip-bin",
+      pathTo7zip
     );
   }
 
-  async function getPasswordForOptions(password: string): Promise<string> {
-    return `-p"${password}"`;
+  async function addPassword(
+    _7zOptions: any,
+    password: string
+  ): Promise<Object> {
+    if (!_7zOptions.method) {
+      _7zOptions.method = [];
+    }
+    _7zOptions.password = password;
+    return _7zOptions;
   }
 
   export async function add(
     archive: string,
     src: string,
     password: string = null,
-    options: string[] = null
+    options: Object = {}
   ): Promise<any> {
-    let _7zOptions = ["a", archive, src];
-
+    let _7zOptions: any = { $bin: pathTo7zip };
     if (options) {
-      _7zOptions = [..._7zOptions, ...options];
+      _7zOptions = { ..._7zOptions, ...options };
     }
 
-    if (password) {
-      _7zOptions.push(await getPasswordForOptions(password));
-      _7zOptions.push("-mhe");
+    if (password !== null) {
+      _7zOptions = await addPassword(_7zOptions, password);
+      _7zOptions.method.push("he");
     }
 
     const promise = new Promise((resolve, reject) => {
-      _7z.cmd(_7zOptions, (err) => {
-        if (err) return reject(err);
-        resolve(true);
-      });
+      const process = _7z.add(archive, src, _7zOptions);
+      process.on("end", () => resolve(true));
+      process.on("error", reject);
     });
 
     return await promise
@@ -51,19 +60,24 @@ export namespace sevenZip {
 
   export async function list(
     archive: string,
-    password: string = null
+    password: string = null,
+    options: Object = {}
   ): Promise<any> {
-    let _7zOptions = ["l", archive, "-slt", "-ba"];
+    let _7zOptions: any = { $bin: pathTo7zip };
+    if (options) {
+      _7zOptions = { ..._7zOptions, ...options };
+    }
 
-    if (password) {
-      _7zOptions.push(await getPasswordForOptions(password));
+    if (password !== null) {
+      _7zOptions = await addPassword(_7zOptions, password);
     }
 
     const promise = new Promise((resolve, reject) => {
-      _7z.cmd(_7zOptions, (err, result) => {
-        if (err) return reject(err);
-        resolve(result);
-      });
+      const files = [];
+      const process = _7z.list(archive, _7zOptions);
+      process.on("data", (file) => files.push(file));
+      process.on("end", () => resolve(files));
+      process.on("error", reject);
     });
 
     return await promise
@@ -75,23 +89,56 @@ export namespace sevenZip {
       });
   }
 
-  async function hash() {}
+  export async function passwordProtected(
+    archive: string,
+    password: string = null,
+    options: Object = {}
+  ): Promise<any> {
+    let _7zOptions: any = { $bin: pathTo7zip };
+    if (options) {
+      _7zOptions = { ..._7zOptions, ...options };
+    }
+
+    _7zOptions = await addPassword(_7zOptions, "WrongPasswordForTesting");
+
+    const promise = new Promise((resolve, reject) => {
+      const tests = [];
+      const process = _7z.test(archive, _7zOptions);
+      process.on("data", (data) => tests.push(data));
+      process.on("end", () => resolve(tests));
+      process.on("error", reject);
+    });
+
+    return await promise
+      .then((data) => {
+        return false;
+      })
+      .catch((err) => {
+        if (archive == err.message) return true;
+        else return err.message;
+      });
+  }
 
   export async function test(
     archive: string,
-    password: string = null
+    password: string = null,
+    options: Object = {}
   ): Promise<any> {
-    let _7zOptions = ["t", archive];
+    let _7zOptions: any = { $bin: pathTo7zip };
+    if (options) {
+      _7zOptions = { ..._7zOptions, ...options };
+    }
 
-    if (password) {
-      _7zOptions.push(await getPasswordForOptions(password));
+    if (password !== null) {
+      _7zOptions = await addPassword(_7zOptions, password);
     }
 
     const promise = new Promise((resolve, reject) => {
-      _7z.cmd(_7zOptions, (err, result) => {
-        if (err) return reject(err);
-        resolve(result);
-      });
+      const tests = [];
+      const process = _7z.test(archive, _7zOptions);
+      process.on("data", (data) => tests.push(data));
+      process.on("end", () => resolve(tests));
+      process.on("error", reject);
     });
 
     return await promise
