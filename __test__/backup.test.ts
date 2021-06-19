@@ -324,6 +324,7 @@ describe("Backup", function () {
         {
           zipArchive: "no",
           backupRetention: 1,
+          password: null,
           singleJex: false,
           result: testPath.backupBasePath,
           testFile: "testFile.txt",
@@ -332,7 +333,18 @@ describe("Backup", function () {
         },
         {
           zipArchive: "no",
+          backupRetention: 1,
+          password: "secret",
+          singleJex: false,
+          result: testPath.backupBasePath,
+          testFile: "testFile.txt",
+          checkFile: path.join(testPath.backupBasePath, "testFile.txt.7z"),
+          saveBackupInfoCalled: 0,
+        },
+        {
+          zipArchive: "no",
           backupRetention: 2,
+          password: null,
           singleJex: false,
           result: path.join(testPath.backupBasePath, "202101021630"),
           testFile: "testFile.txt",
@@ -346,6 +358,7 @@ describe("Backup", function () {
         {
           zipArchive: "yes",
           backupRetention: 1,
+          password: null,
           singleJex: false,
           result: testPath.backupBasePath,
           testFile: "testFile.txt",
@@ -355,6 +368,7 @@ describe("Backup", function () {
         {
           zipArchive: "yes",
           backupRetention: 2,
+          password: null,
           singleJex: false,
           result: path.join(testPath.backupBasePath, "202101021630"),
           testFile: "testFile.txt",
@@ -368,6 +382,7 @@ describe("Backup", function () {
         {
           zipArchive: "yesone",
           backupRetention: 1,
+          password: null,
           singleJex: false,
           result: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
           testFile: "testFile.txt",
@@ -377,6 +392,7 @@ describe("Backup", function () {
         {
           zipArchive: "yesone",
           backupRetention: 2,
+          password: null,
           singleJex: false,
           result: path.join(testPath.backupBasePath, "202101021630.7z"),
           testFile: "testFile.txt",
@@ -386,6 +402,7 @@ describe("Backup", function () {
         {
           zipArchive: "no",
           backupRetention: 1,
+          password: null,
           singleJex: true,
           result: testPath.backupBasePath,
           testFile: "testFile.txt",
@@ -395,6 +412,7 @@ describe("Backup", function () {
         {
           zipArchive: "no",
           backupRetention: 2,
+          password: null,
           singleJex: true,
           result: path.join(testPath.backupBasePath, "202101021630"),
           testFile: "testFile.txt",
@@ -408,6 +426,7 @@ describe("Backup", function () {
         {
           zipArchive: "yes",
           backupRetention: 1,
+          password: null,
           singleJex: true,
           result: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
           testFile: "testFile.txt",
@@ -417,6 +436,7 @@ describe("Backup", function () {
         {
           zipArchive: "yes",
           backupRetention: 2,
+          password: null,
           singleJex: true,
           result: path.join(testPath.backupBasePath, "202101021630.7z"),
           testFile: "testFile.txt",
@@ -426,6 +446,17 @@ describe("Backup", function () {
         {
           zipArchive: "yesone",
           backupRetention: 1,
+          password: null,
+          singleJex: true,
+          result: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+          testFile: "testFile.txt",
+          checkFile: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+          saveBackupInfoCalled: 0,
+        },
+        {
+          zipArchive: "yesone",
+          backupRetention: 1,
+          password: "secret",
           singleJex: true,
           result: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
           testFile: "testFile.txt",
@@ -435,6 +466,7 @@ describe("Backup", function () {
         {
           zipArchive: "yesone",
           backupRetention: 2,
+          password: null,
           singleJex: true,
           result: path.join(testPath.backupBasePath, "202101021630.7z"),
           testFile: "testFile.txt",
@@ -464,6 +496,8 @@ describe("Backup", function () {
         backup.zipArchive = testCase.zipArchive;
         backup.backupRetention = testCase.backupRetention;
         backup.singleJex = testCase.singleJex;
+        backup.passwordEnabled = testCase.password === null ? false : true;
+        backup.password = testCase.password;
 
         const result = await backup.makeBackupSet();
         expect(result).toBe(testCase.result);
@@ -471,6 +505,10 @@ describe("Backup", function () {
         expect(backup.saveBackupInfo).toHaveBeenCalledTimes(
           testCase.saveBackupInfoCalled
         );
+        const pwCheck = await sevenZip.passwordProtected(testCase.checkFile);
+        if (backup.passwordEnabled === true || testCase.zipArchive !== "no") {
+          expect(pwCheck).toBe(backup.passwordEnabled);
+        }
 
         backup.saveBackupInfo.mockReset();
         fs.emptyDirSync(testPath.activeBackupJob);
