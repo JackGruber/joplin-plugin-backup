@@ -1,6 +1,6 @@
 # Changelog
 
-## Not released
+## v0.9.0 [pre-release] (2021-06-19)
 
 - Add: Relative path could be used for `Backup Path`
 - Fix: An error with `Only on change`, which was not working properly
