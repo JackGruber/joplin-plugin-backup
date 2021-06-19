@@ -18,7 +18,6 @@ class Backup {
   private timer: any;
   private passwordEnabled: boolean;
   private password: string;
-  private passwordRepeat: string;
   private backupStartTime: Date;
   private zipArchive: string;
   private singleJex: boolean;
@@ -102,22 +101,26 @@ class Backup {
   }
 
   private async enablePassword() {
-    if ((await this.checkPassword()) === 1) {
+    const usePassword = await joplinWrapper.settingsValue("usePassword");
+    if (usePassword === true && (await this.checkPassword()) === 1) {
       this.passwordEnabled = true;
+      this.password = await joplinWrapper.settingsValue("password");
     } else {
       this.passwordEnabled = false;
       this.password = null;
+
+      await joplin.settings.setValue("password", "password");
+      await joplin.settings.setValue("passwordRepeat", "repeat12");
     }
   }
 
   private async checkPassword(): Promise<number> {
-    if (
-      this.password === "" ||
-      this.password === null ||
-      this.password === undefined
-    ) {
+    if ((await joplinWrapper.settingsValue("usePassword")) === false) {
       return 0; // Not set
-    } else if (this.password === this.passwordRepeat) {
+    } else if (
+      (await joplinWrapper.settingsValue("password")) ===
+      (await joplinWrapper.settingsValue("passwordRepeat"))
+    ) {
       return 1; // OK
     } else {
       return -1; // PWs not OK
@@ -195,11 +198,6 @@ class Backup {
     this.log.verbose("loadSettings");
     await this.loadBackupPath();
     this.backupRetention = await joplinWrapper.settingsValue("backupRetention");
-
-    this.passwordRepeat = (
-      await joplinWrapper.settingsValue("passwordRepeat")
-    ).trim();
-    this.password = (await joplinWrapper.settingsValue("password")).trim();
 
     this.zipArchive = await joplinWrapper.settingsValue("zipArchive");
     this.singleJex = await joplin.settings.value("singleJex");
@@ -298,7 +296,10 @@ class Backup {
       } else {
         this.log.info("Enable password protection: " + this.passwordEnabled);
       }
-
+      this.log.verbose(`Backup path: ${this.backupBasePath}`);
+      this.log.verbose(
+        `Active backup path (export path): ${this.activeBackupPath}`
+      );
       await this.createEmptyFolder(this.activeBackupPath, "");
 
       await this.backupProfileData();
@@ -329,7 +330,7 @@ class Backup {
 
   private async makeBackupSet(): Promise<string> {
     let backupDst = "";
-    if (this.zipArchive === "no") {
+    if (this.zipArchive === "no" && this.passwordEnabled === false) {
       if (this.backupRetention > 1) {
         backupDst = await this.moveFinishedBackup();
         await this.deleteOldBackupSets(
