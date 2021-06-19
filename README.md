@@ -31,16 +31,17 @@ The backup started manually by `Create backup` respects all the settings except 
 
 Go to `Tools > Options > Backup`
 
-| Option                      | Description                                                                                                               | Default |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------- |
-| `Backup path`               | Where to save the backups to. <br>This path is exclusive for the Joplin backups, there should be no other data in it!     |         |
-| `Single JEX`                | Create only one JEX file for all notebooks                                                                                | `false` |
-| `Keep x backups`            | How many backups should be kept                                                                                           | `1`     |
-| `Backups interval in hours` | Create a backup every X hours                                                                                             | `24`    |
-| `Only on change`            | Creates a backup at the specified backup interval only if there was a change to a `note`, `tag`, `resource` or `notebook` | `false` |
-| `Logfile`                   | Loglevel for backup.log                                                                                                   | `error` |
-| `Create zip archive`        | Save backup data in a Zip archive                                                                                         | `No`    |
-| `Temporary export path`     | The data is first exported into this path before it is copied to the backup `Backup path`.                                | ``      |
+| Option                      | Description                                                                                                                                                              | Default          |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------- |
+| `Backup path`               | Where to save the backups to. <br>This path is exclusive for the Joplin backups, there should be no other data in it!                                                    |                  |
+| `Single JEX`                | Create only one JEX file for all notebooks                                                                                                                               | `false`          |
+| `Keep x backups`            | How many backups should be kept                                                                                                                                          | `1`              |
+| `Backups interval in hours` | Create a backup every X hours                                                                                                                                            | `24`             |
+| `Only on change`            | Creates a backup at the specified backup interval only if there was a change to a `note`, `tag`, `resource` or `notebook`                                                | `false`          |
+| `Logfile`                   | Loglevel for backup.log                                                                                                                                                  | `error`          |
+| `Create zip archive`        | Save backup data in a Zip archive                                                                                                                                        | `No`             |
+| `Temporary export path`     | The data is first exported into this path before it is copied to the backup `Backup path`.                                                                               | ``               |
+| `Backup set name`           | Name of the backup set if multiple backups are to be keep. [Available moment tokens](https://momentjs.com/docs/#/displaying/format/), which can be used with `{<TOKEN>}` | `{YYYYMMDDHHmm}` |
 
 ## Keyboard Shortcuts
 
