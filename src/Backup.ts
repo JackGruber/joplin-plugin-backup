@@ -274,6 +274,9 @@ class Backup {
 
   public async start(showDoneMsg: boolean = false) {
     this.log.verbose("start");
+
+    await this.stopTimer();
+
     this.backupStartTime = new Date();
     await this.loadSettings();
 
@@ -321,6 +324,7 @@ class Backup {
     }
 
     this.backupStartTime = null;
+    await this.startTimer();
   }
 
   private async makeBackupSet(): Promise<string> {
@@ -576,6 +580,11 @@ class Backup {
       }
     }
     return lastUpdate;
+  }
+
+  public async stopTimer() {
+    clearTimeout(this.timer);
+    this.timer = null;
   }
 
   public async startTimer() {
