@@ -151,8 +151,10 @@ describe("Backup", function () {
       expect(backup.log.error).toHaveBeenCalledTimes(0);
       expect(backup.log.warn).toHaveBeenCalledTimes(0);
     });
+  });
 
-    it(`moveFinishedBackup no retention`, async () => {
+  describe("moveFinishedBackup", function () {
+    it(`no retention`, async () => {
       const emptyFolder = path.join(testPath.activeBackupJob, "emptyFolder");
       const emptyFolderCheck = path.join(
         testPath.backupBasePath,
@@ -184,7 +186,7 @@ describe("Backup", function () {
       expect(backup.log.warn).toHaveBeenCalledTimes(0);
     });
 
-    it(`moveFinishedBackup retention > 1`, async () => {
+    it(`retention > 1`, async () => {
       const backupDst = path.join(testPath.backupBasePath, "202101021630");
       const testEpoch = new Date(2021, 0, 2, 16, 30, 45, 0).getTime();
       const spyOnDateNow = jest
@@ -219,6 +221,58 @@ describe("Backup", function () {
       expect(backup.log.warn).toHaveBeenCalledTimes(0);
 
       spyOnDateNow.mockRestore();
+    });
+
+    it(`retention > 1, folder exist`, async () => {
+      backup.backupBasePath = testPath.backupBasePath;
+      backup.activeBackupPath = testPath.activeBackupJob;
+      backup.backupSetName = "JoplinBackupSet";
+      backup.backupRetention = 2;
+
+      const expected = path.join(
+        testPath.backupBasePath,
+        backup.backupSetName + " (1)"
+      );
+
+      fs.emptyDirSync(testPath.activeBackupJob);
+      const existingBackupSet = path.join(
+        testPath.backupBasePath,
+        backup.backupSetName
+      );
+      fs.emptyDirSync(existingBackupSet);
+      expect(fs.existsSync(existingBackupSet)).toBe(true);
+
+      expect(fs.existsSync(expected)).toBe(false);
+      expect(await backup.moveFinishedBackup()).toBe(expected);
+      expect(fs.existsSync(expected)).toBe(true);
+    });
+
+    it(`retention > 1, file exist`, async () => {
+      backup.backupBasePath = testPath.backupBasePath;
+      backup.activeBackupPath = testPath.activeBackupJob;
+      backup.backupSetName = "JoplinBackupSet";
+      backup.backupRetention = 2;
+
+      const zipFile = path.join(testPath.backupBasePath, "test.7z");
+      fs.writeFileSync(zipFile, "backup set");
+      expect(fs.existsSync(zipFile)).toBe(true);
+
+      const expected = path.join(
+        testPath.backupBasePath,
+        backup.backupSetName + " (1).7z"
+      );
+
+      fs.emptyDirSync(testPath.activeBackupJob);
+      const existingBackupSet = path.join(
+        testPath.backupBasePath,
+        backup.backupSetName + ".7z"
+      );
+      fs.writeFileSync(existingBackupSet, "backup set");
+      expect(fs.existsSync(existingBackupSet)).toBe(true);
+
+      expect(fs.existsSync(expected)).toBe(false);
+      expect(await backup.moveFinishedBackup(zipFile)).toBe(expected);
+      expect(fs.existsSync(expected)).toBe(true);
     });
   });
   describe("Backup set", function () {
