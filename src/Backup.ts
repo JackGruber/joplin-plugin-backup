@@ -719,6 +719,27 @@ class Backup {
         ? path.join(this.backupBasePath, backupSetFolder + ".7z")
         : path.join(this.backupBasePath, backupSetFolder);
       const src = zipFile ? zipFile : this.activeBackupPath;
+
+      if (fs.existsSync(backupDestination)) {
+        let ext = "";
+        let name = path.basename(backupDestination);
+        if (fs.statSync(backupDestination).isFile()) {
+          console.log("OK");
+          ext = path.extname(backupDestination);
+          name = name.replace(ext, "");
+        }
+        let nr = 0;
+        let newBackupDestination = backupDestination;
+        do {
+          nr++;
+          newBackupDestination = path.join(
+            path.dirname(backupDestination),
+            `${name} (${nr})${ext}`
+          );
+        } while (fs.existsSync(newBackupDestination));
+        backupDestination = newBackupDestination;
+      }
+
       try {
         fs.moveSync(src, backupDestination);
       } catch (e) {
