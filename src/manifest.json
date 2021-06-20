@@ -8,5 +8,5 @@
   "author": "JackGruber",
   "homepage_url": "https://github.com/JackGruber/joplin-plugin-backup/blob/master/README.md",
   "repository_url": "https://github.com/JackGruber/joplin-plugin-backup",
-  "keywords": ["backup", "jex", "export", "zip", "7zip"]
+  "keywords": ["backup", "jex", "export", "zip", "7zip", "encrypted"]
 }
