@@ -1,5 +1,11 @@
 # Changelog
 
+## not released
+
+## v1.0.0 [pre-release] (2021-06-20)
+
+- Add: Option for encrypted backups
+
 > ❗️ Requires at least Joplin `2.1.3` ❗️
 
 ## v0.9.0 [pre-release] (2021-06-19)
