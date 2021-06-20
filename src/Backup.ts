@@ -43,6 +43,7 @@ class Backup {
     await this.startTimer();
     await this.upgradeBackupTargetVersion();
     await sevenZip.updateBinPath();
+    await sevenZip.setExecutionFlag();
   }
 
   private async upgradeBackupTargetVersion() {
