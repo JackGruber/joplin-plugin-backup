@@ -58,11 +58,20 @@ export namespace Settings {
         "Creates a backup at the specified backup interval only if there was a change.",
     });
 
+    await joplin.settings.registerSetting("usePassword", {
+      value: false,
+      type: SettingItemType.Bool,
+      section: "backupSection",
+      public: true,
+      label: "Password protected backups",
+      description: "Protect the backups via encrypted Zip archive.",
+    });
+
     await joplin.settings.registerSetting("password", {
       value: "",
       type: SettingItemType.String,
       section: "backupSection",
-      public: false,
+      public: true,
       secure: true,
       label: "Password",
       description:
@@ -73,7 +82,7 @@ export namespace Settings {
       value: "",
       type: SettingItemType.String,
       section: "backupSection",
-      public: false,
+      public: true,
       secure: true,
       label: "Password (Repeat)",
       description: "Repeat password to validate.",
@@ -116,8 +125,8 @@ export namespace Settings {
         yes: "Yes",
         yesone: "Yes, one archive",
       },
-      //description:
-      //  "If a password is set, a zip archive is always created, the option no then no longer has any effect.",
+      description:
+        "If a password protected backups is set, a zip archive is always created.",
     });
 
     await joplin.settings.registerSetting("exportPath", {
