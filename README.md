@@ -24,35 +24,39 @@ A plugin to extend Joplin with a manual and automatic backup function.
 
 First configure the Plugin under `Tools > Options > Backup`!
 
-Backups can be created manually with the command `Tools > Create Backup` or are created automatically based on the configured interval.
-The backup started manually by `Create Backup` respects all the settings except for the `Backups interval in hours`.
+Backups can be created manually with the command `Tools > Create backup` or are created automatically based on the configured interval.
+The backup started manually by `Create backup` respects all the settings except for the `Backups interval in hours`.
 
 ## Options
 
 Go to `Tools > Options > Backup`
 
-| Option | Description | Default |
-| --- | --- | --- |
-| `Backup Path` | Where to save the backups to. <br>This path is exclusive for the Joplin backups, there should be no other data in it! | |
-| `Single JEX` | Create only one JEX file for all notebooks | `false` |
-| `Keep x Backups` | How many backups should be kept | `1` |
-| `Backups interval in hours` | Create a backup every X hours | `24` |
-| `Only on change` | Creates a backup at the specified backup interval only if there was a change to a `note`, `tag`, `resource` or `notebook` | `false` |
-| `Logfile` | Loglevel for backup.log | `error` |
+| Option                       | Description                                                                                                                                                              | Default          |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------- |
+| `Backup path`                | Where to save the backups to. <br>This path is exclusive for the Joplin backups, there should be no other data in it!                                                    |                  |
+| `Single JEX`                 | Create only one JEX file for all notebooks                                                                                                                               | `false`          |
+| `Keep x backups`             | How many backups should be kept                                                                                                                                          | `1`              |
+| `Backups interval in hours`  | Create a backup every X hours                                                                                                                                            | `24`             |
+| `Only on change`             | Creates a backup at the specified backup interval only if there was a change to a `note`, `tag`, `resource` or `notebook`                                                | `false`          |
+| `Password protected backups` | Protect the backups via encrypted Zip archive.                                                                                                                           | `false`          |
+| `Logfile`                    | Loglevel for backup.log                                                                                                                                                  | `error`          |
+| `Create zip archive`         | Save backup data in a Zip archive                                                                                                                                        | `No`             |
+| `Temporary export path`      | The data is first exported into this path before it is copied to the backup `Backup path`.                                                                               | ``               |
+| `Backup set name`            | Name of the backup set if multiple backups are to be keep. [Available moment tokens](https://momentjs.com/docs/#/displaying/format/), which can be used with `{<TOKEN>}` | `{YYYYMMDDHHmm}` |
 
 ## Keyboard Shortcuts
 
 Under `Options > Keyboard Shortcuts` you can assign a keyboard shortcut for the following commands:
 
-- `Create Backup`
+- `Create backup`
 
-## What is backuped
+## What is backed up
 
-- Notebooks as JEX export (empty notbooks are not backed up)
+- Notebooks as JEX export (Empty notbooks are not backed up)
 - The `settings.json` (Joplin settings)
-- The `keymap-desktop.json` (Keyboard Shortcuts)
-- The `userchrome.css` (Your Joplin Customization)
-- The `userstyle.css` (Your Joplin Customization)
+- The `keymap-desktop.json` (Keyboard shortcuts)
+- The `userchrome.css` (Your Joplin customization)
+- The `userstyle.css` (Your Joplin customization)
 - The `templates` folder (Note templates)
 
 ## Restore
@@ -67,6 +71,7 @@ The exact path can be found in Joplin under `Tools > Options > Generla`:
 ### Notes
 
 The notes are imported via `File > Import > JEX - Joplin Export File`.
+
 > Individual notes cannot be restored from the JEX file!
 
 The notes are imported additionally, no check for duplicates is performed.

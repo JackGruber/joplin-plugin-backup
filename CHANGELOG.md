@@ -1,5 +1,24 @@
 # Changelog
 
+## not released
+
+## v1.0.1 (2021-07-03)
+
+Release for Joplin plugin manager
+
+## v1.0.0 [pre-release] (2021-06-20)
+
+- Add: Option for encrypted backups
+
+> ❗️ Requires at least Joplin `2.1.3` ❗️
+
+## v0.9.0 [pre-release] (2021-06-19)
+
+- Add: Relative path could be used for `Backup Path`
+- Fix: An error with `Only on change`, which was not working properly
+- Add: Option to create zip archive
+- Add: Option to specify the `Backup set name` if multiple backups are to be keep.
+
 ## v0.5.3 (2021-04-03)
 
 - Add: Backup settings.json

@@ -1,23 +1,31 @@
 {
   "name": "joplin-plugin-backup",
-  "version": "0.5.3",
+  "version": "1.0.1",
   "scripts": {
     "dist": "webpack --joplin-plugin-config buildMain && webpack --joplin-plugin-config buildExtraScripts && webpack --joplin-plugin-config createArchive",
-    "prepare": "npm run dist",
-    "update": "npm install -g generator-joplin && yo joplin --update"
+    "prepare": "npm run dist && husky install",
+    "update": "npm install -g generator-joplin && yo joplin --update",
+    "test": "jest"
   },
   "license": "MIT",
   "keywords": [
     "joplin-plugin"
   ],
   "devDependencies": {
+    "@types/jest": "^26.0.23",
     "@types/node": "^14.0.14",
     "chalk": "^4.1.0",
     "copy-webpack-plugin": "^6.1.0",
     "fs-extra": "^9.0.1",
     "glob": "^7.1.6",
+    "husky": "^6.0.0",
+    "jest": "^27.0.4",
+    "jest-when": "^3.3.1",
+    "lint-staged": "^11.0.0",
     "on-build-webpack": "^0.1.0",
+    "prettier": "2.3.0",
     "tar": "^6.0.5",
+    "ts-jest": "^27.0.2",
     "ts-loader": "^7.0.5",
     "typescript": "^3.9.3",
     "webpack": "^4.43.0",
@@ -25,9 +33,34 @@
     "yargs": "^16.2.0"
   },
   "browser": {
-    "fs": false
+    "fs": false,
+    "child_process": false
   },
   "dependencies": {
-    "electron-log": "^4.3.1"
+    "7zip-bin": "^5.1.1",
+    "electron-log": "^4.3.1",
+    "moment": "^2.29.1",
+    "node-7z": "^2.1.2"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "moduleNameMapper": {
+      "^api$": "<rootDir>/api",
+      "^api/types$": "<rootDir>/api/types"
+    },
+    "globals": {
+      "joplin": true
+    }
   }
 }
