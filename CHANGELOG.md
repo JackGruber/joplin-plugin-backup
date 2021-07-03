@@ -2,6 +2,10 @@
 
 ## not released
 
+## v1.0.1 (2021-07-03)
+
+Release for Joplin plugin manager
+
 ## v1.0.0 [pre-release] (2021-06-20)
 
 - Add: Option for encrypted backups
