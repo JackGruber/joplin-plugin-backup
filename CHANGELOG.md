@@ -2,6 +2,8 @@
 
 ## not released
 
+- Improved: Use of moments token
+
 ## v1.0.1 (2021-07-03)
 
 Release for Joplin plugin manager

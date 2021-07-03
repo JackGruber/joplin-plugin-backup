@@ -629,7 +629,7 @@ class Backup {
   }
 
   private async getBackupSetFolderName(folder: string = null): Promise<string> {
-    return this.backupSetName.replace(/{(\w+)}/g, (match, groups) => {
+    return this.backupSetName.replace(/{([^}]+)}/g, (match, groups) => {
       const now = new Date(Date.now());
       return moment(now.getTime()).format(groups);
     });
