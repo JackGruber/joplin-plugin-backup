@@ -905,7 +905,19 @@ class Backup {
     backupPath: string,
     backupRetention: number
   ) {
+    this.log.verbose("deleteOldBackupSets");
     let info = JSON.parse(await joplinWrapper.settingsValue("backupInfo"));
+    let setOk = [];
+    for (let check of info) {
+      const folder = path.join(backupPath, check.name);
+      if (fs.existsSync(folder)) {
+        setOk.push(check);
+      } else {
+        this.log.verbose("Backup set " + folder + " no longer exist");
+      }
+    }
+    await joplinWrapper.settingsSetValue("backupInfo", JSON.stringify(setOk));
+    info = JSON.parse(await joplinWrapper.settingsValue("backupInfo"));
     if (info.length > backupRetention) {
       info.sort((a, b) => b.date - a.date);
     }
@@ -914,6 +926,8 @@ class Backup {
       const del = info.splice(backupRetention, 1);
       const folder = path.join(backupPath, del[0].name);
       if (fs.existsSync(folder)) {
+        this.log.verbose("Remove backup set " + folder);
+
         try {
           fs.rmdirSync(folder, {
             recursive: true,
