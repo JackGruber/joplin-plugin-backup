@@ -273,6 +273,35 @@ class Backup {
     }
   }
 
+  private async logSettings(showDoneMsg: boolean) {
+    const settings = [
+      "path",
+      "singleJex",
+      "backupRetention",
+      "backupInterval",
+      "onlyOnChange",
+      "usePassword",
+      "lastBackup",
+      "fileLogLevel",
+      "zipArchive",
+      "exportPath",
+      "backupSetName",
+      "backupInfo",
+    ];
+
+    this.log.verbose("Plugin settings:");
+    for (let setting of settings) {
+      this.log.verbose(setting + ": " + (await joplin.settings.value(setting)));
+    }
+    this.log.verbose("activeBackupPath: " + this.activeBackupPath);
+    this.log.verbose("backupBasePath: " + this.backupBasePath);
+    this.log.verbose("logFile: " + this.logFile);
+    this.log.verbose("showDoneMsg: " + showDoneMsg);
+    this.log.verbose(
+      "installationDir: " + (await joplin.plugins.installationDir())
+    );
+  }
+
   public async start(showDoneMsg: boolean = false) {
     if (this.backupStartTime === null) {
       this.backupStartTime = new Date();
@@ -284,6 +313,8 @@ class Backup {
       await this.stopTimer();
 
       await this.loadSettings();
+
+      await this.logSettings(showDoneMsg);
 
       if (this.backupBasePath === null) {
         await this.showError(
