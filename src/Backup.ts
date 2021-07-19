@@ -465,7 +465,11 @@ class Backup {
       zipOptions = { ...zipOptions, ...options };
     }
     zipOptions.method = [];
-    zipOptions.method.push("x" + this.compressionLevel);
+    if (this.compressionLevel) {
+      zipOptions.method.push("x" + this.compressionLevel);
+    } else {
+      zipOptions.method.push("x0");
+    }
 
     const status = await sevenZip.add(zipFile, addFile, password, zipOptions);
     if (status !== true) {
