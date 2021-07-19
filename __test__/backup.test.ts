@@ -287,6 +287,10 @@ describe("Backup", function () {
           expected: "202101021630",
         },
         {
+          backupSetName: "{YYYY-MM-DD HH:mm}",
+          expected: "2021-01-02 16:30",
+        },
+        {
           backupSetName: "Joplinbackup_{YYYYMMDDHHmm}",
           expected: "Joplinbackup_202101021630",
         },

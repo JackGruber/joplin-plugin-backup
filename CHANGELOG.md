@@ -2,6 +2,13 @@
 
 ## not released
 
+## v1.0.2 (2021-07-19)
+
+- Improved: Use of moments token
+- Fix: #16 Prevent multiple simultaneous backup runs
+- Add: #11 Make zip compression level selectable
+- Fix: Delete old backup set information, if the backup set no longer exists
+
 ## v1.0.1 (2021-07-03)
 
 Release for Joplin plugin manager

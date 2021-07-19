@@ -20,6 +20,7 @@ class Backup {
   private password: string;
   private backupStartTime: Date;
   private zipArchive: string;
+  private compressionLevel: number;
   private singleJex: boolean;
   private backupSetName: string;
 
@@ -43,6 +44,7 @@ class Backup {
     await this.upgradeBackupTargetVersion();
     await sevenZip.updateBinPath();
     await sevenZip.setExecutionFlag();
+    this.backupStartTime = null;
   }
 
   private async upgradeBackupTargetVersion() {
@@ -201,6 +203,9 @@ class Backup {
     this.backupRetention = await joplinWrapper.settingsValue("backupRetention");
 
     this.zipArchive = await joplinWrapper.settingsValue("zipArchive");
+    this.compressionLevel = await joplinWrapper.settingsValue(
+      "compressionLevel"
+    );
     this.singleJex = await joplin.settings.value("singleJex");
 
     this.backupSetName = await joplinWrapper.settingsValue("backupSetName");
@@ -239,6 +244,7 @@ class Backup {
     await joplin.views.dialogs.setButtons(this.errorDialog, [{ id: "ok" }]);
     await joplin.views.dialogs.setHtml(this.errorDialog, html.join("\n"));
     await joplin.views.dialogs.open(this.errorDialog);
+    this.backupStartTime = null;
   }
 
   public async setActiveBackupPath() {
@@ -271,62 +277,103 @@ class Backup {
     }
   }
 
-  public async start(showDoneMsg: boolean = false) {
-    this.log.verbose("start");
+  private async logSettings(showDoneMsg: boolean) {
+    const settings = [
+      "path",
+      "singleJex",
+      "backupRetention",
+      "backupInterval",
+      "onlyOnChange",
+      "usePassword",
+      "lastBackup",
+      "fileLogLevel",
+      "zipArchive",
+      "compressionLevel",
+      "exportPath",
+      "backupSetName",
+      "backupInfo",
+    ];
 
-    await this.stopTimer();
-
-    this.backupStartTime = new Date();
-    await this.loadSettings();
-
-    if (this.backupBasePath === null) {
-      await this.showError(
-        "Please configure backup path in Joplin Tools > Options > Backup"
-      );
-      return;
+    this.log.verbose("Plugin settings:");
+    for (let setting of settings) {
+      this.log.verbose(setting + ": " + (await joplin.settings.value(setting)));
     }
+    this.log.verbose("activeBackupPath: " + this.activeBackupPath);
+    this.log.verbose("backupBasePath: " + this.backupBasePath);
+    this.log.verbose("logFile: " + this.logFile);
+    this.log.verbose("showDoneMsg: " + showDoneMsg);
+    this.log.verbose(
+      "installationDir: " + (await joplin.plugins.installationDir())
+    );
+  }
 
-    if (fs.existsSync(this.backupBasePath)) {
+  public async start(showDoneMsg: boolean = false) {
+    if (this.backupStartTime === null) {
+      this.backupStartTime = new Date();
+
       await this.deleteLogFile();
       await this.fileLogging(true);
       this.log.info("Backup started");
 
-      if ((await this.checkPassword()) === -1) {
-        await this.showError("Passwords do not match!");
+      await this.stopTimer();
+
+      await this.loadSettings();
+
+      await this.logSettings(showDoneMsg);
+
+      if (this.backupBasePath === null) {
+        await this.showError(
+          "Please configure backup path in Joplin Tools > Options > Backup"
+        );
         return;
-      } else {
-        this.log.info("Enable password protection: " + this.passwordEnabled);
       }
-      this.log.verbose(`Backup path: ${this.backupBasePath}`);
-      this.log.verbose(
-        `Active backup path (export path): ${this.activeBackupPath}`
-      );
-      await this.createEmptyFolder(this.activeBackupPath, "");
 
-      await this.backupProfileData();
+      if (fs.existsSync(this.backupBasePath)) {
+        if ((await this.checkPassword()) === -1) {
+          await this.showError("Passwords do not match!");
+          return;
+        } else {
+          this.log.info("Enable password protection: " + this.passwordEnabled);
+        }
+        this.log.verbose(`Backup path: ${this.backupBasePath}`);
+        this.log.verbose(
+          `Active backup path (export path): ${this.activeBackupPath}`
+        );
+        await this.createEmptyFolder(this.activeBackupPath, "");
 
-      await this.backupNotebooks();
+        await this.backupProfileData();
 
-      const backupDst = await this.makeBackupSet();
+        await this.backupNotebooks();
 
-      await joplin.settings.setValue(
-        "lastBackup",
-        this.backupStartTime.getTime()
-      );
-      this.log.info("Backup finished to: " + backupDst);
+        const backupDst = await this.makeBackupSet();
 
-      this.log.info("Backup completed");
-      await this.fileLogging(false);
+        await joplin.settings.setValue(
+          "lastBackup",
+          this.backupStartTime.getTime()
+        );
+        this.log.info("Backup finished to: " + backupDst);
 
-      this.moveLogFile(backupDst);
+        this.log.info("Backup completed");
+        await this.fileLogging(false);
+
+        this.moveLogFile(backupDst);
+      } else {
+        await this.showError(
+          `The Backup path '${this.backupBasePath}' does not exist!`
+        );
+      }
+
+      this.backupStartTime = null;
+      await this.startTimer();
     } else {
-      await this.showError(
-        `The Backup path '${this.backupBasePath}' does not exist!`
+      this.log.warn(
+        "Backup already running since " +
+          moment(this.backupStartTime).format("YYYY-MM-DD HH:MM:SS") +
+          " (" +
+          this.backupStartTime.getTime() +
+          ")"
       );
     }
-
-    this.backupStartTime = null;
-    await this.startTimer();
   }
 
   private async makeBackupSet(): Promise<string> {
@@ -412,7 +459,19 @@ class Backup {
     options: string[] = null
   ): Promise<string> {
     this.log.verbose(`Add ${addFile} to zip ${zipFile}`);
-    const status = await sevenZip.add(zipFile, addFile, password, options);
+
+    let zipOptions: any = {};
+    if (options) {
+      zipOptions = { ...zipOptions, ...options };
+    }
+    zipOptions.method = [];
+    if (this.compressionLevel) {
+      zipOptions.method.push("x" + this.compressionLevel);
+    } else {
+      zipOptions.method.push("x0");
+    }
+
+    const status = await sevenZip.add(zipFile, addFile, password, zipOptions);
     if (status !== true) {
       await this.showError("createZipArchive: " + status);
       throw new Error("createZipArchive: " + status);
@@ -629,7 +688,7 @@ class Backup {
   }
 
   private async getBackupSetFolderName(folder: string = null): Promise<string> {
-    return this.backupSetName.replace(/{(\w+)}/g, (match, groups) => {
+    return this.backupSetName.replace(/{([^}]+)}/g, (match, groups) => {
       const now = new Date(Date.now());
       return moment(now.getTime()).format(groups);
     });
@@ -846,7 +905,19 @@ class Backup {
     backupPath: string,
     backupRetention: number
   ) {
+    this.log.verbose("deleteOldBackupSets");
     let info = JSON.parse(await joplinWrapper.settingsValue("backupInfo"));
+    let setOk = [];
+    for (let check of info) {
+      const folder = path.join(backupPath, check.name);
+      if (fs.existsSync(folder)) {
+        setOk.push(check);
+      } else {
+        this.log.verbose("Backup set " + folder + " no longer exist");
+      }
+    }
+    await joplinWrapper.settingsSetValue("backupInfo", JSON.stringify(setOk));
+    info = JSON.parse(await joplinWrapper.settingsValue("backupInfo"));
     if (info.length > backupRetention) {
       info.sort((a, b) => b.date - a.date);
     }
@@ -855,6 +926,8 @@ class Backup {
       const del = info.splice(backupRetention, 1);
       const folder = path.join(backupPath, del[0].name);
       if (fs.existsSync(folder)) {
+        this.log.verbose("Remove backup set " + folder);
+
         try {
           fs.rmdirSync(folder, {
             recursive: true,

@@ -50,9 +50,6 @@ export namespace sevenZip {
       _7zOptions = { ..._7zOptions, ...options };
     }
 
-    _7zOptions.method = [];
-    _7zOptions.method.push("x0");
-
     if (password !== null) {
       _7zOptions = await addPassword(_7zOptions, password);
       _7zOptions.method.push("he");
