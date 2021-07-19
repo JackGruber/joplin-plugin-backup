@@ -43,6 +43,7 @@ class Backup {
     await this.upgradeBackupTargetVersion();
     await sevenZip.updateBinPath();
     await sevenZip.setExecutionFlag();
+    this.backupStartTime = null;
   }
 
   private async upgradeBackupTargetVersion() {
@@ -239,6 +240,7 @@ class Backup {
     await joplin.views.dialogs.setButtons(this.errorDialog, [{ id: "ok" }]);
     await joplin.views.dialogs.setHtml(this.errorDialog, html.join("\n"));
     await joplin.views.dialogs.open(this.errorDialog);
+    this.backupStartTime = null;
   }
 
   public async setActiveBackupPath() {
@@ -272,61 +274,70 @@ class Backup {
   }
 
   public async start(showDoneMsg: boolean = false) {
-    this.log.verbose("start");
+    if (this.backupStartTime === null) {
+      this.backupStartTime = new Date();
 
-    await this.stopTimer();
-
-    this.backupStartTime = new Date();
-    await this.loadSettings();
-
-    if (this.backupBasePath === null) {
-      await this.showError(
-        "Please configure backup path in Joplin Tools > Options > Backup"
-      );
-      return;
-    }
-
-    if (fs.existsSync(this.backupBasePath)) {
       await this.deleteLogFile();
       await this.fileLogging(true);
       this.log.info("Backup started");
 
-      if ((await this.checkPassword()) === -1) {
-        await this.showError("Passwords do not match!");
+      await this.stopTimer();
+
+      await this.loadSettings();
+
+      if (this.backupBasePath === null) {
+        await this.showError(
+          "Please configure backup path in Joplin Tools > Options > Backup"
+        );
         return;
-      } else {
-        this.log.info("Enable password protection: " + this.passwordEnabled);
       }
-      this.log.verbose(`Backup path: ${this.backupBasePath}`);
-      this.log.verbose(
-        `Active backup path (export path): ${this.activeBackupPath}`
-      );
-      await this.createEmptyFolder(this.activeBackupPath, "");
 
-      await this.backupProfileData();
+      if (fs.existsSync(this.backupBasePath)) {
+        if ((await this.checkPassword()) === -1) {
+          await this.showError("Passwords do not match!");
+          return;
+        } else {
+          this.log.info("Enable password protection: " + this.passwordEnabled);
+        }
+        this.log.verbose(`Backup path: ${this.backupBasePath}`);
+        this.log.verbose(
+          `Active backup path (export path): ${this.activeBackupPath}`
+        );
+        await this.createEmptyFolder(this.activeBackupPath, "");
 
-      await this.backupNotebooks();
+        await this.backupProfileData();
 
-      const backupDst = await this.makeBackupSet();
+        await this.backupNotebooks();
 
-      await joplin.settings.setValue(
-        "lastBackup",
-        this.backupStartTime.getTime()
-      );
-      this.log.info("Backup finished to: " + backupDst);
+        const backupDst = await this.makeBackupSet();
 
-      this.log.info("Backup completed");
-      await this.fileLogging(false);
+        await joplin.settings.setValue(
+          "lastBackup",
+          this.backupStartTime.getTime()
+        );
+        this.log.info("Backup finished to: " + backupDst);
 
-      this.moveLogFile(backupDst);
+        this.log.info("Backup completed");
+        await this.fileLogging(false);
+
+        this.moveLogFile(backupDst);
+      } else {
+        await this.showError(
+          `The Backup path '${this.backupBasePath}' does not exist!`
+        );
+      }
+
+      this.backupStartTime = null;
+      await this.startTimer();
     } else {
-      await this.showError(
-        `The Backup path '${this.backupBasePath}' does not exist!`
+      this.log.warn(
+        "Backup already running since " +
+          moment(this.backupStartTime).format("YYYY-MM-DD HH:MM:SS") +
+          " (" +
+          this.backupStartTime.getTime() +
+          ")"
       );
     }
-
-    this.backupStartTime = null;
-    await this.startTimer();
   }
 
   private async makeBackupSet(): Promise<string> {

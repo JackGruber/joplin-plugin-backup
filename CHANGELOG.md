@@ -3,6 +3,7 @@
 ## not released
 
 - Improved: Use of moments token
+- Fix: #16 Prevent multiple simultaneous backup runs
 
 ## v1.0.1 (2021-07-03)
 
