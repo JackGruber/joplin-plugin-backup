@@ -2,6 +2,8 @@
 
 ## not released
 
+## v1.0.2 (2021-07-19)
+
 - Improved: Use of moments token
 - Fix: #16 Prevent multiple simultaneous backup runs
 - Add: #11 Make zip compression level selectable
