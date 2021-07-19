@@ -119,6 +119,24 @@ export namespace Settings {
         description:
           "If a password protected backups is set, a zip archive is always created.",
       },
+      compressionLevel: {
+        value: 0,
+        type: SettingItemType.Int,
+        section: "backupSection",
+        isEnum: true,
+        public: true,
+        label: "Zip compression level",
+        advanced: true,
+        options: {
+          0: "Copy (no compression)",
+          1: "Fastest",
+          3: "Fast",
+          5: "Normal",
+          7: "Maximum",
+          9: "Ultra",
+        },
+        description: "Compression level for zip archive.",
+      },
       exportPath: {
         value: "",
         type: SettingItemType.String,

@@ -20,6 +20,7 @@ class Backup {
   private password: string;
   private backupStartTime: Date;
   private zipArchive: string;
+  private compressionLevel: number;
   private singleJex: boolean;
   private backupSetName: string;
 
@@ -202,6 +203,9 @@ class Backup {
     this.backupRetention = await joplinWrapper.settingsValue("backupRetention");
 
     this.zipArchive = await joplinWrapper.settingsValue("zipArchive");
+    this.compressionLevel = await joplinWrapper.settingsValue(
+      "compressionLevel"
+    );
     this.singleJex = await joplin.settings.value("singleJex");
 
     this.backupSetName = await joplinWrapper.settingsValue("backupSetName");
@@ -284,6 +288,7 @@ class Backup {
       "lastBackup",
       "fileLogLevel",
       "zipArchive",
+      "compressionLevel",
       "exportPath",
       "backupSetName",
       "backupInfo",
@@ -454,7 +459,15 @@ class Backup {
     options: string[] = null
   ): Promise<string> {
     this.log.verbose(`Add ${addFile} to zip ${zipFile}`);
-    const status = await sevenZip.add(zipFile, addFile, password, options);
+
+    let zipOptions: any = {};
+    if (options) {
+      zipOptions = { ...zipOptions, ...options };
+    }
+    zipOptions.method = [];
+    zipOptions.method.push("x" + this.compressionLevel);
+
+    const status = await sevenZip.add(zipFile, addFile, password, zipOptions);
     if (status !== true) {
       await this.showError("createZipArchive: " + status);
       throw new Error("createZipArchive: " + status);
