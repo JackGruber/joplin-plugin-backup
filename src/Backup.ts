@@ -743,10 +743,14 @@ class Backup {
     );
 
     // Backup Templates
-    await this.backupFolder(
-      await await joplinWrapper.settingsGlobalValue("templateDir"),
-      path.join(activeBackupFolderProfile, "templates")
-    );
+    try {
+      await this.backupFolder(
+        await await joplinWrapper.settingsGlobalValue("templateDir"),
+        path.join(activeBackupFolderProfile, "templates")
+      );
+    } catch (error) {
+      this.log.info("No templateDir, Joplin >= v2.2.5");
+    }
   }
 
   private async backupFolder(src: string, dst: string): Promise<boolean> {

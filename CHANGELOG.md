@@ -2,6 +2,8 @@
 
 ## not released
 
+- Fix: #19 Backups failed from Joplin version v2.2.5 and higher, due to the removed template function
+
 ## v1.0.2 (2021-07-19)
 
 - Improved: Use of moments token
