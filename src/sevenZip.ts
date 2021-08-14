@@ -2,16 +2,16 @@
 // https://sevenzip.osdn.jp/chm/cmdline/commands/index.htm
 import * as _7z from "node-7z";
 import * as sevenBin from "7zip-bin";
-import { joplinWrapper } from "./joplinWrapper";
 import * as path from "path";
 import { exec } from "child_process";
+import joplin from "api";
 
-let pathTo7zip = sevenBin.path7za;
+export let pathTo7zip = sevenBin.path7za;
 
 export namespace sevenZip {
   export async function updateBinPath() {
     pathTo7zip = path.join(
-      await joplinWrapper.installationDir(),
+      await joplin.plugins.installationDir(),
       "7zip-bin",
       pathTo7zip
     );
