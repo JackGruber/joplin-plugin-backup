@@ -56,11 +56,8 @@
       "js"
     ],
     "moduleNameMapper": {
-      "^api$": "<rootDir>/api",
+      "^api$": "<rootDir>/__test__/mocks/joplinApi.ts",
       "^api/types$": "<rootDir>/api/types"
-    },
-    "globals": {
-      "joplin": true
     }
   }
 }
