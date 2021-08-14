@@ -4,7 +4,6 @@ import joplin from "api";
 import * as path from "path";
 import backupLogging from "electron-log";
 import * as fs from "fs-extra";
-import { joplinWrapper } from "./joplinWrapper";
 import { sevenZip } from "./sevenZip";
 import * as moment from "moment";
 
@@ -48,7 +47,7 @@ class Backup {
   }
 
   private async upgradeBackupTargetVersion() {
-    let version = await joplinWrapper.settingsValue("backupVersion");
+    let version = await joplin.settings.value("backupVersion");
     const targetVersion = 1;
     for (
       let checkVersion = version + 1;
@@ -93,7 +92,7 @@ class Backup {
   }
 
   private async saveBackupInfo(folder: string, date: number) {
-    const info = JSON.parse(await joplinWrapper.settingsValue("backupInfo"));
+    const info = JSON.parse(await joplin.settings.value("backupInfo"));
     const backup = { name: folder, date: date };
     info.push(backup);
     await joplin.settings.setValue("backupInfo", JSON.stringify(info));
@@ -104,10 +103,10 @@ class Backup {
   }
 
   private async enablePassword() {
-    const usePassword = await joplinWrapper.settingsValue("usePassword");
+    const usePassword = await joplin.settings.value("usePassword");
     if (usePassword === true && (await this.checkPassword()) === 1) {
       this.passwordEnabled = true;
-      this.password = await joplinWrapper.settingsValue("password");
+      this.password = await joplin.settings.value("password");
     } else {
       this.passwordEnabled = false;
       this.password = null;
@@ -118,11 +117,11 @@ class Backup {
   }
 
   private async checkPassword(): Promise<number> {
-    if ((await joplinWrapper.settingsValue("usePassword")) === false) {
+    if ((await joplin.settings.value("usePassword")) === false) {
       return 0; // Not set
     } else if (
-      (await joplinWrapper.settingsValue("password")) ===
-      (await joplinWrapper.settingsValue("passwordRepeat"))
+      (await joplin.settings.value("password")) ===
+      (await joplin.settings.value("passwordRepeat"))
     ) {
       return 1; // OK
     } else {
@@ -139,7 +138,7 @@ class Backup {
   }
 
   private async fileLogging(enable: boolean) {
-    const fileLogLevel = await joplinWrapper.settingsValue("fileLogLevel");
+    const fileLogLevel = await joplin.settings.value("fileLogLevel");
 
     if (enable === true && fileLogLevel !== "false") {
       this.log.transports.file.resolvePath = () => this.logFile;
@@ -180,8 +179,8 @@ class Backup {
 
   private async loadBackupPath() {
     this.log.verbose("loadBackupPath");
-    const pathSetting = await joplinWrapper.settingsValue("path");
-    const profileDir = await joplinWrapper.settingsGlobalValue("profileDir");
+    const pathSetting = await joplin.settings.value("path");
+    const profileDir = await joplin.settings.globalValue("profileDir");
 
     if (path.isAbsolute(pathSetting)) {
       this.backupBasePath = path.normalize(pathSetting);
@@ -200,15 +199,13 @@ class Backup {
   public async loadSettings() {
     this.log.verbose("loadSettings");
     await this.loadBackupPath();
-    this.backupRetention = await joplinWrapper.settingsValue("backupRetention");
+    this.backupRetention = await joplin.settings.value("backupRetention");
 
-    this.zipArchive = await joplinWrapper.settingsValue("zipArchive");
-    this.compressionLevel = await joplinWrapper.settingsValue(
-      "compressionLevel"
-    );
+    this.zipArchive = await joplin.settings.value("zipArchive");
+    this.compressionLevel = await joplin.settings.value("compressionLevel");
     this.singleJex = await joplin.settings.value("singleJex");
 
-    this.backupSetName = await joplinWrapper.settingsValue("backupSetName");
+    this.backupSetName = await joplin.settings.value("backupSetName");
     if (
       this.backupSetName.trim() === "" ||
       (await this.getBackupSetFolderName()).trim() === ""
@@ -248,9 +245,9 @@ class Backup {
   }
 
   public async setActiveBackupPath() {
-    let exportPath = await joplinWrapper.settingsValue("exportPath");
-    const profileDir = await joplinWrapper.settingsGlobalValue("profileDir");
-    const tempDir = await joplinWrapper.settingsGlobalValue("tempDir");
+    let exportPath = await joplin.settings.value("exportPath");
+    const profileDir = await joplin.settings.globalValue("profileDir");
+    const tempDir = await joplin.settings.globalValue("tempDir");
 
     if (exportPath !== "") {
       if (path.isAbsolute(exportPath)) {
@@ -658,9 +655,9 @@ class Backup {
     this.log.verbose("backupTime");
 
     const checkEver = 5;
-    const backupInterval = await joplinWrapper.settingsValue("backupInterval");
-    const lastBackup = await joplinWrapper.settingsValue("lastBackup");
-    const onlyOnChange = await joplinWrapper.settingsValue("onlyOnChange");
+    const backupInterval = await joplin.settings.value("backupInterval");
+    const lastBackup = await joplin.settings.value("lastBackup");
+    const onlyOnChange = await joplin.settings.value("onlyOnChange");
     const lastChange = await this.getLastChangeDate();
     const now = new Date();
 
@@ -716,7 +713,7 @@ class Backup {
       this.activeBackupPath,
       "profile"
     );
-    const profileDir = await joplinWrapper.settingsGlobalValue("profileDir");
+    const profileDir = await joplin.settings.globalValue("profileDir");
 
     // Backup Joplin settings
     await this.backupFile(
@@ -745,7 +742,7 @@ class Backup {
     // Backup Templates
     try {
       await this.backupFolder(
-        await await joplinWrapper.settingsGlobalValue("templateDir"),
+        await await joplin.settings.globalValue("templateDir"),
         path.join(activeBackupFolderProfile, "templates")
       );
     } catch (error) {
@@ -910,7 +907,7 @@ class Backup {
     backupRetention: number
   ) {
     this.log.verbose("deleteOldBackupSets");
-    let info = JSON.parse(await joplinWrapper.settingsValue("backupInfo"));
+    let info = JSON.parse(await joplin.settings.value("backupInfo"));
     let setOk = [];
     for (let check of info) {
       const folder = path.join(backupPath, check.name);
@@ -920,8 +917,8 @@ class Backup {
         this.log.verbose("Backup set " + folder + " no longer exist");
       }
     }
-    await joplinWrapper.settingsSetValue("backupInfo", JSON.stringify(setOk));
-    info = JSON.parse(await joplinWrapper.settingsValue("backupInfo"));
+    await joplin.settings.setValue("backupInfo", JSON.stringify(setOk));
+    info = JSON.parse(await joplin.settings.value("backupInfo"));
     if (info.length > backupRetention) {
       info.sort((a, b) => b.date - a.date);
     }
@@ -941,7 +938,7 @@ class Backup {
           throw e;
         }
       }
-      await joplinWrapper.settingsSetValue("backupInfo", JSON.stringify(info));
+      await joplin.settings.setValue("backupInfo", JSON.stringify(info));
     }
   }
 }

@@ -1,9 +1,9 @@
 import { Backup } from "../src/Backup";
 import * as fs from "fs-extra";
 import * as path from "path";
-import { joplinWrapper } from "../src/joplinWrapper";
 import { when } from "jest-when";
 import { sevenZip } from "../src/sevenZip";
+import joplin from "api";
 
 function getTestPaths(): any {
   const testPath: any = {};
@@ -26,10 +26,10 @@ let spyOnLogWarn = null;
 let spyOnLogError = null;
 let spyOnSaveBackupInfo = null;
 
-const spyOnsSettingsValue = jest.spyOn(joplinWrapper, "settingsValue");
-const spyOnGlobalValue = jest.spyOn(joplinWrapper, "settingsGlobalValue");
+const spyOnsSettingsValue = jest.spyOn(joplin.settings, "value");
+const spyOnGlobalValue = jest.spyOn(joplin.settings, "globalValue");
 const spyOnSettingsSetValue = jest
-  .spyOn(joplinWrapper, "settingsSetValue")
+  .spyOn(joplin.settings, "setValue")
   .mockImplementation();
 
 async function createTestStructure() {
