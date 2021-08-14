@@ -53,7 +53,7 @@ Under `Options > Keyboard Shortcuts` you can assign a keyboard shortcut for the 
 
 ## What is backed up
 
-- Notebooks as JEX export (Empty notbooks are not backed up)
+- Notebooks as JEX export (Empty notebooks are not backed up)
 - The `settings.json` (Joplin settings)
 - The `keymap-desktop.json` (Keyboard shortcuts)
 - The `userchrome.css` (Your Joplin customization)
