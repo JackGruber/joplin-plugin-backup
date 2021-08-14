@@ -5,6 +5,9 @@
     "dist": "webpack --joplin-plugin-config buildMain && webpack --joplin-plugin-config buildExtraScripts && webpack --joplin-plugin-config createArchive",
     "prepare": "npm run dist && husky install",
     "update": "npm install -g generator-joplin && yo joplin --update",
+    "compileTools": "tsc -p ./tools/tsconfig.json",
+    "release": "npm run test && npm run compileTools && node ./tools/createRelease.js",
+    "gitRelease": "node ./tools/createRelease.js --upload",
     "test": "jest"
   },
   "license": "MIT",
@@ -14,8 +17,10 @@
   "devDependencies": {
     "@types/jest": "^26.0.23",
     "@types/node": "^14.0.14",
+    "axios": "^0.21.1",
     "chalk": "^4.1.0",
     "copy-webpack-plugin": "^6.1.0",
+    "dotenv": "^10.0.0",
     "fs-extra": "^9.0.1",
     "glob": "^7.1.6",
     "husky": "^6.0.0",
