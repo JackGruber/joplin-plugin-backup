@@ -18,8 +18,8 @@ import {
 import * as dotenv from "dotenv";
 import { execCommand } from "./execCommand";
 
-async function createRelease() {
-  console.log("Create GitHub release");
+async function createRelease(preRelease: boolean) {
+  console.log(`Create GitHub ${preRelease ? "pre-" : ""}release`);
 
   const info = await getInfo();
 
@@ -36,7 +36,7 @@ async function createRelease() {
     repo: info.repo,
     tag: `v${manifest.version}`,
     name: `v${manifest.version}`,
-    prerelease: false,
+    prerelease: preRelease,
     token: process.env.GITHUB_TOKEN,
     body: log,
   };
@@ -69,15 +69,16 @@ async function main() {
   }
   const argv = require("yargs").argv;
 
+  const preRelease = argv.prerelease ? true : false;
+
   let type: string;
   if (argv.upload) {
-    await createRelease();
+    await createRelease(preRelease);
     process.exit(0);
   } else if (argv.patch) type = "patch";
   else if (argv.minor) type = "minor";
   else if (argv.major) type = "major";
   else throw new Error("--patch, --minor or --major not provided");
-
   if (!(await nothingUncomitted())) {
     throw new Error("Not a clean git status");
   }
@@ -105,7 +106,7 @@ async function main() {
   const version = `v${versionNumber}`;
   console.log("new version " + version);
   await setPluginVersion(versionNumber);
-  await updateChangelog(versionNumber);
+  await updateChangelog(versionNumber, preRelease);
 
   await execCommand(
     "git add src/manifest.json CHANGELOG.md package-lock.json package.json"
@@ -123,8 +124,12 @@ async function main() {
   console.log("Execute the following commands:");
   console.log(`git push`);
   console.log(`git push --tag`);
-  console.log(`npm publish`);
-  console.log(`npm run gitRelease`);
+  if (!preRelease) {
+    console.log(`npm publish`);
+    console.log(`npm run gitRelease`);
+  } else {
+    console.log(`npm run gitPreRelease`);
+  }
 }
 
 main().catch((error) => {

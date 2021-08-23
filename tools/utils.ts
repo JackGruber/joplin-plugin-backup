@@ -27,11 +27,13 @@ export async function getJPLFileName() {
   return manifest.id + ".jpl";
 }
 
-export async function updateChangelog(version: string) {
+export async function updateChangelog(version: string, preRelease: boolean) {
   const changelog = path.resolve(path.join(__dirname, "..", "CHANGELOG.md"));
 
   let data = fs.readFileSync(changelog, { encoding: "utf8", flag: "r" });
-  version = `${version} (${moment().format("YYYY-MM-DD")})`;
+  version = `${version} ${preRelease ? "[pre-release] " : ""}(${moment().format(
+    "YYYY-MM-DD"
+  )})`;
   data = data.replace(/## not released/, `## not released\n\n## v${version}`);
   fs.writeFileSync(changelog, data);
 }

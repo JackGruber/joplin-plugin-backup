@@ -6,8 +6,9 @@
     "prepare": "npm run dist && husky install",
     "update": "npm install -g generator-joplin && yo joplin --update",
     "compileTools": "tsc -p ./tools/tsconfig.json",
-    "release": "npm run test && npm run compileTools && node ./tools/createRelease.js",
+    "publish": "npm publish && npm run gitRelease",
     "gitRelease": "node ./tools/createRelease.js --upload",
+    "gitPreRelease": "node ./tools/createRelease.js --upload --prerelease",
     "test": "jest"
   },
   "license": "MIT",
