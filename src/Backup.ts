@@ -117,15 +117,19 @@ class Backup {
   }
 
   private async checkPassword(): Promise<number> {
+    const password: string = await joplin.settings.value("password");
+    const passwordRepeat: string = await joplin.settings.value(
+      "passwordRepeat"
+    );
     if ((await joplin.settings.value("usePassword")) === false) {
       return 0; // Not set
     } else if (
-      (await joplin.settings.value("password")) ===
-      (await joplin.settings.value("passwordRepeat"))
+      password.trim() !== passwordRepeat.trim() ||
+      password.trim() === ""
     ) {
-      return 1; // OK
-    } else {
       return -1; // PWs not OK
+    } else {
+      return 1; // PW OK
     }
   }
 
