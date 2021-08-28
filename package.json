@@ -5,9 +5,10 @@
     "dist": "webpack --joplin-plugin-config buildMain && webpack --joplin-plugin-config buildExtraScripts && webpack --joplin-plugin-config createArchive",
     "prepare": "npm run dist && husky install",
     "update": "npm install -g generator-joplin && yo joplin --update",
-    "publish": "npm publish && npm run gitRelease",
-    "gitRelease": "node ./mode_modules/joplinplugindevtools/createRelease.js --upload",
-    "gitPreRelease": "node ./mode_modules/joplinplugindevtools/createRelease.js --upload --prerelease",
+    "release": "npm test && node ./node_modules/joplinplugindevtools/dist/createRelease.js",
+    "preRelease": "npm test && node ./node_modules/joplinplugindevtools/dist/createRelease.js --prerelease",
+    "gitRelease": "node ./node_modules/joplinplugindevtools/dist/createRelease.js --upload",
+    "gitPreRelease": "node ./node_modules/joplinplugindevtools/dist/createRelease.js --upload --prerelease",
     "test": "jest"
   },
   "license": "MIT",
@@ -26,7 +27,7 @@
     "husky": "^6.0.0",
     "jest": "^27.0.4",
     "jest-when": "^3.3.1",
-    "joplinplugindevtools": "^1.0.1",
+    "joplinplugindevtools": "^1.0.9",
     "lint-staged": "^11.0.0",
     "mime": "^2.5.2",
     "on-build-webpack": "^0.1.0",
@@ -63,7 +64,7 @@
       "js"
     ],
     "moduleNameMapper": {
-      "^api$": "<rootDir>/node_modules/joplinplugindevtools/dist/src/apiMock.js",
+      "^api$": "<rootDir>/node_modules/joplinplugindevtools/dist/apiMock.js",
       "^api/types$": "<rootDir>/api/types"
     }
   }
