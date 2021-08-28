@@ -2,6 +2,10 @@
 
 ## not released
 
+## v1.0.4 [pre-release] (2021-08-28)
+
+- Improved: #21 Password check (empty passwords)
+
 ## v1.0.3 (2021-08-11)
 
 - Fix: #19 Backups failed from Joplin version v2.2.5 and higher, due to the removed template function
