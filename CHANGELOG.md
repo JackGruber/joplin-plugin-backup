@@ -2,6 +2,8 @@
 
 ## not released
 
+- Fix: #28 No message was displayed that the backup is finished when starting manually
+
 ## v1.0.4 [pre-release] (2021-08-28)
 
 - Improved: #21 Password check (empty passwords)

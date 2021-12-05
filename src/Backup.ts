@@ -8,7 +8,7 @@ import { sevenZip } from "./sevenZip";
 import * as moment from "moment";
 
 class Backup {
-  private errorDialog: any;
+  private msgDialog: any;
   private backupBasePath: string;
   private activeBackupPath: string;
   private log: any;
@@ -222,8 +222,30 @@ class Backup {
   }
 
   private async createErrorDialog() {
-    this.errorDialog = await joplin.views.dialogs.create("backupDialog");
-    await joplin.views.dialogs.addScript(this.errorDialog, "webview.css");
+    this.msgDialog = await joplin.views.dialogs.create("backupDialog");
+    await joplin.views.dialogs.addScript(this.msgDialog, "webview.css");
+  }
+
+  private async showMsg(msg: string, title: string = null) {
+    const html = [];
+
+    if (title !== null) {
+      this.log.info(`${title}: ${msg}`);
+    } else {
+      this.log.info(`${msg}`);
+    }
+
+    html.push('<div id="backuperror" style="backuperror">');
+    html.push(`<h3>Backup plugin</h3>`);
+    if (title) {
+      html.push(`<p>${title}</p>`);
+    }
+    html.push(`<div id="msg">${msg}`);
+    html.push("</div>");
+    await joplin.views.dialogs.setButtons(this.msgDialog, [{ id: "ok" }]);
+    await joplin.views.dialogs.setHtml(this.msgDialog, html.join("\n"));
+    await joplin.views.dialogs.open(this.msgDialog);
+    this.backupStartTime = null;
   }
 
   private async showError(msg: string, title: string = null) {
@@ -242,9 +264,9 @@ class Backup {
     }
     html.push(`<div id="errormsg">${msg}`);
     html.push("</div>");
-    await joplin.views.dialogs.setButtons(this.errorDialog, [{ id: "ok" }]);
-    await joplin.views.dialogs.setHtml(this.errorDialog, html.join("\n"));
-    await joplin.views.dialogs.open(this.errorDialog);
+    await joplin.views.dialogs.setButtons(this.msgDialog, [{ id: "ok" }]);
+    await joplin.views.dialogs.setHtml(this.msgDialog, html.join("\n"));
+    await joplin.views.dialogs.open(this.msgDialog);
     this.backupStartTime = null;
   }
 
@@ -358,6 +380,10 @@ class Backup {
         await this.fileLogging(false);
 
         this.moveLogFile(backupDst);
+
+        if (showDoneMsg === true) {
+          await this.showMsg(`Backup completed`);
+        }
       } else {
         await this.showError(
           `The Backup path '${this.backupBasePath}' does not exist!`
@@ -374,6 +400,10 @@ class Backup {
           this.backupStartTime.getTime() +
           ")"
       );
+
+      if (showDoneMsg === true) {
+        await this.showError(`A backup is already running!`);
+      }
     }
   }
 
