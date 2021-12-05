@@ -2,6 +2,11 @@
 
 ## not released
 
+## v1.0.5 (2021-12-05)
+
+- Fix: #28 No message was displayed that the backup is finished when starting manually
+- Improved: #25 Check `Backup set name` for invalid characters
+
 ## v1.0.4 [pre-release] (2021-08-28)
 
 - Improved: #21 Password check (empty passwords)
