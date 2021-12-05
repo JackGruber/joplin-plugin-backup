@@ -6,6 +6,7 @@ import backupLogging from "electron-log";
 import * as fs from "fs-extra";
 import { sevenZip } from "./sevenZip";
 import * as moment from "moment";
+import { helper } from "./helper";
 
 class Backup {
   private msgDialog: any;
@@ -212,9 +213,13 @@ class Backup {
     this.backupSetName = await joplin.settings.value("backupSetName");
     if (
       this.backupSetName.trim() === "" ||
-      (await this.getBackupSetFolderName()).trim() === ""
+      (await this.getBackupSetFolderName()).trim() === "" ||
+      (await helper.validFileName(this.backupSetName)) === false
     ) {
       this.backupSetName = "{YYYYMMDDHHmm}";
+      this.showError(
+        'Backup set name does contain not allowed characters ( \\/:*?"<>| )!'
+      );
     }
 
     await this.enablePassword();

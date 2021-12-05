@@ -3,6 +3,7 @@
 ## not released
 
 - Fix: #28 No message was displayed that the backup is finished when starting manually
+- Improved: #25 Check `Backup set name` for invalid characters
 
 ## v1.0.4 [pre-release] (2021-08-28)
 
