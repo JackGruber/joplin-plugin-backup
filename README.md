@@ -65,7 +65,7 @@ Under `Options > Keyboard Shortcuts` you can assign a keyboard shortcut for the 
 ### Settings
 
 To restore the Settings, copy the desired files from `<Backup Path>\Profile` to the Joplin directory `.config\joplin-desktop`.  
-The exact path can be found in Joplin under `Tools > Options > Generla`:
+The exact path can be found in Joplin under `Tools > Options > General`:
 
 <img src=img/joplin_path_in_gui.jpg>
 
