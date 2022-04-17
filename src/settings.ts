@@ -33,7 +33,7 @@ export namespace Settings {
         public: true,
         label: "Keep x backups",
         description:
-          "If more than one verison is configured, folders are created in the Backup Path acording to backupSetName setting.",
+          "If more than one version is configured, folders are created in the Backup Path acording to backupSetName setting.",
       },
       backupInterval: {
         value: 24,
