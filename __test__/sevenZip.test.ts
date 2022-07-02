@@ -32,7 +32,9 @@ describe("Test sevenZip", function () {
     expect(fs.existsSync(file3)).toBe(true);
     expect(fs.existsSync(zip)).toBe(false);
 
-    expect(await sevenZip.add(zip, testBaseDir + "\\*", "secret")).toBe(true);
+    expect(await sevenZip.add(zip, path.join(testBaseDir, "*"), "secret")).toBe(
+      true
+    );
     expect(fs.existsSync(zip)).toBe(true);
 
     expect(await sevenZip.passwordProtected(zip)).toBe(true);
