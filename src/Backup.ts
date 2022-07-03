@@ -182,6 +182,12 @@ class Backup {
     );
   }
 
+  public async makeBackupDir() {
+    if (this.backupBasePath !== null && !fs.existsSync(this.backupBasePath)) {
+      await fs.promises.mkdir(this.backupBasePath, { recursive: true });
+    }
+  }
+
   private async loadBackupPath() {
     this.log.verbose("loadBackupPath");
     const pathSetting = await joplin.settings.value("path");
@@ -199,6 +205,7 @@ class Backup {
     if (path.normalize(profileDir) === this.backupBasePath) {
       this.backupBasePath = null;
     }
+    await this.makeBackupDir();
   }
 
   public async loadSettings() {

@@ -126,6 +126,34 @@ describe("Backup", function () {
       expect(backup.log.error).toHaveBeenCalledTimes(0);
       expect(backup.log.warn).toHaveBeenCalledTimes(0);
     });
+
+    it("should make backup directory with relative path", async () => {
+      const relativePath = "relativePath";
+      when(spyOnsSettingsValue)
+        .calledWith("path")
+        .mockImplementation(() => Promise.resolve(relativePath));
+      await backup.loadBackupPath();
+
+      expect(fs.existsSync(backup.backupBasePath)).toBe(true);
+      expect(backup.log.error).toHaveBeenCalledTimes(0);
+      expect(backup.log.warn).toHaveBeenCalledTimes(0);
+
+      fs.removeSync(backup.backupBasePath);
+    });
+
+    it("should make backup directory with absolute path", async () => {
+      const absolutePath = path.join(__dirname, "absolute_path_to_folder1");
+      when(spyOnsSettingsValue)
+        .calledWith("path")
+        .mockImplementation(() => Promise.resolve(absolutePath));
+      await backup.loadBackupPath();
+
+      expect(fs.existsSync(backup.backupBasePath)).toBe(true);
+      expect(backup.log.error).toHaveBeenCalledTimes(0);
+      expect(backup.log.warn).toHaveBeenCalledTimes(0);
+
+      fs.removeSync(backup.backupBasePath);
+    });
   });
 
   describe("Div", function () {
