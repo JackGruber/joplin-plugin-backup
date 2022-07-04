@@ -2,6 +2,8 @@
 
 ## not released
 
+- Improved: Create a sub folder `JoplinBackup` in the configured `Backup path` (Only for new installations).
+
 ## v1.0.5 (2021-12-05)
 
 - Fix: #28 No message was displayed that the backup is finished when starting manually
