@@ -22,6 +22,7 @@ class Backup {
   private zipArchive: string;
   private compressionLevel: number;
   private singleJex: boolean;
+  private createSubfolder: boolean;
   private backupSetName: string;
 
   constructor() {
@@ -48,8 +49,10 @@ class Backup {
   }
 
   private async upgradeBackupPluginVersion() {
-    let version = await joplin.settings.value("backupVersion");
-    const targetVersion = 1;
+    this.log.verbose("Upgrade Backup Plugin");
+    let startVersion = await joplin.settings.value("backupVersion");
+    let version = startVersion;
+    const targetVersion = 2;
     for (
       let checkVersion = version + 1;
       checkVersion <= targetVersion;
@@ -59,6 +62,17 @@ class Backup {
         if (checkVersion === 1) {
           if (this.backupBasePath !== "" && this.backupRetention > 1) {
             await this.saveOldBackupInfo();
+          }
+        } else if (checkVersion === 2) {
+          // When a path is set from old installation, disable the subfolder creation
+          if (
+            this.backupBasePath &&
+            this.backupBasePath !== "" &&
+            startVersion === 1
+          ) {
+            this.log.verbose("createSubfolder: false");
+            this.createSubfolder = false;
+            await joplin.settings.setValue("createSubfolder", false);
           }
         }
 
@@ -196,6 +210,20 @@ class Backup {
       );
     }
 
+    if (this.createSubfolder) {
+      this.log.verbose("append subFolder");
+      this.backupBasePath = path.join(this.backupBasePath, "JoplinBackup");
+      if (!fs.existsSync(this.backupBasePath)) {
+        try {
+          fs.mkdirSync(this.backupBasePath);
+        } catch (e) {
+          this.backupBasePath = null;
+          await this.showError("create Folder: " + e.message);
+          throw e;
+        }
+      }
+    }
+
     if (path.normalize(profileDir) === this.backupBasePath) {
       this.backupBasePath = null;
     }
@@ -203,6 +231,7 @@ class Backup {
 
   public async loadSettings() {
     this.log.verbose("loadSettings");
+    this.createSubfolder = await joplin.settings.value("createSubfolder");
     await this.loadBackupPath();
     this.backupRetention = await joplin.settings.value("backupRetention");
 

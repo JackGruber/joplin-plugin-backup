@@ -103,6 +103,16 @@ export namespace Settings {
           error: "Error",
         },
       },
+      createSubfolder: {
+        value: true,
+        type: SettingItemType.Bool,
+        section: "backupSection",
+        public: true,
+        advanced: true,
+        label: "Create Subfolder",
+        description:
+          "Create a subfolder in the the configured `Backup path`. Deactivate only if there is no other data in the `Backup path`!",
+      },
       zipArchive: {
         value: "no",
         type: SettingItemType.String,
