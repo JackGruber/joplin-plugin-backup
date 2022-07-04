@@ -41,13 +41,13 @@ class Backup {
     await this.createErrorDialog();
     await this.loadSettings();
     await this.startTimer();
-    await this.upgradeBackupTargetVersion();
+    await this.upgradeBackupPluginVersion();
     await sevenZip.updateBinPath();
     await sevenZip.setExecutionFlag();
     this.backupStartTime = null;
   }
 
-  private async upgradeBackupTargetVersion() {
+  private async upgradeBackupPluginVersion() {
     let version = await joplin.settings.value("backupVersion");
     const targetVersion = 1;
     for (
