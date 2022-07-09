@@ -16,14 +16,6 @@ export namespace Settings {
         public: true,
         label: "Backup path",
       },
-      singleJex: {
-        value: false,
-        type: SettingItemType.Bool,
-        section: "backupSection",
-        public: true,
-        label: "Single JEX",
-        description: "Create only one JEX file for all notebooks.",
-      },
       backupRetention: {
         value: 1,
         minimum: 1,
@@ -166,6 +158,25 @@ export namespace Settings {
         label: "Backup set name",
         description:
           "Name of the backup set if multiple backups are to be keep.",
+      },
+      singleJexV2: {
+        value: true,
+        type: SettingItemType.Bool,
+        section: "backupSection",
+        public: true,
+        advanced: true,
+        label: "Single JEX",
+        description:
+          "Create only one JEX file for all notebooks (Recommended to prevent the loss of internal note links).",
+      },
+      singleJex: {
+        value: false,
+        type: SettingItemType.Bool,
+        section: "backupSection",
+        public: false,
+        advanced: true,
+        label: "Single JEX",
+        description: "Old setting, for compatibility and upgrade only.",
       },
       backupVersion: {
         value: 0,

@@ -2,6 +2,7 @@
 
 ## not released
 
+- Improved: The default setting for `Single JEX` is now `true` (Create only one JEX backup file) to prevent the loss of internal notelinks during a restore. Joplin Discourse: [Lost all connections of my notes](https://discourse.joplinapp.org/t/lost-all-connections-of-my-notes/25464)
 - Improved: Create a sub folder `JoplinBackup` in the configured `Backup path` (Only for new installations).
 
 ## v1.0.5 (2021-12-05)

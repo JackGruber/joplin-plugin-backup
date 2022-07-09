@@ -52,7 +52,7 @@ class Backup {
     this.log.verbose("Upgrade Backup Plugin");
     let startVersion = await joplin.settings.value("backupVersion");
     let version = startVersion;
-    const targetVersion = 2;
+    const targetVersion = 3;
     for (
       let checkVersion = version + 1;
       checkVersion <= targetVersion;
@@ -73,6 +73,15 @@ class Backup {
             this.log.verbose("createSubfolder: false");
             this.createSubfolder = false;
             await joplin.settings.setValue("createSubfolder", false);
+          }
+        } else if (checkVersion === 3) {
+          // Apply value from singleJex to singleJexV2, because the default value was changed and for this a new field was added
+          if (startVersion > 0) {
+            this.log.verbose("singleJexV2: set to value from singleJex");
+            await joplin.settings.setValue(
+              "singleJexV2",
+              await joplin.settings.value("singleJex")
+            );
           }
         }
 
@@ -235,7 +244,7 @@ class Backup {
 
     this.zipArchive = await joplin.settings.value("zipArchive");
     this.compressionLevel = await joplin.settings.value("compressionLevel");
-    this.singleJex = await joplin.settings.value("singleJex");
+    this.singleJex = await joplin.settings.value("singleJexV2");
 
     this.backupSetName = await joplin.settings.value("backupSetName");
     if (

@@ -34,7 +34,6 @@ Go to `Tools > Options > Backup`
 | Option                       | Description                                                                                                                                                              | Default                 |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
 | `Backup path`                | Where to save the backups to. <br>This path is exclusive for the Joplin backups, there should be no other data in it!                                                    |                         |
-| `Single JEX`                 | Create only one JEX file for all notebooks                                                                                                                               | `false`                 |
 | `Keep x backups`             | How many backups should be kept                                                                                                                                          | `1`                     |
 | `Backups interval in hours`  | Create a backup every X hours                                                                                                                                            | `24`                    |
 | `Only on change`             | Creates a backup at the specified backup interval only if there was a change to a `note`, `tag`, `resource` or `notebook`                                                | `false`                 |
@@ -44,6 +43,7 @@ Go to `Tools > Options > Backup`
 | `Zip compression Level`      | Compression level for zip archive archive                                                                                                                                | `Copy (no compression)` |
 | `Temporary export path`      | The data is first exported into this path before it is copied to the backup `Backup path`.                                                                               | ``                      |
 | `Backup set name`            | Name of the backup set if multiple backups are to be keep. [Available moment tokens](https://momentjs.com/docs/#/displaying/format/), which can be used with `{<TOKEN>}` | `{YYYYMMDDHHmm}`        |
+| `Single JEX`                 | Create only one JEX file for all, this option is recommended to prevent the loss of internal note links during a restore! notebooks.                                     | `true`                  |
 | `Create Subfolder`           | Create a sub folder `JoplinBackup` in the configured `Backup path`. Deactivate only if there is no other data in the `Backup path`!                                      | `true`                  |
 
 ## Keyboard Shortcuts
@@ -78,6 +78,22 @@ The notes are imported via `File > Import > JEX - Joplin Export File`.
 
 The notes are imported additionally, no check for duplicates is performed.
 If the folder in which the note was located already exists in you Joplin, than the folder name is extended by one (1).
+
+## FAQ
+
+### Internal Joplin links betwen notes are lost
+
+If several JEX files are imported and the notes have links to each other, these links will be lost.
+Therefore it is recommended to create a Single JEX Backup!
+
+### Compine multiple JEX Files to one
+
+By combining the JEX files into one, the Joplin internal links will work again after the import.
+
+1. Open one of the JEX files in a ZIP program like 7-Zip
+2. Open a second JEX and add all files to the first JEX
+3. Repeat step 2 for all files
+4. Import first JEX which now contains all notes
 
 ## Changelog
 
