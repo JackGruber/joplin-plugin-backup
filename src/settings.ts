@@ -12,7 +12,6 @@ export namespace Settings {
     const joplinVersion = await helper.joplinVersionInfo();
 
     let pathSettings = null;
-    console.log(joplinVersion);
     if (joplinVersion !== null) {
       pathSettings = {
         value: "",
