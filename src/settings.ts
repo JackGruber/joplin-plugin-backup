@@ -33,14 +33,6 @@ export namespace Settings {
 
     await joplin.settings.registerSettings({
       path: pathSettings,
-      singleJex: {
-        value: false,
-        type: SettingItemType.Bool,
-        section: "backupSection",
-        public: true,
-        label: "Single JEX",
-        description: "Create only one JEX file for all notebooks.",
-      },
       backupRetention: {
         value: 1,
         minimum: 1,
