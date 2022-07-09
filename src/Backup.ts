@@ -217,9 +217,7 @@ class Backup {
         try {
           fs.mkdirSync(this.backupBasePath);
         } catch (e) {
-          this.backupBasePath = null;
           await this.showError("create Folder: " + e.message);
-          throw e;
         }
       }
     }
