@@ -49,6 +49,7 @@ export default class Joplin {
     get views(): JoplinViews;
     get interop(): JoplinInterop;
     get settings(): JoplinSettings;
+    get versionInfo(): any;
     /**
      * It is not possible to bundle native packages with a plugin, because they
      * need to work cross-platforms. Instead access to certain useful native
