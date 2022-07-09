@@ -1,5 +1,6 @@
 import joplin from "api";
-import { SettingItemType } from "api/types";
+import { SettingItemType, SettingItemSubType } from "api/types";
+import { helper } from "./helper";
 
 export namespace Settings {
   export async function register() {
@@ -8,13 +9,37 @@ export namespace Settings {
       iconName: "fas fa-archive",
     });
 
-    await joplin.settings.registerSettings({
-      path: {
+    const joplinVersion = await helper.joplinVersionInfo();
+
+    let pathSettings = null;
+    if (joplinVersion !== null) {
+      pathSettings = {
+        value: "",
+        type: SettingItemType.String,
+        subType: SettingItemSubType.DirectoryPath,
+        section: "backupSection",
+        public: true,
+        label: "Backup path",
+      };
+    } else {
+      pathSettings = {
         value: "",
         type: SettingItemType.String,
         section: "backupSection",
         public: true,
         label: "Backup path",
+      };
+    }
+
+    await joplin.settings.registerSettings({
+      path: pathSettings,
+      singleJex: {
+        value: false,
+        type: SettingItemType.Bool,
+        section: "backupSection",
+        public: true,
+        label: "Single JEX",
+        description: "Create only one JEX file for all notebooks.",
       },
       backupRetention: {
         value: 1,
