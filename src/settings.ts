@@ -176,6 +176,15 @@ export namespace Settings {
         description:
           "Name of the backup set if multiple backups are to be keep.",
       },
+      backupPlugins: {
+        value: true,
+        type: SettingItemType.Bool,
+        section: "backupSection",
+        public: true,
+        advanced: true,
+        label: "Backup plugins",
+        description: "Backup plugin jpl files",
+      },
       singleJexV2: {
         value: true,
         type: SettingItemType.Bool,
