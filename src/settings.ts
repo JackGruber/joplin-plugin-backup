@@ -184,7 +184,7 @@ export namespace Settings {
         advanced: true,
         label: "Single JEX",
         description:
-          "Create only one JEX file for all notebooks (Recommended to prevent the loss of internal note links).",
+          "Create only one JEX file for all notebooks (Recommended to prevent the loss of internal note links and folder structure).",
       },
       singleJex: {
         value: false,
