@@ -348,6 +348,7 @@ class Backup {
     const settings = [
       "path",
       "singleJex",
+      "singleJexV2",
       "backupRetention",
       "backupInterval",
       "onlyOnChange",
@@ -359,6 +360,9 @@ class Backup {
       "exportPath",
       "backupSetName",
       "backupInfo",
+      "backupVersion",
+      "backupPlugins",
+      "createSubfolder",
     ];
 
     this.log.verbose("Plugin settings:");
