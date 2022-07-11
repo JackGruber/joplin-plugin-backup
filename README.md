@@ -95,6 +95,11 @@ By combining the JEX files into one, the Joplin internal links will work again a
 3. Repeat step 2 for all files
 4. Import first JEX which now contains all notes
 
+## Open a JEX Backup file
+
+A Joplin JEX Backup file is a tar archive which can be opened with any zip program that supports TAR archive.
+The file names in the archive correspond to the Joplin internal IDs.
+
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md)
