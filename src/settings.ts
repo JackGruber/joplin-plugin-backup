@@ -1,5 +1,6 @@
 import joplin from "api";
-import { SettingItemType } from "api/types";
+import { SettingItemType, SettingItemSubType } from "api/types";
+import { helper } from "./helper";
 
 export namespace Settings {
   export async function register() {
@@ -8,22 +9,30 @@ export namespace Settings {
       iconName: "fas fa-archive",
     });
 
-    await joplin.settings.registerSettings({
-      path: {
+    const joplinVersion = await helper.joplinVersionInfo();
+
+    let pathSettings = null;
+    if (joplinVersion !== null) {
+      pathSettings = {
+        value: "",
+        type: SettingItemType.String,
+        subType: SettingItemSubType.DirectoryPath,
+        section: "backupSection",
+        public: true,
+        label: "Backup path",
+      };
+    } else {
+      pathSettings = {
         value: "",
         type: SettingItemType.String,
         section: "backupSection",
         public: true,
         label: "Backup path",
-      },
-      singleJex: {
-        value: false,
-        type: SettingItemType.Bool,
-        section: "backupSection",
-        public: true,
-        label: "Single JEX",
-        description: "Create only one JEX file for all notebooks.",
-      },
+      };
+    }
+
+    await joplin.settings.registerSettings({
+      path: pathSettings,
       backupRetention: {
         value: 1,
         minimum: 1,
@@ -33,7 +42,7 @@ export namespace Settings {
         public: true,
         label: "Keep x backups",
         description:
-          "If more than one verison is configured, folders are created in the Backup Path acording to backupSetName setting.",
+          "If more than one version is configured, folders are created in the Backup Path acording to backupSetName setting.",
       },
       backupInterval: {
         value: 24,
@@ -103,6 +112,16 @@ export namespace Settings {
           error: "Error",
         },
       },
+      createSubfolder: {
+        value: true,
+        type: SettingItemType.Bool,
+        section: "backupSection",
+        public: true,
+        advanced: true,
+        label: "Create Subfolder",
+        description:
+          "Create a subfolder in the the configured `Backup path`. Deactivate only if there is no other data in the `Backup path`!",
+      },
       zipArchive: {
         value: "no",
         type: SettingItemType.String,
@@ -156,6 +175,34 @@ export namespace Settings {
         label: "Backup set name",
         description:
           "Name of the backup set if multiple backups are to be keep.",
+      },
+      backupPlugins: {
+        value: true,
+        type: SettingItemType.Bool,
+        section: "backupSection",
+        public: true,
+        advanced: true,
+        label: "Backup plugins",
+        description: "Backup plugin jpl files",
+      },
+      singleJexV2: {
+        value: true,
+        type: SettingItemType.Bool,
+        section: "backupSection",
+        public: true,
+        advanced: true,
+        label: "Single JEX",
+        description:
+          "Create only one JEX file for all notebooks (Recommended to prevent the loss of internal note links and folder structure).",
+      },
+      singleJex: {
+        value: false,
+        type: SettingItemType.Bool,
+        section: "backupSection",
+        public: false,
+        advanced: true,
+        label: "Single JEX",
+        description: "Old setting, for compatibility and upgrade only.",
       },
       backupVersion: {
         value: 0,

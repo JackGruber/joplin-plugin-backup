@@ -20,8 +20,10 @@ class Backup {
   private password: string;
   private backupStartTime: Date;
   private zipArchive: string;
+  private backupPlugins: boolean;
   private compressionLevel: number;
   private singleJex: boolean;
+  private createSubfolder: boolean;
   private backupSetName: string;
 
   constructor() {
@@ -41,15 +43,17 @@ class Backup {
     await this.createErrorDialog();
     await this.loadSettings();
     await this.startTimer();
-    await this.upgradeBackupTargetVersion();
+    await this.upgradeBackupPluginVersion();
     await sevenZip.updateBinPath();
     await sevenZip.setExecutionFlag();
     this.backupStartTime = null;
   }
 
-  private async upgradeBackupTargetVersion() {
-    let version = await joplin.settings.value("backupVersion");
-    const targetVersion = 1;
+  private async upgradeBackupPluginVersion() {
+    this.log.verbose("Upgrade Backup Plugin");
+    let startVersion = await joplin.settings.value("backupVersion");
+    let version = startVersion;
+    const targetVersion = 3;
     for (
       let checkVersion = version + 1;
       checkVersion <= targetVersion;
@@ -59,6 +63,26 @@ class Backup {
         if (checkVersion === 1) {
           if (this.backupBasePath !== "" && this.backupRetention > 1) {
             await this.saveOldBackupInfo();
+          }
+        } else if (checkVersion === 2) {
+          // When a path is set from old installation, disable the subfolder creation
+          if (
+            this.backupBasePath &&
+            this.backupBasePath !== "" &&
+            startVersion === 1
+          ) {
+            this.log.verbose("createSubfolder: false");
+            this.createSubfolder = false;
+            await joplin.settings.setValue("createSubfolder", false);
+          }
+        } else if (checkVersion === 3) {
+          // Apply value from singleJex to singleJexV2, because the default value was changed and for this a new field was added
+          if (startVersion > 0) {
+            this.log.verbose("singleJexV2: set to value from singleJex");
+            await joplin.settings.setValue(
+              "singleJexV2",
+              await joplin.settings.value("singleJex")
+            );
           }
         }
 
@@ -196,6 +220,18 @@ class Backup {
       );
     }
 
+    if (this.createSubfolder) {
+      this.log.verbose("append subFolder");
+      this.backupBasePath = path.join(this.backupBasePath, "JoplinBackup");
+      if (!fs.existsSync(this.backupBasePath)) {
+        try {
+          fs.mkdirSync(this.backupBasePath);
+        } catch (e) {
+          await this.showError("create Folder: " + e.message);
+        }
+      }
+    }
+
     if (path.normalize(profileDir) === this.backupBasePath) {
       this.backupBasePath = null;
     }
@@ -203,12 +239,15 @@ class Backup {
 
   public async loadSettings() {
     this.log.verbose("loadSettings");
+    this.createSubfolder = await joplin.settings.value("createSubfolder");
     await this.loadBackupPath();
     this.backupRetention = await joplin.settings.value("backupRetention");
 
     this.zipArchive = await joplin.settings.value("zipArchive");
     this.compressionLevel = await joplin.settings.value("compressionLevel");
-    this.singleJex = await joplin.settings.value("singleJex");
+    this.singleJex = await joplin.settings.value("singleJexV2");
+
+    this.backupPlugins = await joplin.settings.value("backupPlugins");
 
     this.backupSetName = await joplin.settings.value("backupSetName");
     if (
@@ -309,6 +348,7 @@ class Backup {
     const settings = [
       "path",
       "singleJex",
+      "singleJexV2",
       "backupRetention",
       "backupInterval",
       "onlyOnChange",
@@ -320,6 +360,9 @@ class Backup {
       "exportPath",
       "backupSetName",
       "backupInfo",
+      "backupVersion",
+      "backupPlugins",
+      "createSubfolder",
     ];
 
     this.log.verbose("Plugin settings:");
@@ -777,6 +820,14 @@ class Backup {
       path.join(profileDir, "userstyle.css"),
       path.join(activeBackupFolderProfile, "userstyle.css")
     );
+
+    // Backup plugins files
+    if (this.backupPlugins === true) {
+      await this.backupFolder(
+        path.join(profileDir, "plugins"),
+        path.join(activeBackupFolderProfile, "plugins")
+      );
+    }
 
     // Backup Templates
     try {

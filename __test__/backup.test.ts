@@ -24,6 +24,7 @@ let spyOnLogVerbose = null;
 let spyOnLogInfo = null;
 let spyOnLogWarn = null;
 let spyOnLogError = null;
+let spyOnShowError = null;
 let spyOnSaveBackupInfo = null;
 
 const spyOnsSettingsValue = jest.spyOn(joplin.settings, "value");
@@ -73,6 +74,10 @@ describe("Backup", function () {
     spyOnLogError = jest
       .spyOn(backup.log, "error")
       .mockImplementation(() => {});
+
+    spyOnShowError = jest
+      .spyOn(backup, "showError")
+      .mockImplementation(() => {});
   });
 
   afterEach(async () => {
@@ -80,6 +85,7 @@ describe("Backup", function () {
     spyOnLogInfo.mockReset();
     spyOnLogWarn.mockReset();
     spyOnLogError.mockReset();
+    spyOnShowError.mockReset();
     spyOnsSettingsValue.mockReset();
     spyOnGlobalValue.mockReset();
     spyOnSaveBackupInfo.mockReset();
@@ -88,29 +94,72 @@ describe("Backup", function () {
   afterAll(async () => {
     fs.removeSync(testPath.base);
   });
-
   describe("Backup path", function () {
-    it(`Backup path != Profile`, async () => {
-      await backup.loadBackupPath();
-      expect(backup.backupBasePath).toBe(testPath.backupBasePath);
-      expect(backup.backupBasePath).not.toBe(testPath.joplinProfile);
+    it(`Path tests`, async () => {
+      const testCases = [
+        {
+          backupPath: testPath.joplinProfile,
+          createSubfolder: false,
+          expectedBackupPath: null,
+          expectedBackupPathExist: null,
+        },
+        {
+          backupPath: testPath.joplinProfile,
+          createSubfolder: true,
+          expectedBackupPath: path.join(testPath.joplinProfile, "JoplinBackup"),
+          expectedBackupPathExist: true,
+        },
+        {
+          backupPath: testPath.backupBasePath,
+          createSubfolder: false,
+          expectedBackupPath: testPath.backupBasePath,
+          expectedBackupPathExist: true,
+        },
+        {
+          backupPath: testPath.backupBasePath,
+          createSubfolder: true,
+          expectedBackupPath: path.join(
+            testPath.backupBasePath,
+            "JoplinBackup"
+          ),
+          expectedBackupPathExist: true,
+        },
+        {
+          backupPath: path.join(testPath.backupBasePath, "NotExisting"),
+          createSubfolder: false,
+          expectedBackupPath: path.join(testPath.backupBasePath, "NotExisting"),
+          expectedBackupPathExist: false,
+        },
+        {
+          backupPath: path.join(testPath.backupBasePath, "NotExisting"),
+          createSubfolder: true,
+          expectedBackupPath: path.join(
+            testPath.backupBasePath,
+            "NotExisting",
+            "JoplinBackup"
+          ),
+          expectedBackupPathExist: false,
+        },
+      ];
 
-      /* prettier-ignore */
-      when(spyOnsSettingsValue)
-      .calledWith("path").mockImplementation(() => Promise.resolve(""));
-      await backup.loadBackupPath();
-      expect(backup.backupBasePath).not.toBe(testPath.joplinProfile);
-      expect(backup.backupBasePath).toBe(null);
+      for (const testCase of testCases) {
+        when(spyOnsSettingsValue)
+          .calledWith("path")
+          .mockImplementation(() => Promise.resolve(testCase.backupPath));
+        backup.createSubfolder = testCase.createSubfolder;
+        await backup.loadBackupPath();
+        expect(backup.backupBasePath).toBe(testCase.expectedBackupPath);
+        expect(backup.backupBasePath).not.toBe(testPath.joplinProfile);
 
-      /* prettier-ignore */
-      when(spyOnsSettingsValue)
-      .calledWith("path").mockImplementation(() => Promise.resolve(testPath.joplinProfile));
-      await backup.loadBackupPath();
-      expect(backup.backupBasePath).not.toBe(testPath.joplinProfile);
-      expect(backup.backupBasePath).toBe(null);
+        if (testCase.expectedBackupPathExist !== null) {
+          expect(fs.existsSync(backup.backupBasePath)).toBe(
+            testCase.expectedBackupPathExist
+          );
+        }
 
-      expect(backup.log.error).toHaveBeenCalledTimes(0);
-      expect(backup.log.warn).toHaveBeenCalledTimes(0);
+        expect(backup.log.error).toHaveBeenCalledTimes(0);
+        expect(backup.log.warn).toHaveBeenCalledTimes(0);
+      }
     });
 
     it(`relative paths`, async () => {

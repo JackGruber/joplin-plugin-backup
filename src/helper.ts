@@ -1,3 +1,5 @@
+import joplin from "api";
+
 export namespace helper {
   export async function validFileName(fileName: string) {
     var regChar = /[:*?"<>\/|\\]+/; // forbidden characters \ / : * ? " < > |
@@ -7,6 +9,14 @@ export namespace helper {
       return false;
     } else {
       return true;
+    }
+  }
+
+  export async function joplinVersionInfo(): Promise<any> {
+    try {
+      return await joplin.versionInfo();
+    } catch (error) {
+      return null;
     }
   }
 }
