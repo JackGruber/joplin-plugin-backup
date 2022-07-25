@@ -33,7 +33,7 @@ Go to `Tools > Options > Backup`
 
 | Option                       | Description                                                                                                                                                              | Default                 |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
-| `Backup path`                | Where to save the backups to. <br>This path is exclusive for the Joplin backups, there should be no other data in it!                                                    |                         |
+| `Backup path`                | Where to save the backups to. <br>This path is exclusive for the Joplin backups, there should be no other data in it when you disable the `Create Subfolder` settings!   |                         |
 | `Keep x backups`             | How many backups should be kept                                                                                                                                          | `1`                     |
 | `Backups interval in hours`  | Create a backup every X hours                                                                                                                                            | `24`                    |
 | `Only on change`             | Creates a backup at the specified backup interval only if there was a change to a `note`, `tag`, `resource` or `notebook`                                                | `false`                 |
