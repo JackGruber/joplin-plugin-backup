@@ -1005,9 +1005,13 @@ class Backup {
         this.log.verbose("Remove backup set " + folder);
 
         try {
-          fs.rmdirSync(folder, {
-            recursive: true,
-          });
+          if (fs.lstatSync(folder).isDirectory()) {
+            fs.rmdirSync(folder, {
+              recursive: true,
+            });
+          } else {
+            fs.unlinkSync(folder);
+          }
         } catch (e) {
           await this.showError("deleteOldBackupSets" + e.message);
           throw e;

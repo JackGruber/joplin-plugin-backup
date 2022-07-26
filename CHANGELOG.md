@@ -1,5 +1,7 @@
 # Changelog
 
+- Fix: #45 Error message when deleting old ZIP backupsets
+
 ## not released
 
 - Improved: The default setting for `Single JEX` is now `true` (Create only one JEX backup file) to prevent the loss of internal notelinks during a restore. Joplin Discourse: [Lost all connections of my notes](https://discourse.joplinapp.org/t/lost-all-connections-of-my-notes/25464)
