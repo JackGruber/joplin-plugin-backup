@@ -16,7 +16,7 @@ export namespace Settings {
       pathSettings = {
         value: "",
         type: SettingItemType.String,
-        subType: SettingItemSubType.DirectoryPath,
+        //subType: SettingItemSubType.DirectoryPath,
         section: "backupSection",
         public: true,
         label: "Backup path",
