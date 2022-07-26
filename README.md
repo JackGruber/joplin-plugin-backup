@@ -43,8 +43,9 @@ Go to `Tools > Options > Backup`
 | `Zip compression Level`      | Compression level for zip archive archive                                                                                                                                | `Copy (no compression)` |
 | `Temporary export path`      | The data is first exported into this path before it is copied to the backup `Backup path`.                                                                               | ``                      |
 | `Backup set name`            | Name of the backup set if multiple backups are to be keep. [Available moment tokens](https://momentjs.com/docs/#/displaying/format/), which can be used with `{<TOKEN>}` | `{YYYYMMDDHHmm}`        |
-| `Single JEX`                 | Create only one JEX file for all, this option is recommended to prevent the loss of internal note links during a restore! notebooks.                                     | `true`                  |
+| `Single JEX`                 | Create only one JEX file for all, this option is recommended to prevent the loss of internal note links or folder structure during a restore!                            | `true`                  |
 | `Create Subfolder`           | Create a sub folder `JoplinBackup` in the configured `Backup path`. Deactivate only if there is no other data in the `Backup path`!                                      | `true`                  |
+| `Backup plugins`             | Backup the plugin folder from the Joplin profile with all installed plugin jpl files.                                                                                    | `true`                  |
 
 ## Keyboard Shortcuts
 
@@ -60,6 +61,7 @@ Under `Options > Keyboard Shortcuts` you can assign a keyboard shortcut for the 
 - The `userchrome.css` (Your Joplin customization)
 - The `userstyle.css` (Your Joplin customization)
 - The `templates` folder (Note templates)
+- The `plugin` folder (All installed plugins, no plugin settings!)
 
 ## Restore
 
@@ -94,6 +96,11 @@ By combining the JEX files into one, the Joplin internal links will work again a
 2. Open a second JEX and add all files to the first JEX
 3. Repeat step 2 for all files
 4. Import first JEX which now contains all notes
+
+## Open a JEX Backup file
+
+A Joplin JEX Backup file is a tar archive which can be opened with any zip program that supports TAR archive.
+The file names in the archive correspond to the Joplin internal IDs.
 
 ## Changelog
 

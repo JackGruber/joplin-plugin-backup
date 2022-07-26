@@ -20,6 +20,7 @@ class Backup {
   private password: string;
   private backupStartTime: Date;
   private zipArchive: string;
+  private backupPlugins: boolean;
   private compressionLevel: number;
   private singleJex: boolean;
   private createSubfolder: boolean;
@@ -246,6 +247,8 @@ class Backup {
     this.compressionLevel = await joplin.settings.value("compressionLevel");
     this.singleJex = await joplin.settings.value("singleJexV2");
 
+    this.backupPlugins = await joplin.settings.value("backupPlugins");
+
     this.backupSetName = await joplin.settings.value("backupSetName");
     if (
       this.backupSetName.trim() === "" ||
@@ -345,6 +348,7 @@ class Backup {
     const settings = [
       "path",
       "singleJex",
+      "singleJexV2",
       "backupRetention",
       "backupInterval",
       "onlyOnChange",
@@ -356,6 +360,9 @@ class Backup {
       "exportPath",
       "backupSetName",
       "backupInfo",
+      "backupVersion",
+      "backupPlugins",
+      "createSubfolder",
     ];
 
     this.log.verbose("Plugin settings:");
@@ -813,6 +820,14 @@ class Backup {
       path.join(profileDir, "userstyle.css"),
       path.join(activeBackupFolderProfile, "userstyle.css")
     );
+
+    // Backup plugins files
+    if (this.backupPlugins === true) {
+      await this.backupFolder(
+        path.join(profileDir, "plugins"),
+        path.join(activeBackupFolderProfile, "plugins")
+      );
+    }
 
     // Backup Templates
     try {
