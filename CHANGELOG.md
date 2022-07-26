@@ -1,8 +1,8 @@
 # Changelog
 
-- Fix: #45 Error message when deleting old ZIP backupsets
-
 ## not released
+
+- Fix: #45 Error message when deleting old ZIP backupsets
 
 ## v1.1.0 (2022-07-11)
 
