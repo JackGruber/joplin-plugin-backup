@@ -624,9 +624,10 @@ describe("Backup", function () {
         { name: "202101011630", date: 1 },
         { name: "202101021630", date: 2 },
       ];
-      /* prettier-ignore */
+
       when(spyOnsSettingsValue)
-            .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
+        .calledWith("backupInfo")
+        .mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
 
       await backup.deleteOldBackupSets(
         testPath.backupBasePath,
@@ -658,9 +659,10 @@ describe("Backup", function () {
         { name: "202101021630", date: 2 },
         { name: "202101031630", date: 3 },
       ];
-      /* prettier-ignore */
+
       when(spyOnsSettingsValue)
-            .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
+        .calledWith("backupInfo")
+        .mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
 
       await backup.deleteOldBackupSets(
         testPath.backupBasePath,
@@ -698,9 +700,10 @@ describe("Backup", function () {
         { name: "202101041630", date: 4 },
         { name: "202101051630", date: 5 },
       ];
-      /* prettier-ignore */
+
       when(spyOnsSettingsValue)
-            .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
+        .calledWith("backupInfo")
+        .mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
 
       await backup.deleteOldBackupSets(
         testPath.backupBasePath,
