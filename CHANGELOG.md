@@ -4,6 +4,7 @@
 
 - Fix: #45 Error message when deleting old ZIP backupsets
 - Disable Joplin DirectoryPath selector and use string input again because of several bugs [#6692](https://github.com/laurent22/joplin/issues/6692) and [#6693](https://github.com/laurent22/joplin/issues/6693)
+- Fix: #40 Delete existing temporary zip file to prevent adding files to an old aborted backup
 
 ## v1.1.0 (2022-07-11)
 

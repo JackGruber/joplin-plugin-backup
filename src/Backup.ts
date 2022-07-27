@@ -499,8 +499,20 @@ class Backup {
       this.zipArchive === "yesone" ||
       (this.singleJex === true && this.zipArchive === "yes")
     ) {
+      const singleZipFile = path.join(
+        this.backupBasePath,
+        "newJoplinBackup.7z"
+      );
+
+      if (fs.existsSync(singleZipFile)) {
+        this.log.warn(
+          `New Single ZIP already exist, delete file: ` + singleZipFile
+        );
+        fs.unlinkSync(singleZipFile);
+      }
+
       zipFile = await this.addToZipArchive(
-        path.join(this.backupBasePath, "newJoplinBackup.7z"),
+        singleZipFile,
         path.join(this.activeBackupPath, "*"),
         this.password
       );
