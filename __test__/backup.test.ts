@@ -628,7 +628,10 @@ describe("Backup", function () {
       when(spyOnsSettingsValue)
             .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
 
-      backup.deleteOldBackupSets(testPath.backupBasePath, backupRetention);
+      await backup.deleteOldBackupSets(
+        testPath.backupBasePath,
+        backupRetention
+      );
 
       const folderAnz = fs
         .readdirSync(testPath.backupBasePath, { withFileTypes: true })
@@ -659,7 +662,10 @@ describe("Backup", function () {
       when(spyOnsSettingsValue)
             .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
 
-      backup.deleteOldBackupSets(testPath.backupBasePath, backupRetention);
+      await backup.deleteOldBackupSets(
+        testPath.backupBasePath,
+        backupRetention
+      );
       const folderAnz = fs
         .readdirSync(testPath.backupBasePath, { withFileTypes: true })
         .filter((dirent) => dirent.isDirectory()).length;
