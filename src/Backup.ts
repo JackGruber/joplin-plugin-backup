@@ -942,7 +942,7 @@ class Backup {
       }
 
       try {
-        fs.rmdirSync(this.activeBackupPath, {
+        fs.rmSync(this.activeBackupPath, {
           recursive: true,
         });
       } catch (e) {
@@ -1021,7 +1021,7 @@ class Backup {
 
         try {
           if (fs.lstatSync(folder).isDirectory()) {
-            fs.rmdirSync(folder, {
+            fs.rmSync(folder, {
               recursive: true,
             });
           } else {
