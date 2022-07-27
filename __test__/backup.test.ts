@@ -15,6 +15,7 @@ function getTestPaths(): any {
   );
   testPath.joplinProfile = path.join(testPath.base, "joplin-desktop");
   testPath.templates = path.join(testPath.joplinProfile, "templates");
+  testPath.plugins = path.join(testPath.joplinProfile, "plugins");
   return testPath;
 }
 
@@ -39,6 +40,7 @@ async function createTestStructure() {
   fs.emptyDirSync(test.backupBasePath);
   fs.emptyDirSync(test.joplinProfile);
   fs.emptyDirSync(test.templates);
+  fs.emptyDirSync(test.plugins);
 }
 
 const testPath = getTestPaths();
@@ -883,12 +885,14 @@ describe("Backup", function () {
       const userstyle = path.join(testPath.joplinProfile, "userstyle.css");
       const userchrome = path.join(testPath.joplinProfile, "userchrome.css");
       const keymap = path.join(testPath.joplinProfile, "keymap-desktop.json");
+      const plugin = path.join(testPath.plugins, "test-plugin.jpl");
 
       fs.writeFileSync(template, "template");
       fs.writeFileSync(settings, "settings");
       fs.writeFileSync(userstyle, "userstyle");
       fs.writeFileSync(userchrome, "userchrome");
       fs.writeFileSync(keymap, "keymap");
+      fs.writeFileSync(plugin, "plugin");
 
       fs.emptyDirSync(testPath.activeBackupJob);
 
@@ -918,8 +922,15 @@ describe("Backup", function () {
         "profile",
         "keymap-desktop.json"
       );
+      const backupPlugin = path.join(
+        testPath.activeBackupJob,
+        "profile",
+        "plugins",
+        "test-plugin.jpl"
+      );
 
       backup.activeBackupPath = testPath.activeBackupJob;
+      backup.backupPlugins = true;
       await backup.backupProfileData();
 
       expect(fs.existsSync(backupTemplate)).toBe(true);
@@ -927,6 +938,7 @@ describe("Backup", function () {
       expect(fs.existsSync(backupUserstyle)).toBe(true);
       expect(fs.existsSync(backupUserchrome)).toBe(true);
       expect(fs.existsSync(backupKeymap)).toBe(true);
+      expect(fs.existsSync(backupPlugin)).toBe(true);
 
       expect(backup.log.error).toHaveBeenCalledTimes(0);
       expect(backup.log.warn).toHaveBeenCalledTimes(0);
