@@ -15,6 +15,7 @@ function getTestPaths(): any {
   );
   testPath.joplinProfile = path.join(testPath.base, "joplin-desktop");
   testPath.templates = path.join(testPath.joplinProfile, "templates");
+  testPath.plugins = path.join(testPath.joplinProfile, "plugins");
   return testPath;
 }
 
@@ -39,6 +40,7 @@ async function createTestStructure() {
   fs.emptyDirSync(test.backupBasePath);
   fs.emptyDirSync(test.joplinProfile);
   fs.emptyDirSync(test.templates);
+  fs.emptyDirSync(test.plugins);
 }
 
 const testPath = getTestPaths();
@@ -573,6 +575,45 @@ describe("Backup", function () {
   });
 
   describe("Backup retention", function () {
+    it(`file/Folder deletion`, async () => {
+      const backupRetention = 2;
+      const set1 = path.join(testPath.backupBasePath, "202101011630");
+      const set2 = path.join(testPath.backupBasePath, "202101021630.7z");
+      const set3 = path.join(testPath.backupBasePath, "202101031630");
+      const set4 = path.join(testPath.backupBasePath, "202101041630.7z");
+
+      fs.emptyDirSync(set1);
+      fs.closeSync(fs.openSync(set2, "w"));
+      fs.emptyDirSync(set3);
+      fs.closeSync(fs.openSync(set4, "w"));
+
+      const backupInfo = [
+        { name: "202101011630", date: 1609515000 },
+        { name: "202101021630.7z", date: 1609601400 },
+        { name: "202101031630", date: 1609687800 },
+        { name: "202101041630.7z", date: 1609774200 },
+      ];
+
+      when(spyOnsSettingsValue)
+        .calledWith("backupInfo")
+        .mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
+
+      expect(fs.existsSync(set1)).toBe(true);
+      expect(fs.existsSync(set2)).toBe(true);
+      expect(fs.existsSync(set3)).toBe(true);
+      expect(fs.existsSync(set4)).toBe(true);
+      await backup.deleteOldBackupSets(
+        testPath.backupBasePath,
+        backupRetention
+      );
+
+      expect(fs.existsSync(set1)).toBe(false);
+      expect(fs.existsSync(set2)).toBe(false);
+      expect(fs.existsSync(set3)).toBe(true);
+      expect(fs.existsSync(set4)).toBe(true);
+      expect(fs.readdirSync(testPath.backupBasePath).length).toBe(2);
+    });
+
     it(`Backups < retention`, async () => {
       const backupRetention = 3;
       const folder1 = path.join(testPath.backupBasePath, "202101011630");
@@ -585,11 +626,15 @@ describe("Backup", function () {
         { name: "202101011630", date: 1 },
         { name: "202101021630", date: 2 },
       ];
-      /* prettier-ignore */
-      when(spyOnsSettingsValue)
-            .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
 
-      backup.deleteOldBackupSets(testPath.backupBasePath, backupRetention);
+      when(spyOnsSettingsValue)
+        .calledWith("backupInfo")
+        .mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
+
+      await backup.deleteOldBackupSets(
+        testPath.backupBasePath,
+        backupRetention
+      );
 
       const folderAnz = fs
         .readdirSync(testPath.backupBasePath, { withFileTypes: true })
@@ -616,11 +661,15 @@ describe("Backup", function () {
         { name: "202101021630", date: 2 },
         { name: "202101031630", date: 3 },
       ];
-      /* prettier-ignore */
-      when(spyOnsSettingsValue)
-            .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
 
-      backup.deleteOldBackupSets(testPath.backupBasePath, backupRetention);
+      when(spyOnsSettingsValue)
+        .calledWith("backupInfo")
+        .mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
+
+      await backup.deleteOldBackupSets(
+        testPath.backupBasePath,
+        backupRetention
+      );
       const folderAnz = fs
         .readdirSync(testPath.backupBasePath, { withFileTypes: true })
         .filter((dirent) => dirent.isDirectory()).length;
@@ -653,9 +702,10 @@ describe("Backup", function () {
         { name: "202101041630", date: 4 },
         { name: "202101051630", date: 5 },
       ];
-      /* prettier-ignore */
+
       when(spyOnsSettingsValue)
-            .calledWith("backupInfo").mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
+        .calledWith("backupInfo")
+        .mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
 
       await backup.deleteOldBackupSets(
         testPath.backupBasePath,
@@ -835,12 +885,14 @@ describe("Backup", function () {
       const userstyle = path.join(testPath.joplinProfile, "userstyle.css");
       const userchrome = path.join(testPath.joplinProfile, "userchrome.css");
       const keymap = path.join(testPath.joplinProfile, "keymap-desktop.json");
+      const plugin = path.join(testPath.plugins, "test-plugin.jpl");
 
       fs.writeFileSync(template, "template");
       fs.writeFileSync(settings, "settings");
       fs.writeFileSync(userstyle, "userstyle");
       fs.writeFileSync(userchrome, "userchrome");
       fs.writeFileSync(keymap, "keymap");
+      fs.writeFileSync(plugin, "plugin");
 
       fs.emptyDirSync(testPath.activeBackupJob);
 
@@ -870,8 +922,15 @@ describe("Backup", function () {
         "profile",
         "keymap-desktop.json"
       );
+      const backupPlugin = path.join(
+        testPath.activeBackupJob,
+        "profile",
+        "plugins",
+        "test-plugin.jpl"
+      );
 
       backup.activeBackupPath = testPath.activeBackupJob;
+      backup.backupPlugins = true;
       await backup.backupProfileData();
 
       expect(fs.existsSync(backupTemplate)).toBe(true);
@@ -879,6 +938,7 @@ describe("Backup", function () {
       expect(fs.existsSync(backupUserstyle)).toBe(true);
       expect(fs.existsSync(backupUserchrome)).toBe(true);
       expect(fs.existsSync(backupKeymap)).toBe(true);
+      expect(fs.existsSync(backupPlugin)).toBe(true);
 
       expect(backup.log.error).toHaveBeenCalledTimes(0);
       expect(backup.log.warn).toHaveBeenCalledTimes(0);

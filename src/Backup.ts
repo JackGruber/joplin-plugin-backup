@@ -499,8 +499,20 @@ class Backup {
       this.zipArchive === "yesone" ||
       (this.singleJex === true && this.zipArchive === "yes")
     ) {
+      const singleZipFile = path.join(
+        this.backupBasePath,
+        "newJoplinBackup.7z"
+      );
+
+      if (fs.existsSync(singleZipFile)) {
+        this.log.warn(
+          `New Single ZIP already exist, delete file: ` + singleZipFile
+        );
+        fs.unlinkSync(singleZipFile);
+      }
+
       zipFile = await this.addToZipArchive(
-        path.join(this.backupBasePath, "newJoplinBackup.7z"),
+        singleZipFile,
         path.join(this.activeBackupPath, "*"),
         this.password
       );
@@ -942,7 +954,7 @@ class Backup {
       }
 
       try {
-        fs.rmdirSync(this.activeBackupPath, {
+        fs.rmSync(this.activeBackupPath, {
           recursive: true,
         });
       } catch (e) {
@@ -1020,9 +1032,13 @@ class Backup {
         this.log.verbose("Remove backup set " + folder);
 
         try {
-          fs.rmdirSync(folder, {
-            recursive: true,
-          });
+          if (fs.lstatSync(folder).isDirectory()) {
+            fs.rmSync(folder, {
+              recursive: true,
+            });
+          } else {
+            fs.unlinkSync(folder);
+          }
         } catch (e) {
           await this.showError("deleteOldBackupSets" + e.message);
           throw e;
