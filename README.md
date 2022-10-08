@@ -79,7 +79,7 @@ The notes are imported via `File > Import > JEX - Joplin Export File`.
 > Individual notes cannot be restored from the JEX file!
 
 The notes are imported additionally, no check for duplicates is performed.
-If the folder in which the note was located already exists in you Joplin, than the folder name is extended by one (1).
+If the notebook in which the note was located already exists in your Joplin, then a "(1)" will be appended to the folder name.
 
 ## FAQ
 
