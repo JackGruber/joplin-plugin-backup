@@ -2,7 +2,34 @@
 
 A plugin to extend Joplin with a manual and automatic backup function.
 
+<!-- markdownlint-disable MD033 -->
+<!-- markdownlint-disable MD028 -->
+<!-- markdownlint-disable MD007 -->
+
 <img src=img/main.jpg>
+
+<!-- prettier-ignore-start -->
+<!-- TOC depthfrom:2 orderedlist:false -->
+
+- [Installation](#installation)
+    - [Automatic](#automatic)
+    - [Manual](#manual)
+- [Usage](#usage)
+- [Options](#options)
+- [Keyboard Shortcuts](#keyboard-shortcuts)
+- [What is backed up](#what-is-backed-up)
+- [Restore](#restore)
+    - [Settings](#settings)
+    - [Notes](#notes)
+- [FAQ](#faq)
+    - [Internal Joplin links betwen notes are lost](#internal-joplin-links-betwen-notes-are-lost)
+    - [Combine multiple JEX Files to one](#combine-multiple-jex-files-to-one)
+- [Open a JEX Backup file](#open-a-jex-backup-file)
+- [Changelog](#changelog)
+- [Links](#links)
+
+<!-- /TOC -->
+<!-- prettier-ignore-end -->
 
 ## Installation
 
@@ -88,7 +115,7 @@ If the notebook in which the note was located already exists in your Joplin, the
 If several JEX files are imported and the notes have links to each other, these links will be lost.
 Therefore it is recommended to create a Single JEX Backup!
 
-### Compine multiple JEX Files to one
+### Combine multiple JEX Files to one
 
 By combining the JEX files into one, the Joplin internal links will work again after the import.
 
