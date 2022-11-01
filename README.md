@@ -2,7 +2,34 @@
 
 A plugin to extend Joplin with a manual and automatic backup function.
 
+<!-- markdownlint-disable MD033 -->
+<!-- markdownlint-disable MD028 -->
+<!-- markdownlint-disable MD007 -->
+
 <img src=img/main.jpg>
+
+<!-- prettier-ignore-start -->
+<!-- TOC depthfrom:2 orderedlist:false -->
+
+- [Installation](#installation)
+    - [Automatic](#automatic)
+    - [Manual](#manual)
+- [Usage](#usage)
+- [Options](#options)
+- [Keyboard Shortcuts](#keyboard-shortcuts)
+- [What is backed up](#what-is-backed-up)
+- [Restore](#restore)
+    - [Settings](#settings)
+    - [Notes](#notes)
+- [FAQ](#faq)
+    - [Internal Joplin links betwen notes are lost](#internal-joplin-links-betwen-notes-are-lost)
+    - [Combine multiple JEX Files to one](#combine-multiple-jex-files-to-one)
+- [Open a JEX Backup file](#open-a-jex-backup-file)
+- [Changelog](#changelog)
+- [Links](#links)
+
+<!-- /TOC -->
+<!-- prettier-ignore-end -->
 
 ## Installation
 
