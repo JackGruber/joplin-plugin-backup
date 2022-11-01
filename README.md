@@ -88,7 +88,7 @@ If the notebook in which the note was located already exists in your Joplin, the
 If several JEX files are imported and the notes have links to each other, these links will be lost.
 Therefore it is recommended to create a Single JEX Backup!
 
-### Compine multiple JEX Files to one
+### Combine multiple JEX Files to one
 
 By combining the JEX files into one, the Joplin internal links will work again after the import.
 
