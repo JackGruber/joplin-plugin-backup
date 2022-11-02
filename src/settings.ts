@@ -9,10 +9,12 @@ export namespace Settings {
       iconName: "fas fa-archive",
     });
 
-    const joplinVersion = await helper.joplinVersionInfo();
-
+    const joplinVersionInfo = await helper.joplinVersionInfo();
     let pathSettings = null;
-    if (joplinVersion !== null) {
+    if (
+      joplinVersionInfo !== null &&
+      (await helper.versionCompare(joplinVersionInfo.version, "2.9.12")) >= 0
+    ) {
       pathSettings = {
         value: "",
         type: SettingItemType.String,
