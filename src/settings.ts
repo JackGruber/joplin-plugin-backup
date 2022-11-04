@@ -33,6 +33,15 @@ export namespace Settings {
       };
     }
 
+    // Make export Format only onb Joplin > 2.9.12 public
+    let exportFormatPublic = false;
+    if (
+      joplinVersionInfo !== null &&
+      (await helper.versionCompare(joplinVersionInfo.version, "2.9.12")) >= 0
+    ) {
+      exportFormatPublic = true;
+    }
+
     await joplin.settings.registerSettings({
       path: pathSettings,
       backupRetention: {
@@ -186,6 +195,21 @@ export namespace Settings {
         advanced: true,
         label: "Backup plugins",
         description: "Backup plugin jpl files",
+      },
+      exportFormat: {
+        value: "jex",
+        type: SettingItemType.String,
+        section: "backupSection",
+        isEnum: true,
+        public: exportFormatPublic,
+        label: "Export format",
+        advanced: true,
+        options: {
+          jex: "Jex",
+          md_frontmatter: "MD Frontmatter",
+          raw: "MD RAW",
+        },
+        description: "Backup format for the notes.",
       },
       singleJexV2: {
         value: true,

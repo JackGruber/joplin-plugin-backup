@@ -25,6 +25,7 @@ class Backup {
   private singleJex: boolean;
   private createSubfolder: boolean;
   private backupSetName: string;
+  private exportFormat: string;
 
   constructor() {
     this.log = backupLogging;
