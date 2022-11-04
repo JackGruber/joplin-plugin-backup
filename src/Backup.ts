@@ -247,6 +247,7 @@ class Backup {
     this.zipArchive = await joplin.settings.value("zipArchive");
     this.compressionLevel = await joplin.settings.value("compressionLevel");
     this.singleJex = await joplin.settings.value("singleJexV2");
+    this.exportFormat = await joplin.settings.value("exportFormat");
 
     this.backupPlugins = await joplin.settings.value("backupPlugins");
 
@@ -606,33 +607,48 @@ class Backup {
   private async backupNotebooks() {
     const notebooks = await this.selectNotebooks();
 
-    if (this.singleJex === true) {
-      this.log.info("Create single file JEX backup");
-      await this.jexExport(
-        notebooks.ids,
-        path.join(this.activeBackupPath, "all_notebooks.jex")
-      );
-    } else {
-      this.log.info("Export each notbook as JEX backup");
-      for (const folderId of notebooks.ids) {
-        if ((await this.notebookHasNotes(folderId)) === true) {
-          this.log.verbose(
-            `Export ${notebooks.info[folderId]["title"]} (${folderId})`
-          );
-          const notebookFile = await this.getNotebookFileName(
-            notebooks.info,
-            folderId
-          );
-          await this.jexExport(
-            folderId,
-            path.join(this.activeBackupPath, notebookFile)
-          );
-        } else {
-          this.log.verbose(
-            `Skip ${notebooks.info[folderId]["title"]} (${folderId}) since no notes in notebook`
-          );
+    if (this.exportFormat === "jex") {
+      if (this.singleJex === true) {
+        this.log.info("Create single file JEX backup");
+        await this.exportNotebooks(
+          notebooks.ids,
+          path.join(this.activeBackupPath, "all_notebooks.jex"),
+          this.exportFormat
+        );
+      } else {
+        this.log.info("Export each notbook as JEX backup");
+        for (const folderId of notebooks.ids) {
+          if ((await this.notebookHasNotes(folderId)) === true) {
+            this.log.verbose(
+              `Export ${notebooks.info[folderId]["title"]} (${folderId})`
+            );
+            const notebookFile = await this.getNotebookFileName(
+              notebooks.info,
+              folderId
+            );
+            await this.exportNotebooks(
+              folderId,
+              path.join(this.activeBackupPath, notebookFile),
+              this.exportFormat
+            );
+          } else {
+            this.log.verbose(
+              `Skip ${notebooks.info[folderId]["title"]} (${folderId}) since no notes in notebook`
+            );
+          }
         }
       }
+    } else {
+      this.log.info("Export as " + this.exportFormat);
+      const exportPath = path.join(this.activeBackupPath, "notes");
+      if (!fs.existsSync(exportPath)) {
+        try {
+          fs.mkdirSync(exportPath);
+        } catch (e) {
+          await this.showError("create Folder: " + e.message);
+        }
+      }
+      await this.exportNotebooks(notebooks.ids, exportPath, this.exportFormat);
     }
   }
 
