@@ -2,6 +2,8 @@
 
 ## not released
 
+- Add: Option to select export format between JEX, MD with Frontmatter and RAW (Only supported with Joplin > 2.9.12)
+
 ## v1.1.1 (2022-07-27)
 
 - Fix: #45 Error message when deleting old ZIP backupsets
