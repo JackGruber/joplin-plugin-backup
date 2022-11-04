@@ -230,6 +230,15 @@ export namespace Settings {
         label: "Single JEX",
         description: "Old setting, for compatibility and upgrade only.",
       },
+      execFinishCmd: {
+        value: "",
+        type: SettingItemType.String,
+        section: "backupSection",
+        public: true,
+        advanced: true,
+        label: "Command on Backup finish",
+        description: "Execute command when backup is finished.",
+      },
       backupVersion: {
         value: 0,
         type: SettingItemType.Int,

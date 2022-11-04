@@ -7,6 +7,7 @@ import * as fs from "fs-extra";
 import { sevenZip } from "./sevenZip";
 import * as moment from "moment";
 import { helper } from "./helper";
+import { exec } from "child_process";
 
 class Backup {
   private msgDialog: any;
@@ -26,6 +27,7 @@ class Backup {
   private createSubfolder: boolean;
   private backupSetName: string;
   private exportFormat: string;
+  private execFinishCmd: string;
 
   constructor() {
     this.log = backupLogging;
@@ -248,6 +250,7 @@ class Backup {
     this.compressionLevel = await joplin.settings.value("compressionLevel");
     this.singleJex = await joplin.settings.value("singleJexV2");
     this.exportFormat = await joplin.settings.value("exportFormat");
+    this.execFinishCmd = (await joplin.settings.value("execFinishCmd")).trim();
 
     this.backupPlugins = await joplin.settings.value("backupPlugins");
 
@@ -426,9 +429,13 @@ class Backup {
         );
         this.log.info("Backup finished to: " + backupDst);
 
-        this.log.info("Backup completed");
         await this.fileLogging(false);
 
+        if (this.execFinishCmd !== "") {
+          this.execCmd(this.execFinishCmd);
+        }
+
+        this.log.info("Backup completed");
         this.moveLogFile(backupDst);
 
         if (showDoneMsg === true) {
@@ -1067,6 +1074,19 @@ class Backup {
       }
       await joplin.settings.setValue("backupInfo", JSON.stringify(info));
     }
+  }
+
+  private async execCmd(cmd: string): Promise<boolean> {
+    this.log.info("execCmd: " + cmd);
+    exec(cmd, (error, stdout, stderr) => {
+      this.log.verbose("execCmd stdout: " + stdout);
+      this.log.verbose("execCmd stderr: " + stderr);
+      if (error) {
+        this.log.error(`execCmd error: ${error}`);
+        return false;
+      }
+    });
+    return true;
   }
 }
 
