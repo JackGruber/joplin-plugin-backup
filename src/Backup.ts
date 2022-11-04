@@ -668,16 +668,20 @@ class Backup {
     }
   }
 
-  private async jexExport(notebookIds: string[], file: string) {
+  private async exportNotebooks(
+    notebookIds: string[],
+    file: string,
+    format: string
+  ) {
     try {
       let status: string = await joplin.commands.execute(
         "exportFolders",
         notebookIds,
-        "jex",
+        format,
         file
       );
     } catch (e) {
-      this.showError("Backup error", "jexExport: " + e.message);
+      this.showError("Backup error", format + ": " + e.message);
       throw e;
     }
   }
