@@ -7,6 +7,7 @@ import * as fs from "fs-extra";
 import { sevenZip } from "./sevenZip";
 import * as moment from "moment";
 import { helper } from "./helper";
+import { exec } from "child_process";
 
 class Backup {
   private msgDialog: any;
@@ -25,6 +26,8 @@ class Backup {
   private singleJex: boolean;
   private createSubfolder: boolean;
   private backupSetName: string;
+  private exportFormat: string;
+  private execFinishCmd: string;
 
   constructor() {
     this.log = backupLogging;
@@ -246,6 +249,8 @@ class Backup {
     this.zipArchive = await joplin.settings.value("zipArchive");
     this.compressionLevel = await joplin.settings.value("compressionLevel");
     this.singleJex = await joplin.settings.value("singleJexV2");
+    this.exportFormat = await joplin.settings.value("exportFormat");
+    this.execFinishCmd = (await joplin.settings.value("execFinishCmd")).trim();
 
     this.backupPlugins = await joplin.settings.value("backupPlugins");
 
@@ -424,9 +429,13 @@ class Backup {
         );
         this.log.info("Backup finished to: " + backupDst);
 
-        this.log.info("Backup completed");
         await this.fileLogging(false);
 
+        if (this.execFinishCmd !== "") {
+          this.execCmd(this.execFinishCmd);
+        }
+
+        this.log.info("Backup completed");
         this.moveLogFile(backupDst);
 
         if (showDoneMsg === true) {
@@ -605,33 +614,48 @@ class Backup {
   private async backupNotebooks() {
     const notebooks = await this.selectNotebooks();
 
-    if (this.singleJex === true) {
-      this.log.info("Create single file JEX backup");
-      await this.jexExport(
-        notebooks.ids,
-        path.join(this.activeBackupPath, "all_notebooks.jex")
-      );
-    } else {
-      this.log.info("Export each notbook as JEX backup");
-      for (const folderId of notebooks.ids) {
-        if ((await this.notebookHasNotes(folderId)) === true) {
-          this.log.verbose(
-            `Export ${notebooks.info[folderId]["title"]} (${folderId})`
-          );
-          const notebookFile = await this.getNotebookFileName(
-            notebooks.info,
-            folderId
-          );
-          await this.jexExport(
-            folderId,
-            path.join(this.activeBackupPath, notebookFile)
-          );
-        } else {
-          this.log.verbose(
-            `Skip ${notebooks.info[folderId]["title"]} (${folderId}) since no notes in notebook`
-          );
+    if (this.exportFormat === "jex") {
+      if (this.singleJex === true) {
+        this.log.info("Create single file JEX backup");
+        await this.exportNotebooks(
+          notebooks.ids,
+          path.join(this.activeBackupPath, "all_notebooks.jex"),
+          this.exportFormat
+        );
+      } else {
+        this.log.info("Export each notbook as JEX backup");
+        for (const folderId of notebooks.ids) {
+          if ((await this.notebookHasNotes(folderId)) === true) {
+            this.log.verbose(
+              `Export ${notebooks.info[folderId]["title"]} (${folderId})`
+            );
+            const notebookFile = await this.getNotebookFileName(
+              notebooks.info,
+              folderId
+            );
+            await this.exportNotebooks(
+              folderId,
+              path.join(this.activeBackupPath, notebookFile),
+              this.exportFormat
+            );
+          } else {
+            this.log.verbose(
+              `Skip ${notebooks.info[folderId]["title"]} (${folderId}) since no notes in notebook`
+            );
+          }
         }
       }
+    } else {
+      this.log.info("Export as " + this.exportFormat);
+      const exportPath = path.join(this.activeBackupPath, "notes");
+      if (!fs.existsSync(exportPath)) {
+        try {
+          fs.mkdirSync(exportPath);
+        } catch (e) {
+          await this.showError("create Folder: " + e.message);
+        }
+      }
+      await this.exportNotebooks(notebooks.ids, exportPath, this.exportFormat);
     }
   }
 
@@ -667,16 +691,20 @@ class Backup {
     }
   }
 
-  private async jexExport(notebookIds: string[], file: string) {
+  private async exportNotebooks(
+    notebookIds: string[],
+    file: string,
+    format: string
+  ) {
     try {
       let status: string = await joplin.commands.execute(
         "exportFolders",
         notebookIds,
-        "jex",
+        format,
         file
       );
     } catch (e) {
-      this.showError("Backup error", "jexExport: " + e.message);
+      this.showError("Backup error", format + ": " + e.message);
       throw e;
     }
   }
@@ -1046,6 +1074,19 @@ class Backup {
       }
       await joplin.settings.setValue("backupInfo", JSON.stringify(info));
     }
+  }
+
+  private async execCmd(cmd: string): Promise<boolean> {
+    this.log.info("execCmd: " + cmd);
+    exec(cmd, (error, stdout, stderr) => {
+      this.log.verbose("execCmd stdout: " + stdout);
+      this.log.verbose("execCmd stderr: " + stderr);
+      if (error) {
+        this.log.error(`execCmd error: ${error}`);
+        return false;
+      }
+    });
+    return true;
   }
 }
 

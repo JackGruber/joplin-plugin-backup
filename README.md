@@ -71,6 +71,8 @@ Go to `Tools > Options > Backup`
 | `Temporary export path`      | The data is first exported into this path before it is copied to the backup `Backup path`.                                                                               | ``                      |
 | `Backup set name`            | Name of the backup set if multiple backups are to be keep. [Available moment tokens](https://momentjs.com/docs/#/displaying/format/), which can be used with `{<TOKEN>}` | `{YYYYMMDDHHmm}`        |
 | `Single JEX`                 | Create only one JEX file for all, this option is recommended to prevent the loss of internal note links or folder structure during a restore!                            | `true`                  |
+| `Export format`              | Selection of the export format of the notes.                                                                                                                             | `jex`                   |
+| `Command on Backup finish`   | Execute command when backup is finished.                                                                                                                                 |                         |
 | `Create Subfolder`           | Create a sub folder `JoplinBackup` in the configured `Backup path`. Deactivate only if there is no other data in the `Backup path`!                                      | `true`                  |
 | `Backup plugins`             | Backup the plugin folder from the Joplin profile with all installed plugin jpl files.                                                                                    | `true`                  |
 
