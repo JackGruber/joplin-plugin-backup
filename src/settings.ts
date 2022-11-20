@@ -207,7 +207,7 @@ export namespace Settings {
         options: {
           jex: "Jex",
           md_frontmatter: "MD Frontmatter",
-          raw: "MD RAW",
+          raw: "RAW",
         },
         description: "Backup format for the notes.",
       },
