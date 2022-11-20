@@ -2,6 +2,11 @@
 
 ## not released
 
+## v1.2.0 (2022-11-20)
+
+- Add: Option to select export format between JEX, MD with Frontmatter and RAW (Only supported with Joplin > 2.9.12)
+- Add: `Command on Backup finish` to execute a script/program when the backup is finished
+
 ## v1.1.1 (2022-07-27)
 
 - Fix: #45 Error message when deleting old ZIP backupsets

@@ -9,10 +9,12 @@ export namespace Settings {
       iconName: "fas fa-archive",
     });
 
-    const joplinVersion = await helper.joplinVersionInfo();
-
+    const joplinVersionInfo = await helper.joplinVersionInfo();
     let pathSettings = null;
-    if (joplinVersion !== null) {
+    if (
+      joplinVersionInfo !== null &&
+      (await helper.versionCompare(joplinVersionInfo.version, "2.9.12")) >= 0
+    ) {
       pathSettings = {
         value: "",
         type: SettingItemType.String,
@@ -29,6 +31,15 @@ export namespace Settings {
         public: true,
         label: "Backup path",
       };
+    }
+
+    // Make export Format only onb Joplin > 2.9.12 public
+    let exportFormatPublic = false;
+    if (
+      joplinVersionInfo !== null &&
+      (await helper.versionCompare(joplinVersionInfo.version, "2.9.12")) >= 0
+    ) {
+      exportFormatPublic = true;
     }
 
     await joplin.settings.registerSettings({
@@ -185,6 +196,21 @@ export namespace Settings {
         label: "Backup plugins",
         description: "Backup plugin jpl files",
       },
+      exportFormat: {
+        value: "jex",
+        type: SettingItemType.String,
+        section: "backupSection",
+        isEnum: true,
+        public: exportFormatPublic,
+        label: "Export format",
+        advanced: true,
+        options: {
+          jex: "Jex",
+          md_frontmatter: "MD Frontmatter",
+          raw: "RAW",
+        },
+        description: "Backup format for the notes.",
+      },
       singleJexV2: {
         value: true,
         type: SettingItemType.Bool,
@@ -203,6 +229,15 @@ export namespace Settings {
         advanced: true,
         label: "Single JEX",
         description: "Old setting, for compatibility and upgrade only.",
+      },
+      execFinishCmd: {
+        value: "",
+        type: SettingItemType.String,
+        section: "backupSection",
+        public: true,
+        advanced: true,
+        label: "Command on Backup finish",
+        description: "Execute command when backup is finished.",
       },
       backupVersion: {
         value: 0,
