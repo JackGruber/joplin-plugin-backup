@@ -225,8 +225,12 @@ class Backup {
 
     if (this.createSubfolder) {
       this.log.verbose("append subFolder");
+      const orgBackupBasePath = this.backupBasePath;
       this.backupBasePath = path.join(this.backupBasePath, "JoplinBackup");
-      if (!fs.existsSync(this.backupBasePath)) {
+      if (
+        fs.existsSync(orgBackupBasePath) &&
+        !fs.existsSync(this.backupBasePath)
+      ) {
         try {
           fs.mkdirSync(this.backupBasePath);
         } catch (e) {
