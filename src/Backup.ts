@@ -265,7 +265,7 @@ class Backup {
       (await helper.validFileName(this.backupSetName)) === false
     ) {
       this.backupSetName = "{YYYYMMDDHHmm}";
-      this.showError(
+      await this.showError(
         'Backup set name does contain not allowed characters ( \\/:*?"<>| )!'
       );
     }
@@ -708,7 +708,7 @@ class Backup {
         file
       );
     } catch (e) {
-      this.showError("Backup error", format + ": " + e.message);
+      await this.showError("Backup error", format + ": " + e.message);
       throw e;
     }
   }
@@ -990,7 +990,7 @@ class Backup {
           recursive: true,
         });
       } catch (e) {
-        this.showError("moveFinishedBackup: " + e.message);
+        await this.showError("moveFinishedBackup: " + e.message);
         throw e;
       }
     }
