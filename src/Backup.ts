@@ -28,6 +28,7 @@ class Backup {
   private backupSetName: string;
   private exportFormat: string;
   private execFinishCmd: string;
+  private suppressErrorMsgUntil: number;
 
   constructor() {
     this.log = backupLogging;
@@ -50,6 +51,7 @@ class Backup {
     await sevenZip.updateBinPath();
     await sevenZip.setExecutionFlag();
     this.backupStartTime = null;
+    this.suppressErrorMsgUntil = 0;
   }
 
   private async upgradeBackupPluginVersion() {
@@ -442,13 +444,32 @@ class Backup {
         this.log.info("Backup completed");
         this.moveLogFile(backupDst);
 
+        this.suppressErrorMsgUntil = 0;
+
         if (showDoneMsg === true) {
           await this.showMsg(`Backup completed`);
         }
       } else {
-        await this.showError(
-          `The Backup path '${this.backupBasePath}' does not exist!`
-        );
+        const now = new Date();
+
+        // Show error msg only every x hours on automatic runs
+        if (
+          showDoneMsg === false &&
+          this.suppressErrorMsgUntil > now.getTime()
+        ) {
+          this.log.error(
+            `The Backup path '${this.backupBasePath}' does not exist!`
+          );
+          this.log.info("Error dialog suppressed");
+        } else {
+          await this.showError(
+            `The Backup path '${this.backupBasePath}' does not exist!`
+          );
+
+          if (showDoneMsg === false) {
+            this.suppressErrorMsgUntil = now.getTime() + 6 * 60 * 60 * 1000;
+          }
+        }
       }
 
       this.backupStartTime = null;
