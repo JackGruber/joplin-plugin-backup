@@ -1003,6 +1003,11 @@ class Backup {
             );
           } catch (e) {
             await this.showError("moveFinishedBackup: " + e.message);
+            this.log.error(
+              path.join(this.activeBackupPath, file) +
+                " => " +
+                path.join(backupDestination, file)
+            );
             throw e;
           }
         }
