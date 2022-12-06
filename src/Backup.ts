@@ -999,7 +999,8 @@ class Backup {
           try {
             fs.moveSync(
               path.join(this.activeBackupPath, file),
-              path.join(backupDestination, file)
+              path.join(backupDestination, file),
+              { overwrite: true }
             );
           } catch (e) {
             await this.showError("moveFinishedBackup: " + e.message);
