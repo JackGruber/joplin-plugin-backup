@@ -374,6 +374,8 @@ class Backup {
       "backupVersion",
       "backupPlugins",
       "createSubfolder",
+      "createSubfolder",
+      "exportFormat",
     ];
 
     this.log.verbose("Plugin settings:");
