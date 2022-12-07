@@ -992,22 +992,18 @@ class Backup {
         }
       } else {
         backupDestination = this.backupBasePath;
-        const oldBackupData = fs
+        const backupData = fs
           .readdirSync(this.activeBackupPath, { withFileTypes: true })
           .map((dirent) => dirent.name);
-        for (const file of oldBackupData) {
+        console.log(backupData);
+        for (const file of backupData) {
+          let dst = path.join(backupDestination, file);
           try {
-            fs.moveSync(
-              path.join(this.activeBackupPath, file),
-              path.join(backupDestination, file),
-              { overwrite: true }
-            );
+            fs.moveSync(path.join(this.activeBackupPath, file), dst);
           } catch (e) {
             await this.showError("moveFinishedBackup: " + e.message);
             this.log.error(
-              path.join(this.activeBackupPath, file) +
-                " => " +
-                path.join(backupDestination, file)
+              path.join(this.activeBackupPath, file) + " => " + dst
             );
             throw e;
           }
@@ -1029,7 +1025,6 @@ class Backup {
 
   private async clearBackupTarget(backupPath: string) {
     this.log.verbose(`Clear backup target`);
-
     // Remove only files
     const oldBackupData = fs
       .readdirSync(backupPath, { withFileTypes: true })
@@ -1044,7 +1039,7 @@ class Backup {
         try {
           fs.removeSync(path.join(backupPath, file));
         } catch (e) {
-          await this.showError("" + e.message);
+          await this.showError("clearBackupTarget " + e.message);
           throw e;
         }
       }
@@ -1053,14 +1048,14 @@ class Backup {
     try {
       fs.removeSync(path.join(backupPath, "templates"));
     } catch (e) {
-      await this.showError("deleteOldBackupSets" + e.message);
+      await this.showError("clearBackupTarget " + e.message);
       throw e;
     }
 
     try {
       fs.removeSync(path.join(backupPath, "profile"));
     } catch (e) {
-      await this.showError("deleteOldBackupSets" + e.message);
+      await this.showError("clearBackupTarget " + e.message);
       throw e;
     }
   }
