@@ -998,7 +998,9 @@ class Backup {
         for (const file of backupData) {
           let dst = path.join(backupDestination, file);
           try {
-            fs.moveSync(path.join(this.activeBackupPath, file), dst);
+            fs.moveSync(path.join(this.activeBackupPath, file), dst, {
+              overwrite: true,
+            });
           } catch (e) {
             await this.showError("moveFinishedBackup: " + e.message);
             this.log.error(
