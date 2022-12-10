@@ -995,7 +995,6 @@ class Backup {
         const backupData = fs
           .readdirSync(this.activeBackupPath, { withFileTypes: true })
           .map((dirent) => dirent.name);
-        console.log(backupData);
         for (const file of backupData) {
           let dst = path.join(backupDestination, file);
           try {
