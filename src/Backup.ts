@@ -1047,6 +1047,13 @@ class Backup {
     }
 
     try {
+      fs.removeSync(path.join(backupPath, "notes"));
+    } catch (e) {
+      await this.showError("clearBackupTarget " + e.message);
+      throw e;
+    }
+
+    try {
       fs.removeSync(path.join(backupPath, "templates"));
     } catch (e) {
       await this.showError("clearBackupTarget " + e.message);
