@@ -28,6 +28,7 @@ class Backup {
   private backupSetName: string;
   private exportFormat: string;
   private execFinishCmd: string;
+  private suppressErrorMsgUntil: number;
 
   constructor() {
     this.log = backupLogging;
@@ -50,6 +51,7 @@ class Backup {
     await sevenZip.updateBinPath();
     await sevenZip.setExecutionFlag();
     this.backupStartTime = null;
+    this.suppressErrorMsgUntil = 0;
   }
 
   private async upgradeBackupPluginVersion() {
@@ -225,8 +227,12 @@ class Backup {
 
     if (this.createSubfolder) {
       this.log.verbose("append subFolder");
+      const orgBackupBasePath = this.backupBasePath;
       this.backupBasePath = path.join(this.backupBasePath, "JoplinBackup");
-      if (!fs.existsSync(this.backupBasePath)) {
+      if (
+        fs.existsSync(orgBackupBasePath) &&
+        !fs.existsSync(this.backupBasePath)
+      ) {
         try {
           fs.mkdirSync(this.backupBasePath);
         } catch (e) {
@@ -261,7 +267,7 @@ class Backup {
       (await helper.validFileName(this.backupSetName)) === false
     ) {
       this.backupSetName = "{YYYYMMDDHHmm}";
-      this.showError(
+      await this.showError(
         'Backup set name does contain not allowed characters ( \\/:*?"<>| )!'
       );
     }
@@ -368,6 +374,8 @@ class Backup {
       "backupVersion",
       "backupPlugins",
       "createSubfolder",
+      "createSubfolder",
+      "exportFormat",
     ];
 
     this.log.verbose("Plugin settings:");
@@ -438,13 +446,32 @@ class Backup {
         this.log.info("Backup completed");
         this.moveLogFile(backupDst);
 
+        this.suppressErrorMsgUntil = 0;
+
         if (showDoneMsg === true) {
           await this.showMsg(`Backup completed`);
         }
       } else {
-        await this.showError(
-          `The Backup path '${this.backupBasePath}' does not exist!`
-        );
+        const now = new Date();
+
+        // Show error msg only every x hours on automatic runs
+        if (
+          showDoneMsg === false &&
+          this.suppressErrorMsgUntil > now.getTime()
+        ) {
+          this.log.error(
+            `The Backup path '${this.backupBasePath}' does not exist!`
+          );
+          this.log.info("Error dialog suppressed");
+        } else {
+          await this.showError(
+            `The Backup path '${this.backupBasePath}' does not exist!`
+          );
+
+          if (showDoneMsg === false) {
+            this.suppressErrorMsgUntil = now.getTime() + 6 * 60 * 60 * 1000;
+          }
+        }
       }
 
       this.backupStartTime = null;
@@ -704,7 +731,7 @@ class Backup {
         file
       );
     } catch (e) {
-      this.showError("Backup error", format + ": " + e.message);
+      await this.showError("Backup error", format + ": " + e.message);
       throw e;
     }
   }
@@ -965,17 +992,20 @@ class Backup {
         }
       } else {
         backupDestination = this.backupBasePath;
-        const oldBackupData = fs
+        const backupData = fs
           .readdirSync(this.activeBackupPath, { withFileTypes: true })
           .map((dirent) => dirent.name);
-        for (const file of oldBackupData) {
+        for (const file of backupData) {
+          let dst = path.join(backupDestination, file);
           try {
-            fs.moveSync(
-              path.join(this.activeBackupPath, file),
-              path.join(backupDestination, file)
-            );
+            fs.moveSync(path.join(this.activeBackupPath, file), dst, {
+              overwrite: true,
+            });
           } catch (e) {
             await this.showError("moveFinishedBackup: " + e.message);
+            this.log.error(
+              path.join(this.activeBackupPath, file) + " => " + dst
+            );
             throw e;
           }
         }
@@ -986,7 +1016,7 @@ class Backup {
           recursive: true,
         });
       } catch (e) {
-        this.showError("moveFinishedBackup: " + e.message);
+        await this.showError("moveFinishedBackup: " + e.message);
         throw e;
       }
     }
@@ -996,7 +1026,6 @@ class Backup {
 
   private async clearBackupTarget(backupPath: string) {
     this.log.verbose(`Clear backup target`);
-
     // Remove only files
     const oldBackupData = fs
       .readdirSync(backupPath, { withFileTypes: true })
@@ -1011,23 +1040,30 @@ class Backup {
         try {
           fs.removeSync(path.join(backupPath, file));
         } catch (e) {
-          await this.showError("" + e.message);
+          await this.showError("clearBackupTarget " + e.message);
           throw e;
         }
       }
     }
 
     try {
+      fs.removeSync(path.join(backupPath, "notes"));
+    } catch (e) {
+      await this.showError("clearBackupTarget " + e.message);
+      throw e;
+    }
+
+    try {
       fs.removeSync(path.join(backupPath, "templates"));
     } catch (e) {
-      await this.showError("deleteOldBackupSets" + e.message);
+      await this.showError("clearBackupTarget " + e.message);
       throw e;
     }
 
     try {
       fs.removeSync(path.join(backupPath, "profile"));
     } catch (e) {
-      await this.showError("deleteOldBackupSets" + e.message);
+      await this.showError("clearBackupTarget " + e.message);
       throw e;
     }
   }

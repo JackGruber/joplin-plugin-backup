@@ -2,6 +2,11 @@
 
 ## not released
 
+## v1.2.1 (2022-12-10)
+
+- Fix: #47 Suppress repeating error message during automatic execution if the backup path is not accessible
+- Fix: #48 File already exists when a RAW or MD Frontmatter backup with no revisions is made
+
 ## v1.2.0 (2022-11-20)
 
 - Add: Option to select export format between JEX, MD with Frontmatter and RAW (Only supported with Joplin > 2.9.12)
