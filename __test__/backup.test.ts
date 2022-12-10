@@ -298,6 +298,51 @@ describe("Backup", function () {
       expect(fs.existsSync(expected)).toBe(true);
     });
 
+    it(`retention = 1, folder exist with same files and folder`, async () => {
+      const emptyFolder = path.join(testPath.activeBackupJob, "emptyFolder");
+      const emptyFolderCheck = path.join(
+        testPath.backupBasePath,
+        "emptyFolder"
+      );
+      const folderNotes = path.join(testPath.activeBackupJob, "notes");
+      const folderNotesCheck = path.join(testPath.backupBasePath, "notes");
+      const file1 = path.join(folderNotes, "file.txt");
+      const file1Check = path.join(folderNotesCheck, "file.txt");
+      const file2 = path.join(testPath.activeBackupJob, "file.txt");
+      const file2Check = path.join(testPath.backupBasePath, "file.txt");
+      const file3Check = path.join(testPath.backupBasePath, "fileStay.txt");
+      const file4Check = path.join(folderNotesCheck, "fileNo.txt");
+      backup.backupBasePath = testPath.backupBasePath;
+      backup.activeBackupPath = testPath.activeBackupJob;
+
+      fs.emptyDirSync(testPath.backupBasePath);
+      fs.emptyDirSync(emptyFolderCheck);
+      fs.emptyDirSync(folderNotesCheck);
+      fs.writeFileSync(file1Check, "old file");
+      fs.writeFileSync(file2Check, "old file");
+      fs.writeFileSync(file3Check, "old file");
+      fs.writeFileSync(file4Check, "old file");
+
+      fs.emptyDirSync(testPath.activeBackupJob);
+      fs.emptyDirSync(emptyFolder);
+      fs.emptyDirSync(folderNotes);
+      fs.writeFileSync(file1, "new file");
+      fs.writeFileSync(file2, "new file");
+
+      backup.backupRetention = 1;
+
+      expect(await backup.moveFinishedBackup()).toBe(testPath.backupBasePath);
+      expect(fs.existsSync(folderNotes)).toBe(false);
+      expect(fs.existsSync(folderNotesCheck)).toBe(true);
+      expect(fs.existsSync(emptyFolderCheck)).toBe(true);
+      expect(fs.existsSync(file1Check)).toBe(true);
+      expect(fs.existsSync(file2Check)).toBe(true);
+      expect(fs.existsSync(file3Check)).toBe(true);
+      expect(fs.existsSync(file4Check)).toBe(false);
+      expect(backup.log.error).toHaveBeenCalledTimes(0);
+      expect(backup.log.warn).toHaveBeenCalledTimes(0);
+    });
+
     it(`retention > 1, file exist`, async () => {
       backup.backupBasePath = testPath.backupBasePath;
       backup.activeBackupPath = testPath.activeBackupJob;
