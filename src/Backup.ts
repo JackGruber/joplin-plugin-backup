@@ -440,11 +440,11 @@ class Backup {
         await this.fileLogging(false);
 
         if (this.execFinishCmd !== "") {
-          this.execCmd(this.execFinishCmd);
+          await this.execCmd(this.execFinishCmd);
         }
 
         this.log.info("Backup completed");
-        this.moveLogFile(backupDst);
+        await this.moveLogFile(backupDst);
 
         this.suppressErrorMsgUntil = 0;
 
