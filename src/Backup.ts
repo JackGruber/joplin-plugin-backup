@@ -620,7 +620,7 @@ class Backup {
           fs.renameSync(logFile, newlogFile);
           logFile = newlogFile;
         } catch (e) {
-          await this.showError("moveLogFile: " + e.message);
+          await this.showError("moveLogFile rename: " + e.message);
           throw e;
         }
         await this.addToZipArchive(logDst, logFile, this.password, ["-sdel"]);
