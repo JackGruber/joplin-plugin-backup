@@ -528,9 +528,9 @@ describe("Backup", function () {
           backupRetention: 1,
           password: null,
           singleJex: true,
-          result: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+          result: path.join(testPath.backupBasePath),
           testFile: "testFile.txt",
-          checkFile: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+          checkFile: path.join(testPath.backupBasePath, "testFile.txt.7z"),
           saveBackupInfoCalled: 0,
         },
         {
@@ -538,9 +538,13 @@ describe("Backup", function () {
           backupRetention: 2,
           password: null,
           singleJex: true,
-          result: path.join(testPath.backupBasePath, "202101021630.7z"),
+          result: path.join(testPath.backupBasePath, "202101021630"),
           testFile: "testFile.txt",
-          checkFile: path.join(testPath.backupBasePath, "202101021630.7z"),
+          checkFile: path.join(
+            testPath.backupBasePath,
+            "202101021630",
+            "testFile.txt.7z"
+          ),
           saveBackupInfoCalled: 1,
         },
         {
