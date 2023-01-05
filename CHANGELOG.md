@@ -3,6 +3,7 @@
 ## not released
 
 - Fix: `moveLogFile: ENOTDIR: not a directory` for certain backup settings
+- Add: DirectoryPath selector for backup path and tmp. export path selection on Joplin >= v2.10.4
 
 ## v1.2.1 (2022-12-10)
 

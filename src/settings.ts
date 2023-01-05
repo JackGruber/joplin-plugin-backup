@@ -11,26 +11,33 @@ export namespace Settings {
 
     const joplinVersionInfo = await helper.joplinVersionInfo();
     let pathSettings = null;
+    pathSettings = {
+      value: "",
+      type: SettingItemType.String,
+      section: "backupSection",
+      public: true,
+      label: "Backup path",
+    };
+
+    let exportPathSettings = null;
+    exportPathSettings = {
+      value: "",
+      type: SettingItemType.String,
+      section: "backupSection",
+      public: true,
+      advanced: true,
+      label: "Temporary export path",
+      description:
+        "Temporary path for note export from Joplin, before they are copyed to backup destination.",
+    };
+
+    // Add DirectoryPath selector for newer Joplin versions
     if (
       joplinVersionInfo !== null &&
-      (await helper.versionCompare(joplinVersionInfo.version, "2.9.12")) >= 0
+      (await helper.versionCompare(joplinVersionInfo.version, "2.10.4")) >= 0
     ) {
-      pathSettings = {
-        value: "",
-        type: SettingItemType.String,
-        //subType: SettingItemSubType.DirectoryPath,
-        section: "backupSection",
-        public: true,
-        label: "Backup path",
-      };
-    } else {
-      pathSettings = {
-        value: "",
-        type: SettingItemType.String,
-        section: "backupSection",
-        public: true,
-        label: "Backup path",
-      };
+      pathSettings["subType"] = SettingItemSubType.DirectoryPath;
+      exportPathSettings["subType"] = SettingItemSubType.DirectoryPath;
     }
 
     // Make export Format only onb Joplin > 2.9.12 public
@@ -167,16 +174,7 @@ export namespace Settings {
         },
         description: "Compression level for zip archive.",
       },
-      exportPath: {
-        value: "",
-        type: SettingItemType.String,
-        section: "backupSection",
-        public: true,
-        advanced: true,
-        label: "Temporary export path",
-        description:
-          "Temporary path for note export from Joplin, before they are copyed to backup destination.",
-      },
+      exportPath: exportPathSettings,
       backupSetName: {
         value: "{YYYYMMDDHHmm}",
         type: SettingItemType.String,
