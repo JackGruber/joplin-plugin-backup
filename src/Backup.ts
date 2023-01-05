@@ -613,7 +613,8 @@ class Backup {
     let logFile = this.logFile;
     if (fs.existsSync(logFile)) {
       if (this.zipArchive === "yesone" || this.password !== null) {
-        if (fs.statSync(logDst).isDirectory()) {
+        this.log.verbose(`Single zip or password`);
+        if (this.zipArchive !== "yesone") {
           logDst = path.join(logDst, "backuplog.7z");
         }
         try {
