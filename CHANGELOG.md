@@ -2,6 +2,8 @@
 
 ## not released
 
+- Fix: `moveLogFile: ENOTDIR: not a directory` for certain backup settings
+
 ## v1.2.1 (2022-12-10)
 
 - Fix: #47 Suppress repeating error message during automatic execution if the backup path is not accessible
