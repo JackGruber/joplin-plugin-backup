@@ -531,10 +531,7 @@ class Backup {
     this.log.info(`Create zip archive`);
 
     let zipFile = null;
-    if (
-      this.zipArchive === "yesone" ||
-      (this.singleJex === true && this.zipArchive === "yes")
-    ) {
+    if (this.zipArchive === "yesone") {
       const singleZipFile = path.join(
         this.backupBasePath,
         "newJoplinBackup.7z"
