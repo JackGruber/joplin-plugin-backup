@@ -608,6 +608,7 @@ class Backup {
   }
 
   private async moveLogFile(logDst: string): Promise<boolean> {
+    this.log.verbose(`moveLogFile: ${logDst}`);
     const logfileName = "backup.log";
     let logFile = this.logFile;
     if (fs.existsSync(logFile)) {
