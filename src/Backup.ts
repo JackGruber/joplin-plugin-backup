@@ -440,11 +440,11 @@ class Backup {
         await this.fileLogging(false);
 
         if (this.execFinishCmd !== "") {
-          this.execCmd(this.execFinishCmd);
+          await this.execCmd(this.execFinishCmd);
         }
 
         this.log.info("Backup completed");
-        this.moveLogFile(backupDst);
+        await this.moveLogFile(backupDst);
 
         this.suppressErrorMsgUntil = 0;
 
@@ -531,10 +531,7 @@ class Backup {
     this.log.info(`Create zip archive`);
 
     let zipFile = null;
-    if (
-      this.zipArchive === "yesone" ||
-      (this.singleJex === true && this.zipArchive === "yes")
-    ) {
+    if (this.zipArchive === "yesone") {
       const singleZipFile = path.join(
         this.backupBasePath,
         "newJoplinBackup.7z"
@@ -608,11 +605,13 @@ class Backup {
   }
 
   private async moveLogFile(logDst: string): Promise<boolean> {
+    this.log.verbose(`moveLogFile: ${logDst}`);
     const logfileName = "backup.log";
     let logFile = this.logFile;
     if (fs.existsSync(logFile)) {
       if (this.zipArchive === "yesone" || this.password !== null) {
-        if (fs.statSync(logDst).isDirectory()) {
+        this.log.verbose(`Single zip or password`);
+        if (this.zipArchive !== "yesone") {
           logDst = path.join(logDst, "backuplog.7z");
         }
         try {
@@ -620,7 +619,7 @@ class Backup {
           fs.renameSync(logFile, newlogFile);
           logFile = newlogFile;
         } catch (e) {
-          await this.showError("moveLogFile: " + e.message);
+          await this.showError("moveLogFile rename: " + e.message);
           throw e;
         }
         await this.addToZipArchive(logDst, logFile, this.password, ["-sdel"]);
