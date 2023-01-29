@@ -67,5 +67,8 @@
       "^api$": "<rootDir>/node_modules/joplinplugindevtools/dist/apiMock.js",
       "^api/types$": "<rootDir>/api/types"
     }
-  }
+  },
+  "files": [
+    "publish"
+  ]
 }
