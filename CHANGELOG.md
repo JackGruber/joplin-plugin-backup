@@ -2,6 +2,8 @@
 
 ## not released
 
+- Add: German translation
+
 ## v1.2.2 (2023-01-06)
 
 - Fix: `moveLogFile: ENOTDIR: not a directory` for certain backup settings
