@@ -2,6 +2,10 @@
 
 ## not released
 
+- Add: German translation
+
+## v1.2.2 (2023-01-06)
+
 - Fix: `moveLogFile: ENOTDIR: not a directory` for certain backup settings
 - Add: DirectoryPath selector for backup path and tmp. export path selection on Joplin >= v2.10.4
 
