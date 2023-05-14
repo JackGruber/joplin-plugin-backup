@@ -45,8 +45,10 @@
     "child_process": false
   },
   "dependencies": {
+    "@types/i18n": "^0.13.6",
     "7zip-bin": "^5.1.1",
     "electron-log": "^4.3.1",
+    "i18n": "^0.15.1",
     "moment": "^2.29.1",
     "node-7z": "^2.1.2"
   },
