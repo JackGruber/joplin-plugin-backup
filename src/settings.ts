@@ -1,6 +1,7 @@
 import joplin from "api";
 import { SettingItemType, SettingItemSubType } from "api/types";
 import { helper } from "./helper";
+import { i18n } from "./Backup";
 
 export namespace Settings {
   export async function register() {
@@ -11,26 +12,32 @@ export namespace Settings {
 
     const joplinVersionInfo = await helper.joplinVersionInfo();
     let pathSettings = null;
+    pathSettings = {
+      value: "",
+      type: SettingItemType.String,
+      section: "backupSection",
+      public: true,
+      label: i18n.__("settings.path"),
+    };
+
+    let exportPathSettings = null;
+    exportPathSettings = {
+      value: "",
+      type: SettingItemType.String,
+      section: "backupSection",
+      public: true,
+      advanced: true,
+      label: i18n.__("settings.exportPath"),
+      description: i18n.__("settings.exportPath.description"),
+    };
+
+    // Add DirectoryPath selector for newer Joplin versions
     if (
       joplinVersionInfo !== null &&
-      (await helper.versionCompare(joplinVersionInfo.version, "2.9.12")) >= 0
+      (await helper.versionCompare(joplinVersionInfo.version, "2.10.4")) >= 0
     ) {
-      pathSettings = {
-        value: "",
-        type: SettingItemType.String,
-        //subType: SettingItemSubType.DirectoryPath,
-        section: "backupSection",
-        public: true,
-        label: "Backup path",
-      };
-    } else {
-      pathSettings = {
-        value: "",
-        type: SettingItemType.String,
-        section: "backupSection",
-        public: true,
-        label: "Backup path",
-      };
+      pathSettings["subType"] = SettingItemSubType.DirectoryPath;
+      exportPathSettings["subType"] = SettingItemSubType.DirectoryPath;
     }
 
     // Make export Format only onb Joplin > 2.9.12 public
@@ -51,9 +58,8 @@ export namespace Settings {
         type: SettingItemType.Int,
         section: "backupSection",
         public: true,
-        label: "Keep x backups",
-        description:
-          "If more than one version is configured, folders are created in the Backup Path acording to backupSetName setting.",
+        label: i18n.__("settings.backupRetention"),
+        description: i18n.__("settings.backupRetention.description"),
       },
       backupInterval: {
         value: 24,
@@ -62,25 +68,24 @@ export namespace Settings {
         type: SettingItemType.Int,
         section: "backupSection",
         public: true,
-        label: "Backup interval in hours",
-        description: "0 = disable automatic backup",
+        label: i18n.__("settings.backupInterval"),
+        description: i18n.__("settings.backupInterval.description"),
       },
       onlyOnChange: {
         value: false,
         type: SettingItemType.Bool,
         section: "backupSection",
         public: true,
-        label: "Only on change",
-        description:
-          "Creates a backup at the specified backup interval only if there was a change.",
+        label: i18n.__("settings.onlyOnChange"),
+        description: i18n.__("settings.onlyOnChange.description"),
       },
       usePassword: {
         value: false,
         type: SettingItemType.Bool,
         section: "backupSection",
         public: true,
-        label: "Password protected backups",
-        description: "Protect the backups via encrypted Zip archive.",
+        label: i18n.__("settings.usePassword"),
+        description: i18n.__("settings.usePassword.description"),
       },
       password: {
         value: "password",
@@ -88,9 +93,8 @@ export namespace Settings {
         section: "backupSection",
         public: true,
         secure: true,
-        label: "Password",
-        description:
-          "If a password has been entered, the backups are protected with a password.",
+        label: i18n.__("settings.password"),
+        description: i18n.__("settings.password.description"),
       },
       passwordRepeat: {
         value: "repeat12",
@@ -98,8 +102,8 @@ export namespace Settings {
         section: "backupSection",
         public: true,
         secure: true,
-        label: "Password (Repeat)",
-        description: "Repeat password to validate.",
+        label: i18n.__("settings.passwordRepeat"),
+        description: i18n.__("settings.passwordRepeat.description"),
       },
       lastBackup: {
         value: 0,
@@ -114,7 +118,7 @@ export namespace Settings {
         section: "backupSection",
         isEnum: true,
         public: true,
-        label: "Logfile",
+        label: i18n.__("settings.fileLogLevel"),
         options: {
           false: "Off",
           verbose: "Verbose",
@@ -129,9 +133,8 @@ export namespace Settings {
         section: "backupSection",
         public: true,
         advanced: true,
-        label: "Create Subfolder",
-        description:
-          "Create a subfolder in the the configured `Backup path`. Deactivate only if there is no other data in the `Backup path`!",
+        label: i18n.__("settings.createSubfolder"),
+        description: i18n.__("settings.createSubfolder.description"),
       },
       zipArchive: {
         value: "no",
@@ -139,15 +142,14 @@ export namespace Settings {
         section: "backupSection",
         isEnum: true,
         public: true,
-        label: "Create zip archive",
         advanced: true,
         options: {
           no: "No",
           yes: "Yes",
           yesone: "Yes, one archive",
         },
-        description:
-          "If a password protected backups is set, a zip archive is always created.",
+        label: i18n.__("settings.zipArchive"),
+        description: i18n.__("settings.zipArchive.description"),
       },
       compressionLevel: {
         value: 0,
@@ -155,7 +157,6 @@ export namespace Settings {
         section: "backupSection",
         isEnum: true,
         public: true,
-        label: "Zip compression level",
         advanced: true,
         options: {
           0: "Copy (no compression)",
@@ -165,27 +166,18 @@ export namespace Settings {
           7: "Maximum",
           9: "Ultra",
         },
-        description: "Compression level for zip archive.",
+        label: i18n.__("settings.compressionLevel"),
+        description: i18n.__("settings.compressionLevel.description"),
       },
-      exportPath: {
-        value: "",
-        type: SettingItemType.String,
-        section: "backupSection",
-        public: true,
-        advanced: true,
-        label: "Temporary export path",
-        description:
-          "Temporary path for note export from Joplin, before they are copyed to backup destination.",
-      },
+      exportPath: exportPathSettings,
       backupSetName: {
         value: "{YYYYMMDDHHmm}",
         type: SettingItemType.String,
         section: "backupSection",
         public: true,
         advanced: true,
-        label: "Backup set name",
-        description:
-          "Name of the backup set if multiple backups are to be keep.",
+        label: i18n.__("settings.backupSetName"),
+        description: i18n.__("settings.backupSetName.description"),
       },
       backupPlugins: {
         value: true,
@@ -193,8 +185,8 @@ export namespace Settings {
         section: "backupSection",
         public: true,
         advanced: true,
-        label: "Backup plugins",
-        description: "Backup plugin jpl files",
+        label: i18n.__("settings.backupPlugins"),
+        description: i18n.__("settings.backupPlugins.description"),
       },
       exportFormat: {
         value: "jex",
@@ -202,14 +194,14 @@ export namespace Settings {
         section: "backupSection",
         isEnum: true,
         public: exportFormatPublic,
-        label: "Export format",
         advanced: true,
         options: {
           jex: "Jex",
           md_frontmatter: "MD Frontmatter",
           raw: "RAW",
         },
-        description: "Backup format for the notes.",
+        label: i18n.__("settings.exportFormat"),
+        description: i18n.__("settings.exportFormat.description"),
       },
       singleJexV2: {
         value: true,
@@ -217,9 +209,8 @@ export namespace Settings {
         section: "backupSection",
         public: true,
         advanced: true,
-        label: "Single JEX",
-        description:
-          "Create only one JEX file for all notebooks (Recommended to prevent the loss of internal note links and folder structure).",
+        label: i18n.__("settings.singleJex"),
+        description: i18n.__("settings.singleJex.description"),
       },
       singleJex: {
         value: false,
@@ -236,8 +227,8 @@ export namespace Settings {
         section: "backupSection",
         public: true,
         advanced: true,
-        label: "Command on Backup finish",
-        description: "Execute command when backup is finished.",
+        label: i18n.__("settings.execFinishCmd"),
+        description: i18n.__("settings.execFinishCmd.description"),
       },
       backupVersion: {
         value: 0,

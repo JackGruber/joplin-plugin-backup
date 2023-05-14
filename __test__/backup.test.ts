@@ -528,9 +528,9 @@ describe("Backup", function () {
           backupRetention: 1,
           password: null,
           singleJex: true,
-          result: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+          result: path.join(testPath.backupBasePath),
           testFile: "testFile.txt",
-          checkFile: path.join(testPath.backupBasePath, "JoplinBackup.7z"),
+          checkFile: path.join(testPath.backupBasePath, "testFile.txt.7z"),
           saveBackupInfoCalled: 0,
         },
         {
@@ -538,9 +538,13 @@ describe("Backup", function () {
           backupRetention: 2,
           password: null,
           singleJex: true,
-          result: path.join(testPath.backupBasePath, "202101021630.7z"),
+          result: path.join(testPath.backupBasePath, "202101021630"),
           testFile: "testFile.txt",
-          checkFile: path.join(testPath.backupBasePath, "202101021630.7z"),
+          checkFile: path.join(
+            testPath.backupBasePath,
+            "202101021630",
+            "testFile.txt.7z"
+          ),
           saveBackupInfoCalled: 1,
         },
         {
@@ -801,86 +805,104 @@ describe("Backup", function () {
       expect(backup.log.transports.file.level).toBe("error");
     });
 
-    it(`move logfile`, async () => {
+    describe("move logfile", function () {
       const testCases = [
         {
+          description: "backupBasePath",
           zipArchive: "no",
           password: null,
           logDst: testPath.backupBasePath,
-          testLogFile: path.join(testPath.backupBasePath, "backup.log"),
         },
         {
+          description: "backupBasePath, password",
+          zipArchive: "no",
+          password: "secret",
+          logDst: testPath.backupBasePath,
+        },
+        {
+          description: "backupBasePath, zip, password",
+          zipArchive: "yes",
+          password: "secret",
+          logDst: testPath.backupBasePath,
+        },
+        {
+          description: "backupBasePath, zip one",
+          zipArchive: "yesone",
+          password: null,
+          logDst: path.join(testPath.backupBasePath, "retention.7z"),
+        },
+        {
+          description: "backupBasePath, zip one, password",
+          zipArchive: "yesone",
+          password: "secret",
+          logDst: path.join(testPath.backupBasePath, "retention.7z"),
+        },
+        {
+          description: "sub in backupBasePath",
           zipArchive: "no",
           password: null,
-          logDst: path.join(testPath.backupBasePath, "testDir"),
-          testLogFile: path.join(
-            testPath.backupBasePath,
-            "testDir",
-            "backup.log"
-          ),
+          logDst: path.join(testPath.backupBasePath, "retentionfolder"),
         },
         {
+          description: "sub in backupBasePath, password",
+          zipArchive: "no",
+          password: "secret",
+          logDst: path.join(testPath.backupBasePath, "retentionfolder"),
+        },
+        {
+          description: "sub in backupBasePath, zip",
           zipArchive: "yes",
           password: null,
-          logDst: path.join(testPath.backupBasePath, "testDir"),
-          testLogFile: path.join(
-            testPath.backupBasePath,
-            "testDir",
-            "backup.log"
-          ),
+          logDst: path.join(testPath.backupBasePath, "retentionfolder"),
         },
         {
-          zipArchive: "yesone",
-          password: null,
-          logDst: path.join(testPath.backupBasePath, "Backup.7z"),
-          testLogFile: "backup.log",
-        },
-        {
-          zipArchive: "yesone",
+          description: "sub in backupBasePath, password, zip",
+          zipArchive: "yes",
           password: "secret",
-          logDst: path.join(testPath.backupBasePath, "Backup.7z"),
-          testLogFile: "backup.log",
-        },
-        {
-          zipArchive: "no",
-          password: "secret",
-          logDst: testPath.backupBasePath,
-          testLogFile: "backup.log",
+          logDst: path.join(testPath.backupBasePath, "retentionfolder"),
         },
       ];
 
-      backup.logFile = path.join(testPath.base, "test.log");
       for (const testCase of testCases) {
-        await createTestStructure();
-        if (testCase.zipArchive !== "yesone") {
-          fs.emptyDirSync(testCase.logDst);
-        }
-        if (testCase.zipArchive === "yesone") {
-          const dummyFile = path.join(testPath.base, "dummy");
-          fs.writeFileSync(dummyFile, "dummy");
-          await sevenZip.add(testCase.logDst, dummyFile, testCase.password);
-          expect(fs.existsSync(dummyFile)).toBe(true);
-          expect(fs.existsSync(testCase.logDst)).toBe(true);
-        }
+        it(`${testCase.description}`, async () => {
+          backup.logFile = path.join(testPath.base, "test.log");
+          backup.zipArchive = testCase.zipArchive;
+          backup.password = testCase.password;
 
-        fs.writeFileSync(backup.logFile, "log");
+          await createTestStructure();
 
-        backup.zipArchive = testCase.zipArchive;
-        backup.password = testCase.password;
+          if (testCase.zipArchive === "yesone") {
+            const dummyFile = path.join(testPath.base, "dummy");
+            fs.writeFileSync(dummyFile, "dummy");
+            expect(fs.existsSync(dummyFile)).toBe(true);
+            await sevenZip.add(testCase.logDst, dummyFile, testCase.password);
+            expect(fs.existsSync(testCase.logDst)).toBe(true);
+          } else {
+            fs.emptyDirSync(testCase.logDst);
+          }
 
-        expect(fs.existsSync(backup.logFile)).toBe(true);
-        expect(await backup.moveLogFile(testCase.logDst)).toBe(true);
-        expect(fs.existsSync(backup.logFile)).toBe(false);
+          fs.writeFileSync(backup.logFile, "log");
+          expect(fs.existsSync(backup.logFile)).toBe(true);
 
-        if (testCase.password !== null || testCase.zipArchive === "yesone") {
-          const fileList = await sevenZip.list(
-            testCase.logDst,
-            testCase.password
-          );
-          expect(fileList.map((f) => f.file)).toContain(testCase.testLogFile);
-        } else {
-          expect(fs.existsSync(testCase.testLogFile)).toBe(true);
-        }
+          expect(await backup.moveLogFile(testCase.logDst)).toBe(true);
+          expect(fs.existsSync(backup.logFile)).toBe(false);
+
+          let checkBackupLogFile = path.join(testCase.logDst, "backup.log");
+          if (testCase.zipArchive === "yesone") {
+            checkBackupLogFile = testCase.logDst;
+          } else if (testCase.password !== null) {
+            checkBackupLogFile = path.join(testCase.logDst, "backuplog.7z");
+          }
+          expect(fs.existsSync(checkBackupLogFile)).toBe(true);
+
+          if (testCase.password !== null || testCase.zipArchive === "yesone") {
+            const fileList = await sevenZip.list(
+              testCase.logDst,
+              testCase.password
+            );
+            expect(fileList.map((f) => f.file)).toContain("backup.log");
+          }
+        });
       }
     });
   });
