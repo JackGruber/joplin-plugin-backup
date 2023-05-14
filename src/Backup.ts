@@ -64,14 +64,16 @@ class Backup {
     i18n = new I18n({
       locales: ["en_US"],
       defaultLocale: "en_US",
+      fallbacks: { "en_*": "en_US" },
       updateFiles: false,
       retryInDefaultLocale: true,
       syncFiles: true,
       directory: localesDir,
     });
-    this.log.verbose("localesDir: " + localesDir);
-    this.log.verbose("Locale: " + joplinLocale);
     i18n.setLocale(joplinLocale);
+    this.log.verbose("localesDir: " + localesDir);
+    this.log.verbose("JoplinLocale: " + joplinLocale);
+    this.log.verbose("i18nLocale: " + i18n.getLocale());
   }
 
   private async upgradeBackupPluginVersion() {
