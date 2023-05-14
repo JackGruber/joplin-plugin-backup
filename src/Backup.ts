@@ -8,6 +8,9 @@ import { sevenZip } from "./sevenZip";
 import * as moment from "moment";
 import { helper } from "./helper";
 import { exec } from "child_process";
+import { I18n } from "i18n";
+
+let i18n: any;
 
 class Backup {
   private msgDialog: any;
@@ -41,6 +44,7 @@ class Backup {
     const installationDir = await joplin.plugins.installationDir();
     this.logFile = path.join(installationDir, "activeBackup.log");
 
+    await this.confLocale(path.join(installationDir, "locales"));
     await this.registerSettings();
     await this.registerCommands();
     await this.registerMenues();
@@ -52,6 +56,22 @@ class Backup {
     await sevenZip.setExecutionFlag();
     this.backupStartTime = null;
     this.suppressErrorMsgUntil = 0;
+  }
+
+  private async confLocale(localesDir: string) {
+    this.log.verbose("Conf translation");
+    const joplinLocale = await joplin.settings.globalValue("locale");
+    i18n = new I18n({
+      locales: ["en_US"],
+      defaultLocale: "en_US",
+      updateFiles: false,
+      retryInDefaultLocale: true,
+      syncFiles: true,
+      directory: localesDir,
+    });
+    this.log.verbose("localesDir: " + localesDir);
+    this.log.verbose("Locale: " + joplinLocale);
+    i18n.setLocale(joplinLocale);
   }
 
   private async upgradeBackupPluginVersion() {
@@ -1125,4 +1145,4 @@ class Backup {
   }
 }
 
-export { Backup };
+export { Backup, i18n };
