@@ -1,0 +1,5 @@
+{
+  "settings.path": "Backup path",
+  "settings.exportPath": "Temporary export path",
+  "settings.exportPath.description": "Temporary path for note export from Joplin, before they are copyed to backup destination."
+}

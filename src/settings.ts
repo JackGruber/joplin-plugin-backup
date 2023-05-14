@@ -1,6 +1,7 @@
 import joplin from "api";
 import { SettingItemType, SettingItemSubType } from "api/types";
 import { helper } from "./helper";
+import { i18n } from "./Backup";
 
 export namespace Settings {
   export async function register() {
@@ -16,7 +17,7 @@ export namespace Settings {
       type: SettingItemType.String,
       section: "backupSection",
       public: true,
-      label: "Backup path",
+      label: i18n.__("settings.path"),
     };
 
     let exportPathSettings = null;
@@ -26,9 +27,8 @@ export namespace Settings {
       section: "backupSection",
       public: true,
       advanced: true,
-      label: "Temporary export path",
-      description:
-        "Temporary path for note export from Joplin, before they are copyed to backup destination.",
+      label: i18n.__("settings.exportPath"),
+      description: i18n.__("settings.exportPath.description"),
     };
 
     // Add DirectoryPath selector for newer Joplin versions
