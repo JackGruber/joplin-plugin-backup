@@ -30,5 +30,17 @@
   "settings.singleJex": "Single JEX",
   "settings.singleJex.description": "Create only one JEX file for all notebooks (Recommended to prevent the loss of internal note links and folder structure)",
   "settings.execFinishCmd": "Command on Backup finish",
-  "settings.execFinishCmd.description": "Execute command when backup is finished"
+  "settings.execFinishCmd.description": "Execute command when backup is finished",
+  "backup.Completed": "Backup completed",
+  "error.PluginUpgrade": "Upgrade error %s: %s",
+  "error.folderCreation": "Error on folder creation: %s",
+  "error.ConfigureBackupPath": "Please configure backup path in Joplin Tools > Options > Backup",
+  "error.error.PasswordMatch": "Passwords do not match!",
+  "error.BackupPathDontExist": "The Backup path '%s' does not exist!",
+  "error.BackupAlreadyRunning": "A backup is already running!",
+  "error.Backup": "Backup error for %s: %s",
+  "error.fileCopy": "Error on file/folder copy in %s: %s",
+  "error.deleteFile": "Error on file/folder delete in %s: %s",
+  "command.createBackup": "Create backup",
+  "error.BackupSetNotSupportedChars": "Backup set name does contain not allowed characters ( %s )!"
 }

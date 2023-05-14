@@ -114,7 +114,9 @@ class Backup {
         version = checkVersion;
         await joplin.settings.setValue("backupVersion", version);
       } catch (e) {
-        await this.showError(`Upgrade error ${checkVersion}: ${e.message}`);
+        await this.showError(
+          i18n.__("error.PluginUpgrade", checkVersion, e.message)
+        );
       }
     }
   }
@@ -216,7 +218,7 @@ class Backup {
   public async registerCommands() {
     await joplin.commands.register({
       name: "CreateBackup",
-      label: "Create backup",
+      label: i18n.__("command.createBackup"),
       execute: async () => {
         await this.start(true);
       },
@@ -256,7 +258,7 @@ class Backup {
         try {
           fs.mkdirSync(this.backupBasePath);
         } catch (e) {
-          await this.showError("create Folder: " + e.message);
+          await this.showError(i18n.__("error.folderCreation", e.message));
         }
       }
     }
@@ -288,7 +290,7 @@ class Backup {
     ) {
       this.backupSetName = "{YYYYMMDDHHmm}";
       await this.showError(
-        'Backup set name does contain not allowed characters ( \\/:*?"<>| )!'
+        i18n.__("error.BackupSetNotSupportedChars", '\\/:*?"<>|')
       );
     }
 
@@ -426,15 +428,13 @@ class Backup {
       await this.logSettings(showDoneMsg);
 
       if (this.backupBasePath === null) {
-        await this.showError(
-          "Please configure backup path in Joplin Tools > Options > Backup"
-        );
+        await this.showError(i18n.__("error.ConfigureBackupPath"));
         return;
       }
 
       if (fs.existsSync(this.backupBasePath)) {
         if ((await this.checkPassword()) === -1) {
-          await this.showError("Passwords do not match!");
+          await this.showError(i18n.__("error.PasswordMatch"));
           return;
         } else {
           this.log.info("Enable password protection: " + this.passwordEnabled);
@@ -469,7 +469,7 @@ class Backup {
         this.suppressErrorMsgUntil = 0;
 
         if (showDoneMsg === true) {
-          await this.showMsg(`Backup completed`);
+          await this.showMsg(i18n.__("backup.Completed"));
         }
       } else {
         const now = new Date();
@@ -485,7 +485,7 @@ class Backup {
           this.log.info("Error dialog suppressed");
         } else {
           await this.showError(
-            `The Backup path '${this.backupBasePath}' does not exist!`
+            i18n.__("error.BackupPathDontExist", this.backupBasePath)
           );
 
           if (showDoneMsg === false) {
@@ -506,7 +506,7 @@ class Backup {
       );
 
       if (showDoneMsg === true) {
-        await this.showError(`A backup is already running!`);
+        await this.showError(i18n.__("error.BackupAlreadyRunning"));
       }
     }
   }
@@ -698,7 +698,7 @@ class Backup {
         try {
           fs.mkdirSync(exportPath);
         } catch (e) {
-          await this.showError("create Folder: " + e.message);
+          await this.showError(i18n.__("error.folderCreation", +e.message));
         }
       }
       await this.exportNotebooks(notebooks.ids, exportPath, this.exportFormat);
@@ -750,7 +750,7 @@ class Backup {
         file
       );
     } catch (e) {
-      await this.showError("Backup error", format + ": " + e.message);
+      await this.showError(i18n.__("error.Backup", format, +e.message));
       throw e;
     }
   }
@@ -869,7 +869,7 @@ class Backup {
       fs.emptyDirSync(dir);
       return dir;
     } catch (e) {
-      await this.showError("createEmptyFolder: " + e.message);
+      await this.showError(i18n.__("error.folderCreation:", e.message));
       throw e;
     }
   }
@@ -933,7 +933,9 @@ class Backup {
         fs.copySync(src, dst);
         return true;
       } catch (e) {
-        await this.showError("backupFolder: " + e.message);
+        await this.showError(
+          i18n.__("error.fileCopy", "backupFolder", e.message)
+        );
         throw e;
       }
     } else {
@@ -992,7 +994,9 @@ class Backup {
       try {
         fs.moveSync(src, backupDestination);
       } catch (e) {
-        await this.showError("moveFinishedBackup: " + e.message);
+        await this.showError(
+          i18n.__("error.fileCopy", "moveFinishedBackup", e.message)
+        );
         throw e;
       }
 
@@ -1006,7 +1010,9 @@ class Backup {
         try {
           fs.moveSync(zipFile, backupDestination);
         } catch (e) {
-          await this.showError("moveFinishedBackup: " + e.message);
+          await this.showError(
+            i18n.__("error.fileCopy", "moveFinishedBackup", e.message)
+          );
           throw e;
         }
       } else {
@@ -1021,7 +1027,9 @@ class Backup {
               overwrite: true,
             });
           } catch (e) {
-            await this.showError("moveFinishedBackup: " + e.message);
+            await this.showError(
+              i18n.__("error.fileCopy", "moveFinishedBackup", e.message)
+            );
             this.log.error(
               path.join(this.activeBackupPath, file) + " => " + dst
             );
@@ -1035,7 +1043,9 @@ class Backup {
           recursive: true,
         });
       } catch (e) {
-        await this.showError("moveFinishedBackup: " + e.message);
+        await this.showError(
+          i18n.__("error.fileCopy", "moveFinishedBackup", e.message)
+        );
         throw e;
       }
     }
@@ -1059,7 +1069,9 @@ class Backup {
         try {
           fs.removeSync(path.join(backupPath, file));
         } catch (e) {
-          await this.showError("clearBackupTarget " + e.message);
+          await this.showError(
+            i18n.__("error.deleteFile", "clearBackupTarget", e.message)
+          );
           throw e;
         }
       }
@@ -1068,21 +1080,27 @@ class Backup {
     try {
       fs.removeSync(path.join(backupPath, "notes"));
     } catch (e) {
-      await this.showError("clearBackupTarget " + e.message);
+      await this.showError(
+        i18n.__("error.deleteFile", "clearBackupTarget", e.message)
+      );
       throw e;
     }
 
     try {
       fs.removeSync(path.join(backupPath, "templates"));
     } catch (e) {
-      await this.showError("clearBackupTarget " + e.message);
+      await this.showError(
+        i18n.__("error.deleteFile", "clearBackupTarget", e.message)
+      );
       throw e;
     }
 
     try {
       fs.removeSync(path.join(backupPath, "profile"));
     } catch (e) {
-      await this.showError("clearBackupTarget " + e.message);
+      await this.showError(
+        i18n.__("error.deleteFile", "clearBackupTarget", e.message)
+      );
       throw e;
     }
   }
@@ -1123,7 +1141,9 @@ class Backup {
             fs.unlinkSync(folder);
           }
         } catch (e) {
-          await this.showError("deleteOldBackupSets" + e.message);
+          await this.showError(
+            i18n.__("error.deleteFile", "deleteOldBackupSets", e.message)
+          );
           throw e;
         }
       }
