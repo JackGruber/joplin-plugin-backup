@@ -2,6 +2,8 @@
 
 ## not released
 
+## v1.3.0 (2023-05-14)
+
 - Add: German translation
 
 ## v1.2.2 (2023-01-06)
