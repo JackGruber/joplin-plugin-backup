@@ -62,7 +62,7 @@ class Backup {
     this.log.verbose("Conf translation");
     const joplinLocale = await joplin.settings.globalValue("locale");
     i18n = new I18n({
-      locales: ["en_US", "de_DE"],
+      locales: ["en_US", "de_DE", "zh_CN"],
       defaultLocale: "en_US",
       fallbacks: { "en_*": "en_US" },
       updateFiles: false,
