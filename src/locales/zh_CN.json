@@ -1,7 +1,7 @@
 {
   "settings.path": "备份路径",
   "settings.exportPath": "临时导出路径",
-  "settings.exportPath.description": "用于在导出日志的临时Temporary path for note export from Joplin, before they are copyed to backup destination",
+  "settings.exportPath.description": "用于导出的临时路径，笔记在被移动到“备份路径”前会存于此处",
   "settings.backupRetention": "保留 x 个备份",
   "settings.backupRetention.description": "如果设置了多个备份, 则会根据“备份集名称”在“备份路径”下创建多个子文件夹",
   "settings.backupInterval": "备份间隔(以小时为单位)",
