@@ -2,6 +2,10 @@
 
 ## not released
 
+## v1.3.2 (2023-06-02)
+
+- Fix: #51 for translation zh_CN
+
 ## v1.3.1 (2023-05-19)
 
 - Add: #55 Simplified Chinese(zh_CN) translation, thanks to @wh201906
