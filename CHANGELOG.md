@@ -1,8 +1,8 @@
 # Changelog
 
-- Add: Workaround for bug #132 with `"` (double quotes) in the password where zip files with such a password can no longer be opened
-
 ## not released
+
+- Add: Workaround for bug #132 with `"` (double quotes) in the password where zip files with such a password can no longer be opened
 
 ## v1.3.2 (2023-06-02)
 
