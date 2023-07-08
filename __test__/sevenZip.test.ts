@@ -101,7 +101,6 @@ describe("Test sevenZip", function () {
           } catch {
             errorThrown = true;
           }
-          console.log(">>>" + errorThrown);
           expect(errorThrown).toBe(true);
         } else {
           const result = await sevenZip.add(zip, file, password, {
