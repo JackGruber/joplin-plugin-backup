@@ -1,5 +1,7 @@
 # Changelog
 
+- Add: Workaround for bug #132 with `"` (double quotes) in the password where zip files with such a password can no longer be opened
+
 ## not released
 
 - Fix: #51 for translation zh_CN
