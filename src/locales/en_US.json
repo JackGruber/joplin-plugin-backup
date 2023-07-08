@@ -42,5 +42,6 @@
   "error.fileCopy": "Error on file/folder copy in %s: %s",
   "error.deleteFile": "Error on file/folder delete in %s: %s",
   "command.createBackup": "Create backup",
-  "error.BackupSetNotSupportedChars": "Backup set name does contain not allowed characters ( %s )!"
+  "error.BackupSetNotSupportedChars": "Backup set name does contain not allowed characters ( %s )!",
+  "error.passwordDoubleQuotes": "Password contains \" (double quotes), these are not allowed because of a bug. Password protection for the backup is deactivated!"
 }

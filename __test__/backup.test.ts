@@ -4,6 +4,7 @@ import * as path from "path";
 import { when } from "jest-when";
 import { sevenZip } from "../src/sevenZip";
 import joplin from "api";
+import { I18n } from "i18n";
 
 function getTestPaths(): any {
   const testPath: any = {};
