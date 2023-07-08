@@ -156,11 +156,33 @@ class Backup {
     await Settings.register();
   }
 
+  // For mock ups
+  private async getTranslation(key: string): Promise<string> {
+    return i18n.__(key);
+  }
+
   private async enablePassword() {
     const usePassword = await joplin.settings.value("usePassword");
     if (usePassword === true && (await this.checkPassword()) === 1) {
-      this.passwordEnabled = true;
-      this.password = await joplin.settings.value("password");
+      const pw = await joplin.settings.value("password");
+
+      // Check for node-7z bug with double quotes
+      // https://github.com/JackGruber/joplin-plugin-backup/issues/53
+      // https://github.com/quentinrossetti/node-7z/issues/132
+      if (pw.indexOf('"') >= 0) {
+        this.log.error(
+          'enablePassword: Password contains " (double quotes), disable password'
+        );
+        this.passwordEnabled = false;
+        this.password = null;
+
+        await this.showMsg(
+          await this.getTranslation("error.passwordDoubleQuotes")
+        );
+      } else {
+        this.passwordEnabled = true;
+        this.password = pw;
+      }
     } else {
       this.passwordEnabled = false;
       this.password = null;
@@ -324,7 +346,6 @@ class Backup {
     await joplin.views.dialogs.setButtons(this.msgDialog, [{ id: "ok" }]);
     await joplin.views.dialogs.setHtml(this.msgDialog, html.join("\n"));
     await joplin.views.dialogs.open(this.msgDialog);
-    this.backupStartTime = null;
   }
 
   private async showError(msg: string, title: string = null) {

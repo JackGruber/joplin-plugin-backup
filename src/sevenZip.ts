@@ -35,6 +35,10 @@ export namespace sevenZip {
     if (!_7zOptions.method) {
       _7zOptions.method = [];
     }
+    if (password.indexOf('"') >= 0) {
+      throw 'Password contains " (double quotes) https://github.com/quentinrossetti/node-7z/issues/132';
+    }
+
     _7zOptions.password = password;
     return _7zOptions;
   }

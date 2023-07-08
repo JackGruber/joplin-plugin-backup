@@ -85,20 +85,37 @@ describe("Test sevenZip", function () {
       const fileName = "file.txt";
       const file = path.join(testBaseDir, fileName);
       const zip = path.join(testBaseDir, "file.7z");
-      const password = "secret";
-      fs.writeFileSync(file, "file");
-      expect(fs.existsSync(file)).toBe(true);
-      expect(fs.existsSync(zip)).toBe(false);
 
-      const result = await sevenZip.add(zip, file, password);
-      expect(result).toBe(true);
-      expect(fs.existsSync(zip)).toBe(true);
+      const passwords = ["scret", "bla!", 'VCe`,=/P<_+.7]~;Ys("'];
 
-      expect(await sevenZip.passwordProtected(zip)).toBe(true);
+      for (const password of passwords) {
+        fs.writeFileSync(file, "file");
+        expect(fs.existsSync(file)).toBe(true);
+        expect(fs.existsSync(zip)).toBe(false);
 
-      const sevenZipList = await sevenZip.list(zip, password);
-      expect(sevenZipList.length).toBe(1);
-      expect(sevenZipList[0].file).toBe(fileName);
+        if (password.indexOf('"') >= 0) {
+          let errorThrown = null;
+          try {
+            errorThrown = false;
+            await sevenZip.add(zip, file, password, { method: ["x0"] });
+          } catch {
+            errorThrown = true;
+          }
+          expect(errorThrown).toBe(true);
+        } else {
+          const result = await sevenZip.add(zip, file, password, {
+            method: ["x0"],
+          });
+          expect(result).toBe(true);
+          expect(fs.existsSync(zip)).toBe(true);
+          expect(await sevenZip.passwordProtected(zip)).toBe(true);
+          const sevenZipList = await sevenZip.list(zip, password);
+
+          expect(sevenZipList.length).toBe(1);
+          expect(sevenZipList[0].file).toBe(fileName);
+        }
+        fs.removeSync(zip);
+      }
     });
   });
 });
