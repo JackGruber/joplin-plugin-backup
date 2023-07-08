@@ -2,6 +2,10 @@
 
 ## not released
 
+## v1.3.3 (2023-07-08)
+
+- Add: Workaround for bug #132 with `"` (double quotes) in the password where zip files with such a password can no longer be opened
+
 ## v1.3.2 (2023-06-02)
 
 - Fix: #51 for translation zh_CN
