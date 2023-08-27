@@ -24,7 +24,8 @@ A plugin to extend Joplin with a manual and automatic backup function.
 - [FAQ](#faq)
     - [Internal Joplin links betwen notes are lost](#internal-joplin-links-betwen-notes-are-lost)
     - [Combine multiple JEX Files to one](#combine-multiple-jex-files-to-one)
-- [Open a JEX Backup file](#open-a-jex-backup-file)
+    - [Open a JEX Backup file](#open-a-jex-backup-file)
+    - [Are Note History Revisions backed up?](#are-note-history-revisions-backed-up)
 - [Changelog](#changelog)
 - [Links](#links)
 
@@ -126,10 +127,14 @@ By combining the JEX files into one, the Joplin internal links will work again a
 3. Repeat step 2 for all files
 4. Import first JEX which now contains all notes
 
-## Open a JEX Backup file
+### Open a JEX Backup file
 
 A Joplin JEX Backup file is a tar archive which can be opened with any zip program that supports TAR archive.
 The file names in the archive correspond to the Joplin internal IDs.
+
+### Are Note History (Revisions) backed up?
+
+The note history and file versions (revisions) are not included in the backup.
 
 ## Changelog
 
