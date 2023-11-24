@@ -174,6 +174,15 @@ const baseConfig = {
 			},
 		],
 	},
+
+	// 7zip-bin uses __dirname to determine the path to bundled binaries.
+	// In Joplin, __dirname points to the plugin directory (for example
+	// /tmp/.mount_Joplinf4CQVb/resources/app.asar/services/plugins/),
+	// which is not where 7zip binaries are stored.
+	node: {
+		// Makes __dirname evaluate to '/'
+		__dirname: 'mock',
+	},
 };
 
 const pluginConfig = { ...baseConfig, entry: './src/index.ts',

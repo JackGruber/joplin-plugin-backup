@@ -56,6 +56,13 @@ In general this command tries to do the right thing - in particular it's going t
 
 The file that may cause problem is "webpack.config.js" because it's going to be overwritten. For that reason, if you want to change it, consider creating a separate JavaScript file and include it in webpack.config.js. That way, when you update, you only have to restore the line that include your file.
 
+### Simple backup changes to `webpack.config.js`
+
+To support including `7zip-bin` in the plugin's built `.jpl` file, the following changes are made:
+
+- Added `node: { __dirname: 'mock' },` to the plugin `baseConfig`. This causes `7zip-bin` to return a more correct path to `7za` (e.g. `/linux/x64/7za` instead of `/tmp/.mount_Joplin/resources/app.asar/services/plugins/linux/x64/7za`).
+- Added a `new CopyPlugin({ ... })` to `pluginConfig`'s `plugins` object to copy `7zip-bin` from `node_modules` to the `dist` directory.
+
 ## External script files
 
 By default, the compiler (webpack) is going to compile `src/index.ts` only (as well as any file it imports), and any other file will simply be copied to the plugin package. In some cases this is sufficient, however if you have [content scripts](https://joplinapp.org/api/references/plugin_api/classes/joplincontentscripts.html) or [webview scripts](https://joplinapp.org/api/references/plugin_api/classes/joplinviewspanels.html#addscript) you might want to compile them too, in particular in these two cases:
