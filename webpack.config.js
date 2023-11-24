@@ -195,6 +195,15 @@ const pluginConfig = { ...baseConfig, entry: './src/index.ts',
 			patterns: [
 				{
 					from: '**/*',
+					context: path.resolve(__dirname, 'node_modules','7zip-bin'),
+					to: path.resolve(__dirname, 'dist/7zip-bin/'),
+				},
+			]
+		}),
+		new CopyPlugin({
+			patterns: [
+				{
+					from: '**/*',
 					context: path.resolve(__dirname, 'src'),
 					to: path.resolve(__dirname, 'dist'),
 					globOptions: {
