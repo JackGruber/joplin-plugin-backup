@@ -726,7 +726,7 @@ class Backup {
         try {
           fs.mkdirSync(exportPath);
         } catch (e) {
-          await this.showError(i18n.__("error.folderCreation", +e.message));
+          await this.showError(i18n.__("error.folderCreation", e.message));
         }
       }
       await this.exportNotebooks(notebooks.ids, exportPath, this.exportFormat);
@@ -793,7 +793,7 @@ class Backup {
         file
       );
     } catch (e) {
-      await this.showError(i18n.__("error.Backup", format, +e.message));
+      await this.showError(i18n.__("error.Backup", format, e.message));
       throw e;
     }
   }
