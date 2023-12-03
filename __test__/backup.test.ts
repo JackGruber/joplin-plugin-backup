@@ -4,7 +4,6 @@ import * as path from "path";
 import { when } from "jest-when";
 import { sevenZip } from "../src/sevenZip";
 import joplin from "api";
-import { I18n } from "i18n";
 
 function getTestPaths(): any {
   const testPath: any = {};
@@ -58,6 +57,7 @@ describe("Backup", function () {
     when(spyOnGlobalValue)
       .mockImplementation(() => Promise.resolve("no mockImplementation"))
       .calledWith("profileDir").mockImplementation(() => Promise.resolve(testPath.joplinProfile))
+      .calledWith("locale").mockImplementation(() => Promise.resolve("en_US"))
       .calledWith("templateDir").mockImplementation(() => Promise.resolve(testPath.templates));
 
     await createTestStructure();
@@ -81,6 +81,8 @@ describe("Backup", function () {
     spyOnShowError = jest
       .spyOn(backup, "showError")
       .mockImplementation(() => {});
+
+    await backup.confLocale(path.join(__dirname, "..", "src", "locales"));
   });
 
   afterEach(async () => {
