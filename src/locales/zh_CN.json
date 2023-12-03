@@ -1,46 +1,90 @@
 {
-  "settings.path": "备份路径",
-  "settings.exportPath": "临时导出路径",
-  "settings.exportPath.description": "用于导出的临时路径，笔记在被移动到“备份路径”前会存于此处",
-  "settings.backupRetention": "保留 x 个备份",
-  "settings.backupRetention.description": "如果设置了多个备份, 则会根据“备份集名称”在“备份路径”下创建多个子文件夹",
-  "settings.backupInterval": "备份间隔(以小时为单位)",
-  "settings.backupInterval.description": "0 = 停止自动备份",
-  "settings.onlyOnChange": "仅在更改时备份",
-  "settings.onlyOnChange.description": "仅当笔记发生更改时，在指定的备份间隔内创建备份",
-  "settings.usePassword": "使用密码保护备份",
-  "settings.usePassword.description": "备份将通过加密的压缩文件进行保护",
-  "settings.password": "密码",
-  "settings.password.description": "如果输入了密码，则备份将受到密码保护",
-  "settings.passwordRepeat": "重复密码",
-  "settings.passwordRepeat.description": "请重复输入密码以确认",
-  "settings.fileLogLevel": "日志级别",
-  "settings.createSubfolder": "创建子文件夹",
-  "settings.createSubfolder.description": "在配置的备份路径中创建一个子文件夹。请在“备份路径”中没有其他数据时才禁用！",
-  "settings.zipArchive": "创建压缩文件",
-  "settings.zipArchive.description": "如果设置了“使用密码保护备份”，则总是会创建压缩文件",
-  "settings.compressionLevel": "压缩等级",
-  "settings.compressionLevel.description": "压缩文件的压缩等级",
-  "settings.backupSetName": "备份集名称",
-  "settings.backupSetName.description": "如果要保留多个备份，请为备份集指定名称",
-  "settings.backupPlugins": "备份插件",
-  "settings.backupPlugins.description": "备份插件的JPL文件(不会备份插件设置！)",
-  "settings.exportFormat": "导出格式",
-  "settings.exportFormat.description": "笔记的备份格式",
-  "settings.singleJex": "生成单个JEX文件",
-  "settings.singleJex.description": "为所有笔记本创建单个JEX文件(建议选中，以免丢失内部笔记链接和文件夹结构)",
-  "settings.execFinishCmd": "备份后执行命令",
-  "settings.execFinishCmd.description": "备份完成后所执行的命令/程序",
-  "backup.Completed": "备份完成",
-  "error.PluginUpgrade": "升级错误 %s: %s",
-  "error.folderCreation": "创建文件夹时出错: %s",
-  "error.ConfigureBackupPath": "请在Joplin > 工具 > 选项 > 备份 中配置备份路径",
-  "error.error.PasswordMatch": "密码不正确！",
-  "error.BackupPathDontExist": "备份路径 '%s' 不存在！",
-  "error.BackupAlreadyRunning": "已经在进行备份！",
-  "error.Backup": "备份为 %s 时出错: %s",
-  "error.fileCopy": " %s 时复制文件/文件夹出错: %s",
-  "error.deleteFile": " %s 时删除文件/文件夹出错: %s",
-  "command.createBackup": "创建备份",
-  "error.BackupSetNotSupportedChars": "“备份集名称”包含不允许的字符 ( %s )！"
+  "msg": {
+    "backup": {
+      "completed": "备份完成"
+    },
+    "error": {
+      "PluginUpgrade": "升级错误 %s: %s",
+      "folderCreation": "创建文件夹时出错: %s",
+      "ConfigureBackupPath": "请在Joplin > 工具 > 选项 > 备份 中配置备份路径",
+      "PasswordMissMatch": "密码不正确！",
+      "BackupPathDontExist": "备份路径 '%s' 不存在！",
+      "BackupAlreadyRunning": "已经在进行备份！",
+      "Backup": "备份为 %s 时出错: %s",
+      "fileCopy": " %s 时复制文件/文件夹出错: %s",
+      "deleteFile": " %s 时删除文件/文件夹出错: %s",
+      "BackupSetNotSupportedChars": "“备份集名称”包含不允许的字符 ( %s )！"
+    }
+  },
+  "settings": {
+    "path": {
+      "label": "备份路径"
+    },
+    "exportPath": {
+      "label": "临时导出路径",
+      "description": "用于导出的临时路径，笔记在被移动到“备份路径”前会存于此处"
+    },
+    "backupRetention": {
+      "label": "保留 x 个备份",
+      "description": "如果设置了多个备份, 则会根据“备份集名称”在“备份路径”下创建多个子文件夹"
+    },
+    "backupInterval": {
+      "label": "备份间隔(以小时为单位)",
+      "description": "0 = 停止自动备份"
+    },
+    "onlyOnChange": {
+      "label": "仅在更改时备份",
+      "description": "仅当笔记发生更改时，在指定的备份间隔内创建备份"
+    },
+    "usePassword": {
+      "label": "使用密码保护备份",
+      "description": "备份将通过加密的压缩文件进行保护"
+    },
+    "password": {
+      "label": "密码",
+      "description": "如果输入了密码，则备份将受到密码保护"
+    },
+    "passwordRepeat": {
+      "label": "重复密码",
+      "description": "请重复输入密码以确认"
+    },
+    "fileLogLevel": {
+      "label": "日志级别"
+    },
+    "createSubfolder": {
+      "label": "创建子文件夹",
+      "description": "在配置的备份路径中创建一个子文件夹。请在“备份路径”中没有其他数据时才禁用！"
+    },
+    "zipArchive": {
+      "label": "创建压缩文件",
+      "description": "如果设置了“使用密码保护备份”，则总是会创建压缩文件"
+    },
+    "compressionLevel": {
+      "label": "压缩等级",
+      "description": "压缩文件的压缩等级"
+    },
+    "backupSetName": {
+      "label": "备份集名称",
+      "description": "如果要保留多个备份，请为备份集指定名称"
+    },
+    "backupPlugins": {
+      "label": "备份插件",
+      "description": "备份插件的JPL文件(不会备份插件设置！)"
+    },
+    "exportFormat": {
+      "label": "导出格式",
+      "description": "笔记的备份格式"
+    },
+    "singleJex": {
+      "label": "生成单个JEX文件",
+      "description": "为所有笔记本创建单个JEX文件(建议选中，以免丢失内部笔记链接和文件夹结构)"
+    },
+    "execFinishCmd": {
+      "label": "备份后执行命令",
+      "description": "备份完成后所执行的命令/程序"
+    }
+  },
+  "command": {
+    "createBackup": "创建备份"
+  }
 }
