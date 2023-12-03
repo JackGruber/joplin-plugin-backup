@@ -1,5 +1,7 @@
 # Changelog
 
+- Fix: #61 On Jex backup, do not overwrite already exported notebooks if the notebooks name differs only in special characters
+
 ## not released
 
 ## v1.3.3 (2023-07-08)

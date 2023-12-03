@@ -702,11 +702,13 @@ class Backup {
               notebooks.info,
               folderId
             );
-            await this.exportNotebooks(
-              folderId,
-              path.join(this.activeBackupPath, notebookFile),
-              this.exportFormat
+
+            const file = await this.getNumberdFileNameIfExist(
+              path.join(this.activeBackupPath, notebookFile)
             );
+            this.log.verbose(`Save as ${file}`);
+
+            await this.exportNotebooks(folderId, file, this.exportFormat);
           } else {
             this.log.verbose(
               `Skip ${notebooks.info[folderId]["title"]} (${folderId}) since no notes in notebook`
@@ -726,6 +728,21 @@ class Backup {
       }
       await this.exportNotebooks(notebooks.ids, exportPath, this.exportFormat);
     }
+  }
+
+  private async getNumberdFileNameIfExist(file: string): Promise<string> {
+    const fileExt = path.parse(file).ext;
+    const fileDir = path.parse(file).dir;
+    const fileName = path.parse(file).name;
+
+    let indexNr = 1;
+    let checkFile = fileName;
+    while (fs.existsSync(path.join(fileDir, checkFile + fileExt))) {
+      checkFile = fileName + "_" + indexNr;
+      indexNr++;
+    }
+
+    return path.join(fileDir, checkFile + fileExt);
   }
 
   private async getNotebookFileName(
