@@ -69,6 +69,7 @@ class Backup {
       retryInDefaultLocale: true,
       syncFiles: true,
       directory: localesDir,
+      objectNotation: true,
     });
     i18n.setLocale(joplinLocale);
     this.log.verbose("localesDir: " + localesDir);
