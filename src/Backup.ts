@@ -69,6 +69,7 @@ class Backup {
       retryInDefaultLocale: true,
       syncFiles: true,
       directory: localesDir,
+      objectNotation: true,
     });
     i18n.setLocale(joplinLocale);
     this.log.verbose("localesDir: " + localesDir);
@@ -117,7 +118,7 @@ class Backup {
         await joplin.settings.setValue("backupVersion", version);
       } catch (e) {
         await this.showError(
-          i18n.__("error.PluginUpgrade", checkVersion, e.message)
+          i18n.__("msg.error.PluginUpgrade", checkVersion, e.message)
         );
       }
     }
@@ -177,7 +178,7 @@ class Backup {
         this.password = null;
 
         await this.showMsg(
-          await this.getTranslation("error.passwordDoubleQuotes")
+          await this.getTranslation("msg.error.passwordDoubleQuotes")
         );
       } else {
         this.passwordEnabled = true;
@@ -282,7 +283,7 @@ class Backup {
         try {
           fs.mkdirSync(this.backupBasePath);
         } catch (e) {
-          await this.showError(i18n.__("error.folderCreation", e.message));
+          await this.showError(i18n.__("msg.error.folderCreation", e.message));
         }
       }
     }
@@ -290,7 +291,7 @@ class Backup {
     if (path.normalize(profileDir) === this.backupBasePath) {
       this.backupBasePath = null;
       await this.showError(
-        i18n.__("error.backupPathJoplinDir", path.normalize(profileDir))
+        i18n.__("msg.error.backupPathJoplinDir", path.normalize(profileDir))
       );
     }
   }
@@ -317,7 +318,7 @@ class Backup {
     ) {
       this.backupSetName = "{YYYYMMDDHHmm}";
       await this.showError(
-        i18n.__("error.BackupSetNotSupportedChars", '\\/:*?"<>|')
+        i18n.__("msg.error.BackupSetNotSupportedChars", '\\/:*?"<>|')
       );
     }
 
@@ -454,13 +455,13 @@ class Backup {
       await this.logSettings(showDoneMsg);
 
       if (this.backupBasePath === null) {
-        await this.showError(i18n.__("error.ConfigureBackupPath"));
+        await this.showError(i18n.__("msg.error.ConfigureBackupPath"));
         return;
       }
 
       if (fs.existsSync(this.backupBasePath)) {
         if ((await this.checkPassword()) === -1) {
-          await this.showError(i18n.__("error.PasswordMatch"));
+          await this.showError(i18n.__("msg.error.PasswordMissMatch"));
           return;
         } else {
           this.log.info("Enable password protection: " + this.passwordEnabled);
@@ -495,7 +496,7 @@ class Backup {
         this.suppressErrorMsgUntil = 0;
 
         if (showDoneMsg === true) {
-          await this.showMsg(i18n.__("backup.Completed"));
+          await this.showMsg(i18n.__("msg.backup.completed"));
         }
       } else {
         const now = new Date();
@@ -511,7 +512,7 @@ class Backup {
           this.log.info("Error dialog suppressed");
         } else {
           await this.showError(
-            i18n.__("error.BackupPathDontExist", this.backupBasePath)
+            i18n.__("msg.error.BackupPathDontExist", this.backupBasePath)
           );
 
           if (showDoneMsg === false) {
@@ -532,7 +533,7 @@ class Backup {
       );
 
       if (showDoneMsg === true) {
-        await this.showError(i18n.__("error.BackupAlreadyRunning"));
+        await this.showError(i18n.__("msg.error.BackupAlreadyRunning"));
       }
     }
   }
@@ -726,7 +727,7 @@ class Backup {
         try {
           fs.mkdirSync(exportPath);
         } catch (e) {
-          await this.showError(i18n.__("error.folderCreation", +e.message));
+          await this.showError(i18n.__("msg.error.folderCreation", e.message));
         }
       }
       await this.exportNotebooks(notebooks.ids, exportPath, this.exportFormat);
@@ -793,7 +794,7 @@ class Backup {
         file
       );
     } catch (e) {
-      await this.showError(i18n.__("error.Backup", format, +e.message));
+      await this.showError(i18n.__("msg.error.Backup", format, e.message));
       throw e;
     }
   }
@@ -912,7 +913,7 @@ class Backup {
       fs.emptyDirSync(dir);
       return dir;
     } catch (e) {
-      await this.showError(i18n.__("error.folderCreation:", e.message));
+      await this.showError(i18n.__("msg.error.folderCreation:", e.message));
       throw e;
     }
   }
@@ -977,7 +978,7 @@ class Backup {
         return true;
       } catch (e) {
         await this.showError(
-          i18n.__("error.fileCopy", "backupFolder", e.message)
+          i18n.__("msg.error.fileCopy", "backupFolder", e.message)
         );
         throw e;
       }
@@ -1038,7 +1039,7 @@ class Backup {
         fs.moveSync(src, backupDestination);
       } catch (e) {
         await this.showError(
-          i18n.__("error.fileCopy", "moveFinishedBackup", e.message)
+          i18n.__("msg.error.fileCopy", "moveFinishedBackup", e.message)
         );
         throw e;
       }
@@ -1054,7 +1055,7 @@ class Backup {
           fs.moveSync(zipFile, backupDestination);
         } catch (e) {
           await this.showError(
-            i18n.__("error.fileCopy", "moveFinishedBackup", e.message)
+            i18n.__("msg.error.fileCopy", "moveFinishedBackup", e.message)
           );
           throw e;
         }
@@ -1071,7 +1072,7 @@ class Backup {
             });
           } catch (e) {
             await this.showError(
-              i18n.__("error.fileCopy", "moveFinishedBackup", e.message)
+              i18n.__("msg.error.fileCopy", "moveFinishedBackup", e.message)
             );
             this.log.error(
               path.join(this.activeBackupPath, file) + " => " + dst
@@ -1087,7 +1088,7 @@ class Backup {
         });
       } catch (e) {
         await this.showError(
-          i18n.__("error.fileCopy", "moveFinishedBackup", e.message)
+          i18n.__("msg.error.fileCopy", "moveFinishedBackup", e.message)
         );
         throw e;
       }
@@ -1113,7 +1114,7 @@ class Backup {
           fs.removeSync(path.join(backupPath, file));
         } catch (e) {
           await this.showError(
-            i18n.__("error.deleteFile", "clearBackupTarget", e.message)
+            i18n.__("msg.error.deleteFile", "clearBackupTarget", e.message)
           );
           throw e;
         }
@@ -1124,7 +1125,7 @@ class Backup {
       fs.removeSync(path.join(backupPath, "notes"));
     } catch (e) {
       await this.showError(
-        i18n.__("error.deleteFile", "clearBackupTarget", e.message)
+        i18n.__("msg.error.deleteFile", "clearBackupTarget", e.message)
       );
       throw e;
     }
@@ -1133,7 +1134,7 @@ class Backup {
       fs.removeSync(path.join(backupPath, "templates"));
     } catch (e) {
       await this.showError(
-        i18n.__("error.deleteFile", "clearBackupTarget", e.message)
+        i18n.__("msg.error.deleteFile", "clearBackupTarget", e.message)
       );
       throw e;
     }
@@ -1142,7 +1143,7 @@ class Backup {
       fs.removeSync(path.join(backupPath, "profile"));
     } catch (e) {
       await this.showError(
-        i18n.__("error.deleteFile", "clearBackupTarget", e.message)
+        i18n.__("msg.error.deleteFile", "clearBackupTarget", e.message)
       );
       throw e;
     }
@@ -1185,7 +1186,7 @@ class Backup {
           }
         } catch (e) {
           await this.showError(
-            i18n.__("error.deleteFile", "deleteOldBackupSets", e.message)
+            i18n.__("msg.error.deleteFile", "deleteOldBackupSets", e.message)
           );
           throw e;
         }
