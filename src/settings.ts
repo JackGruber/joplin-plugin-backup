@@ -17,7 +17,7 @@ export namespace Settings {
       type: SettingItemType.String,
       section: "backupSection",
       public: true,
-      label: i18n.__("settings.path"),
+      label: i18n.__("settings.path.label"),
     };
 
     let exportPathSettings = null;
@@ -27,7 +27,7 @@ export namespace Settings {
       section: "backupSection",
       public: true,
       advanced: true,
-      label: i18n.__("settings.exportPath"),
+      label: i18n.__("settings.exportPath.label"),
       description: i18n.__("settings.exportPath.description"),
     };
 
@@ -58,7 +58,7 @@ export namespace Settings {
         type: SettingItemType.Int,
         section: "backupSection",
         public: true,
-        label: i18n.__("settings.backupRetention"),
+        label: i18n.__("settings.backupRetention.label"),
         description: i18n.__("settings.backupRetention.description"),
       },
       backupInterval: {
@@ -68,7 +68,7 @@ export namespace Settings {
         type: SettingItemType.Int,
         section: "backupSection",
         public: true,
-        label: i18n.__("settings.backupInterval"),
+        label: i18n.__("settings.backupInterval.label"),
         description: i18n.__("settings.backupInterval.description"),
       },
       onlyOnChange: {
@@ -76,7 +76,7 @@ export namespace Settings {
         type: SettingItemType.Bool,
         section: "backupSection",
         public: true,
-        label: i18n.__("settings.onlyOnChange"),
+        label: i18n.__("settings.onlyOnChange.label"),
         description: i18n.__("settings.onlyOnChange.description"),
       },
       usePassword: {
@@ -84,7 +84,7 @@ export namespace Settings {
         type: SettingItemType.Bool,
         section: "backupSection",
         public: true,
-        label: i18n.__("settings.usePassword"),
+        label: i18n.__("settings.usePassword.label"),
         description: i18n.__("settings.usePassword.description"),
       },
       password: {
@@ -93,7 +93,7 @@ export namespace Settings {
         section: "backupSection",
         public: true,
         secure: true,
-        label: i18n.__("settings.password"),
+        label: i18n.__("settings.password.label"),
         description: i18n.__("settings.password.description"),
       },
       passwordRepeat: {
@@ -102,7 +102,7 @@ export namespace Settings {
         section: "backupSection",
         public: true,
         secure: true,
-        label: i18n.__("settings.passwordRepeat"),
+        label: i18n.__("settings.passwordRepeat.label"),
         description: i18n.__("settings.passwordRepeat.description"),
       },
       lastBackup: {
@@ -118,7 +118,7 @@ export namespace Settings {
         section: "backupSection",
         isEnum: true,
         public: true,
-        label: i18n.__("settings.fileLogLevel"),
+        label: i18n.__("settings.fileLogLevel.label"),
         options: {
           false: "Off",
           verbose: "Verbose",
@@ -133,7 +133,7 @@ export namespace Settings {
         section: "backupSection",
         public: true,
         advanced: true,
-        label: i18n.__("settings.createSubfolder"),
+        label: i18n.__("settings.createSubfolder.label"),
         description: i18n.__("settings.createSubfolder.description"),
       },
       zipArchive: {
@@ -148,7 +148,7 @@ export namespace Settings {
           yes: "Yes",
           yesone: "Yes, one archive",
         },
-        label: i18n.__("settings.zipArchive"),
+        label: i18n.__("settings.zipArchive.label"),
         description: i18n.__("settings.zipArchive.description"),
       },
       compressionLevel: {
@@ -166,7 +166,7 @@ export namespace Settings {
           7: "Maximum",
           9: "Ultra",
         },
-        label: i18n.__("settings.compressionLevel"),
+        label: i18n.__("settings.compressionLevel.label"),
         description: i18n.__("settings.compressionLevel.description"),
       },
       exportPath: exportPathSettings,
@@ -176,7 +176,7 @@ export namespace Settings {
         section: "backupSection",
         public: true,
         advanced: true,
-        label: i18n.__("settings.backupSetName"),
+        label: i18n.__("settings.backupSetName.label"),
         description: i18n.__("settings.backupSetName.description"),
       },
       backupPlugins: {
@@ -185,7 +185,7 @@ export namespace Settings {
         section: "backupSection",
         public: true,
         advanced: true,
-        label: i18n.__("settings.backupPlugins"),
+        label: i18n.__("settings.backupPlugins.label"),
         description: i18n.__("settings.backupPlugins.description"),
       },
       exportFormat: {
@@ -200,7 +200,7 @@ export namespace Settings {
           md_frontmatter: "MD Frontmatter",
           raw: "RAW",
         },
-        label: i18n.__("settings.exportFormat"),
+        label: i18n.__("settings.exportFormat.label"),
         description: i18n.__("settings.exportFormat.description"),
       },
       singleJexV2: {
@@ -209,7 +209,7 @@ export namespace Settings {
         section: "backupSection",
         public: true,
         advanced: true,
-        label: i18n.__("settings.singleJex"),
+        label: i18n.__("settings.singleJex.label"),
         description: i18n.__("settings.singleJex.description"),
       },
       singleJex: {
@@ -227,7 +227,7 @@ export namespace Settings {
         section: "backupSection",
         public: true,
         advanced: true,
-        label: i18n.__("settings.execFinishCmd"),
+        label: i18n.__("settings.execFinishCmd.label"),
         description: i18n.__("settings.execFinishCmd.description"),
       },
       backupVersion: {
