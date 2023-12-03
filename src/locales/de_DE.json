@@ -41,6 +41,7 @@
   "error.Backup": "Backup Fehler für %s: %s",
   "error.fileCopy": "Fehler beim kopieren von Datei/Ordner in %s: %s",
   "error.deleteFile": "Fehler beim löschen von Datei/Ordner in %s: %s",
+  "error.backupPathJoplinDir": "Als Sicherungs Pfad wurde das Joplin profile Verzeichniss (%s) ohne Unterordner ausgewählt, dies ist nicht erlaubt!",
   "command.createBackup": "Backup erstellen",
   "error.BackupSetNotSupportedChars": "Der Name des Backup-Sets enthält nicht zulässige Zeichen ( %s )!",
   "error.passwordDoubleQuotes": "Das Passwort enthält \" (Doppelte Anführungszeichen), diese sind wegen eines Bugs nicht erlaubt. Der Passwortschutz für die Backups wurde deaktivert!"

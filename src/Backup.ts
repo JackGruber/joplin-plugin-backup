@@ -289,6 +289,9 @@ class Backup {
 
     if (path.normalize(profileDir) === this.backupBasePath) {
       this.backupBasePath = null;
+      await this.showError(
+        i18n.__("error.backupPathJoplinDir", path.normalize(profileDir))
+      );
     }
   }
 
