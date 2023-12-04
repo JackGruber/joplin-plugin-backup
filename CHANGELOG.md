@@ -2,6 +2,8 @@
 
 ## not released
 
+## v1.3.4 (2023-12-04)
+
 - Fix: #61 On Jex backup, do not overwrite already exported notebooks if the notebooks name differs only in special characters
 - Fix: #62 Better error message if the Joplin profile directory is set as backup path
 - Update en_US translation by @montoner0
