@@ -1,47 +1,92 @@
 {
-  "settings.path": "Backup path",
-  "settings.exportPath": "Temporary export path",
-  "settings.exportPath.description": "Temporary path for note export from Joplin, before they are copyed to backup destination",
-  "settings.backupRetention": "Keep x backups",
-  "settings.backupRetention.description": "If more than one version is configured, folders are created in the Backup Path acording to backupSetName setting",
-  "settings.backupInterval": "Backup interval in hours",
-  "settings.backupInterval.description": "0 = disable automatic backup",
-  "settings.onlyOnChange": "Only on change",
-  "settings.onlyOnChange.description": "Creates a backup at the specified backup interval only if there was a change",
-  "settings.usePassword": "Password protected backups",
-  "settings.usePassword.description": "Protect the backups via encrypted Zip archive",
-  "settings.password": "Password",
-  "settings.password.description": "If a password has been entered, the backups are protected with a password",
-  "settings.passwordRepeat": "Password (Repeat)",
-  "settings.passwordRepeat.description": "Repeat password to validate",
-  "settings.fileLogLevel": "Loglevel",
-  "settings.createSubfolder": "Create Subfolder",
-  "settings.createSubfolder.description": "Create a subfolder in the the configured `Backup path`. Deactivate only if there is no other data in the `Backup path`!",
-  "settings.zipArchive": "Create zip archive",
-  "settings.zipArchive.description": "If a password protected backups is set, a zip archive is always created",
-  "settings.compressionLevel": "Zip compression level",
-  "settings.compressionLevel.description": "Compression level for zip archive",
-  "settings.backupSetName": "Backup set name",
-  "settings.backupSetName.description": "Name of the backup set if multiple backups are to be keep",
-  "settings.backupPlugins": "Backup plugins",
-  "settings.backupPlugins.description": "Backup plugin jpl files (No plugin settings!)",
-  "settings.exportFormat": "Export format",
-  "settings.exportFormat.description": "Backup format for the notes",
-  "settings.singleJex": "Single JEX",
-  "settings.singleJex.description": "Create only one JEX file for all notebooks (Recommended to prevent the loss of internal note links and folder structure)",
-  "settings.execFinishCmd": "Command on Backup finish",
-  "settings.execFinishCmd.description": "Execute command when backup is finished",
-  "backup.Completed": "Backup completed",
-  "error.PluginUpgrade": "Upgrade error %s: %s",
-  "error.folderCreation": "Error on folder creation: %s",
-  "error.ConfigureBackupPath": "Please configure backup path in Joplin Tools > Options > Backup",
-  "error.error.PasswordMatch": "Passwords do not match!",
-  "error.BackupPathDontExist": "The Backup path '%s' does not exist!",
-  "error.BackupAlreadyRunning": "A backup is already running!",
-  "error.Backup": "Backup error for %s: %s",
-  "error.fileCopy": "Error on file/folder copy in %s: %s",
-  "error.deleteFile": "Error on file/folder delete in %s: %s",
-  "command.createBackup": "Create backup",
-  "error.BackupSetNotSupportedChars": "Backup set name does contain not allowed characters ( %s )!",
-  "error.passwordDoubleQuotes": "Password contains \" (double quotes), these are not allowed because of a bug. Password protection for the backup is deactivated!"
+  "msg": {
+    "backup": {
+      "completed": "Backup completed"
+    },
+    "error": {
+      "PluginUpgrade": "Upgrade error %s: %s",
+      "folderCreation": "Error on folder creation: %s",
+      "ConfigureBackupPath": "Please configure backup path in Joplin Tools > Options > Backup",
+      "PasswordMissMatch": "Passwords do not match!",
+      "BackupPathDontExist": "The Backup path '%s' does not exist!",
+      "BackupAlreadyRunning": "A backup is already running!",
+      "Backup": "Backup error for %s: %s",
+      "fileCopy": "Error on file/folder copy in %s: %s",
+      "deleteFile": "Error on file/folder delete in %s: %s",
+      "backupPathJoplinDir": "The backup path is the Joplin profile directory (%s) without subfolders, this is not allowed!",
+      "BackupSetNotSupportedChars": "Backup set name does contain not allowed characters ( %s )!",
+      "passwordDoubleQuotes": "Password contains \" (double quotes), these are not allowed because of a bug. Password protection for the backup is deactivated!"
+    }
+  },
+  "settings": {
+    "path": {
+      "label": "Backup path"
+    },
+    "exportPath": {
+      "label": "Temporary export path",
+      "description": "Temporary path for note export from Joplin, before they are copyed to backup destination"
+    },
+    "backupRetention": {
+      "label": "Keep x backups",
+      "description": "If more than one version is configured, folders are created in the Backup Path acording to backupSetName setting"
+    },
+    "backupInterval": {
+      "label": "Backup interval in hours",
+      "description": "0 = disable automatic backup"
+    },
+    "onlyOnChange": {
+      "label": "Only on change",
+      "description": "Creates a backup at the specified backup interval only if there was a change"
+    },
+    "usePassword": {
+      "label": "Password protected backups",
+      "description": "Protect the backups via encrypted archive"
+    },
+    "password": {
+      "label": "Password",
+      "description": "If a password has been entered, the backups are protected with a password"
+    },
+    "passwordRepeat": {
+      "label": "Password (Repeat)",
+      "description": "Repeat password to validate"
+    },
+    "fileLogLevel": {
+      "label": "Loglevel"
+    },
+    "createSubfolder": {
+      "label": "Create Subfolder",
+      "description": "Create a subfolder in the the configured `Backup path`. Deactivate only if there is no other data in the `Backup path`!"
+    },
+    "zipArchive": {
+      "label": "Create archive",
+      "description": "If a password protected backups is set, an archive is always created"
+    },
+    "compressionLevel": {
+      "label": "Compression level",
+      "description": "Compression level for archive"
+    },
+    "backupSetName": {
+      "label": "Backup set name",
+      "description": "Name of the backup set if multiple backups are to be keep"
+    },
+    "backupPlugins": {
+      "label": "Backup plugins",
+      "description": "Backup plugin jpl files (No plugin settings!)"
+    },
+    "exportFormat": {
+      "label": "Export format",
+      "description": "Backup format for the notes"
+    },
+    "singleJex": {
+      "label": "Single JEX",
+      "description": "Create only one JEX file for all notebooks (Recommended to prevent the loss of internal note links and folder structure)"
+    },
+    "execFinishCmd": {
+      "label": "Command on Backup finish",
+      "description": "Execute command when backup is finished"
+    }
+  },
+  "command": {
+    "createBackup": "Create backup"
+  }
 }

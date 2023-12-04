@@ -6,7 +6,7 @@ A plugin to extend Joplin with a manual and automatic backup function.
 <!-- markdownlint-disable MD028 -->
 <!-- markdownlint-disable MD007 -->
 
-<img src=img/main.jpg>
+<img src=img/main.png>
 
 <!-- prettier-ignore-start -->
 <!-- TOC depthfrom:2 orderedlist:false -->

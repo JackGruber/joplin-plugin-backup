@@ -10,6 +10,8 @@ import JoplinSettings from './JoplinSettings';
 import JoplinContentScripts from './JoplinContentScripts';
 import JoplinClipboard from './JoplinClipboard';
 import JoplinWindow from './JoplinWindow';
+import BasePlatformImplementation from '../BasePlatformImplementation';
+import JoplinImaging from './JoplinImaging';
 /**
  * This is the main entry point to the Joplin API. You can access various services using the provided accessors.
  *
@@ -25,6 +27,7 @@ import JoplinWindow from './JoplinWindow';
 export default class Joplin {
     private data_;
     private plugins_;
+    private imaging_;
     private workspace_;
     private filters_;
     private commands_;
@@ -34,9 +37,11 @@ export default class Joplin {
     private contentScripts_;
     private clipboard_;
     private window_;
-    constructor(implementation: any, plugin: Plugin, store: any);
+    private implementation_;
+    constructor(implementation: BasePlatformImplementation, plugin: Plugin, store: any);
     get data(): JoplinData;
     get clipboard(): JoplinClipboard;
+    get imaging(): JoplinImaging;
     get window(): JoplinWindow;
     get plugins(): JoplinPlugins;
     get workspace(): JoplinWorkspace;
@@ -52,7 +57,6 @@ export default class Joplin {
     get views(): JoplinViews;
     get interop(): JoplinInterop;
     get settings(): JoplinSettings;
-    get versionInfo(): any;
     /**
      * It is not possible to bundle native packages with a plugin, because they
      * need to work cross-platforms. Instead access to certain useful native
@@ -66,4 +70,5 @@ export default class Joplin {
      * [View the demo plugin](https://github.com/laurent22/joplin/tree/dev/packages/app-cli/tests/support/plugins/nativeModule)
      */
     require(_path: string): any;
+    versionInfo(): Promise<import("./types").VersionInfo>;
 }
