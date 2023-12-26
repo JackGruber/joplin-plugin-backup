@@ -1,6 +1,6 @@
 {
   "name": "joplin-plugin-backup",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "scripts": {
     "dist": "webpack --env joplin-plugin-config=buildMain && webpack --env joplin-plugin-config=buildExtraScripts && webpack --env joplin-plugin-config=createArchive",
     "prepare": "npm run dist && husky install",
