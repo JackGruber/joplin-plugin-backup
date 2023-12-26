@@ -802,7 +802,7 @@ class Backup {
   private async selectNotebooks(): Promise<any> {
     const noteBookInfo = {};
     const noteBooksIds = [];
-    let pageNum = 0;
+    let pageNum = 1;
     this.log.info("Select notebooks for export");
     do {
       var folders = await joplin.data.get(["folders"], {
