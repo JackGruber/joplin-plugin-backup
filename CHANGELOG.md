@@ -2,6 +2,8 @@
 
 ## not released
 
+- Fix: #64 With single JEX backups, some notebooks were backuped/exported twice
+
 ## v1.3.4 (2023-12-04)
 
 - Fix: #61 On Jex backup, do not overwrite already exported notebooks if the notebooks name differs only in special characters
