@@ -1,4 +1,4 @@
-# Joplin Backup Plugin
+# Joplin Backup Plugin <img src=img/icon_32.png>
 
 A plugin to extend Joplin with a manual and automatic backup function.
 

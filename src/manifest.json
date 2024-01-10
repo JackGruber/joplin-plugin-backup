@@ -19,5 +19,7 @@
   ],
   "categories": ["productivity", "files"],
   "screenshots": [],
-  "icons": {}
+  "icons": {
+    "256": "img/icon_256.png"
+  }
 }
