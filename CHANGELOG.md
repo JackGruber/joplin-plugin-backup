@@ -2,6 +2,8 @@
 
 ## not released
 
+- Add: Screenshots / icon for [https://joplinapp.org/plugins/](https://joplinapp.org/plugins/)
+
 ## v1.3.5 (2023-12-26)
 
 - Fix: #64 With single JEX backups, some notebooks were backuped/exported twice
