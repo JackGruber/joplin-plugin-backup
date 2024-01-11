@@ -7,7 +7,7 @@ This documentation describes how to create a plugin, and how to work with the pl
 First, install [Yeoman](http://yeoman.io) and generator-joplin using [npm](https://www.npmjs.com/) (we assume you have pre-installed [node.js](https://nodejs.org/)).
 
 ```bash
-npm install -g yo
+npm install -g yo@4.3.1
 npm install -g generator-joplin
 ```
 
@@ -55,13 +55,6 @@ To update the plugin framework, run `npm run update`.
 In general this command tries to do the right thing - in particular it's going to merge the changes in package.json and .gitignore instead of overwriting. It will also leave "/src" as well as README.md untouched.
 
 The file that may cause problem is "webpack.config.js" because it's going to be overwritten. For that reason, if you want to change it, consider creating a separate JavaScript file and include it in webpack.config.js. That way, when you update, you only have to restore the line that include your file.
-
-### Simple backup changes to `webpack.config.js`
-
-To support including `7zip-bin` in the plugin's built `.jpl` file, the following changes are made:
-
-- Added `node: { __dirname: 'mock' },` to the plugin `baseConfig`. This causes `7zip-bin` to return a more correct path to `7za` (e.g. `/linux/x64/7za` instead of `/tmp/.mount_Joplin/resources/app.asar/services/plugins/linux/x64/7za`).
-- Added a `new CopyPlugin({ ... })` to `pluginConfig`'s `plugins` object to copy `7zip-bin` from `node_modules` to the `dist` directory.
 
 ## External script files
 
