@@ -18,7 +18,16 @@
     "archive"
   ],
   "categories": ["productivity", "files"],
-  "screenshots": [],
+  "screenshots": [
+    {
+      "src": "img/main.png",
+      "label": "Screenshot: Showing the basic settings"
+    },
+    {
+      "src": "img/showcase1.png",
+      "label": "Screenshot: Showing the advanced settings"
+    }
+  ],
   "icons": {
     "256": "img/icon_256.png"
   }
