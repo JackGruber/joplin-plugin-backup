@@ -14,6 +14,7 @@
       "fileCopy": "Error on file/folder copy in %s: %s",
       "deleteFile": "Error on file/folder delete in %s: %s",
       "backupPathJoplinDir": "The backup path is the Joplin profile directory (%s) without subfolders, this is not allowed!",
+      "backupPathHomeDir": "The backup path is the home directory (%s). Either enable \"createSubfolders\" or choose a different backup directory.",
       "BackupSetNotSupportedChars": "Backup set name does contain not allowed characters ( %s )!",
       "passwordDoubleQuotes": "Password contains \" (double quotes), these are not allowed because of a bug. Password protection for the backup is deactivated!"
     }

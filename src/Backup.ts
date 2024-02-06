@@ -4,6 +4,7 @@ import joplin from "api";
 import * as path from "path";
 import backupLogging from "electron-log";
 import * as fs from "fs-extra";
+import * as os from "os";
 import { sevenZip } from "./sevenZip";
 import * as moment from "moment";
 import { helper } from "./helper";
@@ -288,11 +289,16 @@ class Backup {
       }
     }
 
-    if (path.normalize(profileDir) === this.backupBasePath) {
+    const handleInvalidPath = async (errorId: string) => {
+      const invalidBackupPath = this.backupBasePath;
       this.backupBasePath = null;
-      await this.showError(
-        i18n.__("msg.error.backupPathJoplinDir", path.normalize(profileDir))
-      );
+      await this.showError(i18n.__(errorId, invalidBackupPath));
+    };
+
+    if (helper.pathsEquivalent(profileDir, this.backupBasePath)) {
+      await handleInvalidPath("msg.error.backupPathJoplinDir");
+    } else if (helper.pathsEquivalent(os.homedir(), this.backupBasePath)) {
+      await handleInvalidPath("msg.error.backupPathHomeDir");
     }
   }
 

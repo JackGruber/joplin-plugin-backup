@@ -1,4 +1,5 @@
 import joplin from "api";
+import * as path from "path";
 
 export namespace helper {
   export async function validFileName(fileName: string) {
@@ -64,5 +65,11 @@ export namespace helper {
     }
 
     return result;
+  }
+
+  export function pathsEquivalent(path1: string, path2: string) {
+    // We use `resolve` and not `normalize` because `resolve` removes trailing
+    // slashes, while `normalize` does not.
+    return path.resolve(path1) === path.resolve(path2);
   }
 }

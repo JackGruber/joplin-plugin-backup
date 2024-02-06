@@ -146,4 +146,14 @@ describe("Test helper", function () {
       ).toBe(testCase.expected);
     }
   });
+
+  test.each([
+    [ "/tmp/this/is/a/test", "/tmp/this/is/a/test", true ],
+    [ "/tmp/test", "/tmp/test///", true ],
+    [ "/tmp/te", "/tmp/test", false ],
+    [ "a", "/a", false ],
+    [ "/a/b", "/b/c", false ],
+  ])("pathsEquivalent (%s ?= %s)", (path1, path2, expected) => {
+    expect(helper.pathsEquivalent(path1, path2)).toBe(expected);
+  });
 });
