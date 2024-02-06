@@ -70,7 +70,13 @@ export namespace helper {
   // Doesn't resolve simlinks
   // See https://stackoverflow.com/questions/44892672/how-to-check-if-two-paths-are-the-same-in-npm
   // for possible alternative implementations.
-  export function isSubdirectoryOrEqual(parent: string, possibleChild: string) {
+  export function isSubdirectoryOrEqual(
+    parent: string,
+    possibleChild: string,
+
+    // Testing only
+    pathModule: typeof path = path
+  ) {
     // Appending path.sep to handle this case:
     //   parent: /a/b/test
     //   possibleChild: /a/b/test2
@@ -79,8 +85,8 @@ export namespace helper {
     //
     // Note that .resolve removes trailing slashes.
     //
-    const normalizedParent = path.resolve(parent) + path.sep;
-    const normalizedChild = path.resolve(possibleChild) + path.sep;
+    const normalizedParent = pathModule.resolve(parent) + pathModule.sep;
+    const normalizedChild = pathModule.resolve(possibleChild) + pathModule.sep;
 
     return normalizedChild.startsWith(normalizedParent);
   }
