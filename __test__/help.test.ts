@@ -165,7 +165,7 @@ describe("Test helper", function () {
     ["a", "/a", false],
     ["/a/b", "/b/c", false],
   ])(
-    "isSubdirectoryOrEqual with POSIX paths(is %s the parent of %s?)",
+    "isSubdirectoryOrEqual with POSIX paths (is %s the parent of %s?)",
     (path1, path2, expected) => {
       expect(helper.isSubdirectoryOrEqual(path1, path2, path.posix)).toBe(
         expected
