@@ -295,10 +295,10 @@ class Backup {
       await this.showError(i18n.__(errorId, invalidBackupPath));
     };
 
-    if (helper.pathsEquivalent(profileDir, this.backupBasePath)) {
-      await handleInvalidPath("msg.error.backupPathJoplinDir");
-    } else if (helper.pathsEquivalent(os.homedir(), this.backupBasePath)) {
-      await handleInvalidPath("msg.error.backupPathHomeDir");
+    if (helper.isSubdirectoryOrEqual(this.backupBasePath, os.homedir())) {
+      await handleInvalidPath("msg.error.backupPathContainsHomeDir");
+    } else if (helper.isSubdirectoryOrEqual(this.backupBasePath, profileDir)) {
+      await handleInvalidPath("msg.error.backupPathContainsJoplinDir");
     }
   }
 

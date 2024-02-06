@@ -168,7 +168,7 @@ describe("Backup", function () {
     });
 
     it(`relative paths`, async () => {
-      const backupPath = "../";
+      const backupPath = "../foo";
       /* prettier-ignore */
       when(spyOnsSettingsValue)
       .calledWith("path").mockImplementation(() => Promise.resolve(backupPath));

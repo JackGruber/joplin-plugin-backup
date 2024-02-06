@@ -67,9 +67,21 @@ export namespace helper {
     return result;
   }
 
-  export function pathsEquivalent(path1: string, path2: string) {
-    // We use `resolve` and not `normalize` because `resolve` removes trailing
-    // slashes, while `normalize` does not.
-    return path.resolve(path1) === path.resolve(path2);
+  // Doesn't resolve simlinks
+  // See https://stackoverflow.com/questions/44892672/how-to-check-if-two-paths-are-the-same-in-npm
+  // for possible alternative implementations.
+  export function isSubdirectoryOrEqual(parent: string, possibleChild: string) {
+    // Appending path.sep to handle this case:
+    //   parent: /a/b/test
+    //   possibleChild: /a/b/test2
+    // "/a/b/test2".startsWith("/a/b/test") -> true, but
+    // "/a/b/test2/".startsWith("/a/b/test/") -> false
+    //
+    // Note that .resolve removes trailing slashes.
+    //
+    const normalizedParent = path.resolve(parent) + path.sep;
+    const normalizedChild = path.resolve(possibleChild) + path.sep;
+
+    return normalizedChild.startsWith(normalizedParent);
   }
 }

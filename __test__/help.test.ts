@@ -148,12 +148,25 @@ describe("Test helper", function () {
   });
 
   test.each([
-    [ "/tmp/this/is/a/test", "/tmp/this/is/a/test", true ],
-    [ "/tmp/test", "/tmp/test///", true ],
-    [ "/tmp/te", "/tmp/test", false ],
-    [ "a", "/a", false ],
-    [ "/a/b", "/b/c", false ],
-  ])("pathsEquivalent (%s ?= %s)", (path1, path2, expected) => {
-    expect(helper.pathsEquivalent(path1, path2)).toBe(expected);
-  });
+    // Equality
+    ["/tmp/this/is/a/test", "/tmp/this/is/a/test", true],
+    ["/tmp/test", "/tmp/test///", true],
+
+    // Subdirectories
+    ["/tmp", "/tmp/test", true],
+    ["/tmp/", "/tmp/test", true],
+    ["/tmp/", "/tmp/..test", true],
+    ["/tmp/test", "/tmp/", false],
+
+    // Different directories
+    ["/tmp/", "/tmp/../test", false],
+    ["/tmp/te", "/tmp/test", false],
+    ["a", "/a", false],
+    ["/a/b", "/b/c", false],
+  ])(
+    "isSubdirectoryOrEqual (is %s the parent of %s?)",
+    (path1, path2, expected) => {
+      expect(helper.isSubdirectoryOrEqual(path1, path2)).toBe(expected);
+    }
+  );
 });
