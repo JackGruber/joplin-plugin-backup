@@ -86,6 +86,7 @@
       "description": "Execute command when backup is finished"
     }
   },
+  "backupReadme": "# Joplin Backup\n\nThe backups in this folder were created with the Simple Backup plugin for Joplin. The most recent backup was created on %s.\n\nSee the [Simple Backup documentation](https://joplinapp.org/plugins/plugin/io.github.jackgruber.backup/#restore) for information about how to restore from this backup.",
   "command": {
     "createBackup": "Create backup"
   }
