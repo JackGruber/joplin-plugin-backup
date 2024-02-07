@@ -136,6 +136,15 @@ export namespace Settings {
         label: i18n.__("settings.createSubfolder.label"),
         description: i18n.__("settings.createSubfolder.description"),
       },
+      createSubfolderPerProfile: {
+        value: false,
+        type: SettingItemType.Bool,
+        section: "backupSection",
+        public: true,
+        advanced: true,
+        label: i18n.__("settings.createSubfolderPerProfile.label"),
+        description: i18n.__("settings.createSubfolderPerProfile.description"),
+      },
       zipArchive: {
         value: "no",
         type: SettingItemType.String,

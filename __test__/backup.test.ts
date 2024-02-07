@@ -182,6 +182,48 @@ describe("Backup", function () {
     });
   });
 
+  describe("backups per profile", function () {
+    test.each([
+      {
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: testPath.joplinProfile,
+        expectedProfileName: "default",
+      },
+      {
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: path.join(testPath.joplinProfile, "profile-test"),
+        expectedProfileName: "profile-test",
+      },
+      {
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: path.join(testPath.joplinProfile, "profile-idhere"),
+        expectedProfileName: "profile-idhere",
+      },
+    ])(
+      "should correctly set backupBasePath based on the current profile name (case %#)",
+      async ({ profileDir, rootProfileDir, expectedProfileName }) => {
+        when(spyOnsSettingsValue)
+          .calledWith("path")
+          .mockImplementation(async () => testPath.backupBasePath);
+        when(spyOnGlobalValue)
+          .calledWith("rootProfileDir")
+          .mockImplementation(async () => rootProfileDir);
+        when(spyOnGlobalValue)
+          .calledWith("profileDir")
+          .mockImplementation(async () => profileDir);
+
+        // Should use the folder named "default" for the default profile
+        backup.createSubfolderPerProfile = true;
+        await backup.loadBackupPath();
+        expect(backup.backupBasePath).toBe(
+          path.normalize(
+            path.join(testPath.backupBasePath, expectedProfileName)
+          )
+        );
+      }
+    );
+  });
+
   describe("Div", function () {
     it(`Create empty folder`, async () => {
       const folder = await backup.createEmptyFolder(
