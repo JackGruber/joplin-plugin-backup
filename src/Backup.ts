@@ -312,8 +312,8 @@ class Backup {
         profileName = "default";
       }
 
-      // This prevents the default joplin-dev profile's backup from overwriting
-      // a non-dev profile (both have a default profile named "default").
+      // Appending a -dev to the profile name prevents a devmode default Joplin
+      // profile from overwriting a non-devmode Joplin profile.
       if ((await joplin.settings.globalValue("env")) === "dev") {
         profileName += "-dev";
       }
