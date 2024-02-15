@@ -187,21 +187,41 @@ describe("Backup", function () {
       {
         rootProfileDir: testPath.joplinProfile,
         profileDir: testPath.joplinProfile,
+        joplinEnv: "prod",
         expectedProfileName: "default",
       },
       {
         rootProfileDir: testPath.joplinProfile,
+        profileDir: testPath.joplinProfile,
+        joplinEnv: "dev",
+        expectedProfileName: "default-dev",
+      },
+      {
+        rootProfileDir: testPath.joplinProfile,
         profileDir: path.join(testPath.joplinProfile, "profile-test"),
+        joplinEnv: "prod",
         expectedProfileName: "profile-test",
       },
       {
         rootProfileDir: testPath.joplinProfile,
         profileDir: path.join(testPath.joplinProfile, "profile-idhere"),
+        joplinEnv: "prod",
         expectedProfileName: "profile-idhere",
+      },
+      {
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: path.join(testPath.joplinProfile, "profile-idhere"),
+        joplinEnv: "dev",
+        expectedProfileName: "profile-idhere-dev",
       },
     ])(
       "should correctly set backupBasePath based on the current profile name (case %#)",
-      async ({ profileDir, rootProfileDir, expectedProfileName }) => {
+      async ({
+        profileDir,
+        rootProfileDir,
+        joplinEnv,
+        expectedProfileName,
+      }) => {
         when(spyOnsSettingsValue)
           .calledWith("path")
           .mockImplementation(async () => testPath.backupBasePath);
@@ -211,6 +231,9 @@ describe("Backup", function () {
         when(spyOnGlobalValue)
           .calledWith("profileDir")
           .mockImplementation(async () => profileDir);
+        when(spyOnGlobalValue)
+          .calledWith("env")
+          .mockImplementation(async () => joplinEnv);
 
         // Should use the folder named "default" for the default profile
         backup.createSubfolderPerProfile = true;

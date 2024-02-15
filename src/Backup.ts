@@ -312,6 +312,12 @@ class Backup {
         profileName = "default";
       }
 
+      // This prevents the default joplin-dev profile's backup from overwriting
+      // a non-dev profile (both have a default profile named "default").
+      if ((await joplin.settings.globalValue("env")) === "dev") {
+        profileName += "-dev";
+      }
+
       this.backupBasePath = path.join(this.backupBasePath, profileName);
       await handleSubfolderCreation();
     }
