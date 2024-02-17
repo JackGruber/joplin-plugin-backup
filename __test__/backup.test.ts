@@ -52,7 +52,10 @@ describe("Backup", function () {
     when(spyOnsSettingsValue)
       .mockImplementation(() => Promise.resolve("no mockImplementation"))
       .calledWith("fileLogLevel").mockImplementation(() => Promise.resolve("error"))
-      .calledWith("path").mockImplementation(() => Promise.resolve(testPath.backupBasePath));
+      .calledWith("path").mockImplementation(() => Promise.resolve(testPath.backupBasePath))
+      .calledWith("zipArchive").mockImplementation(() => "no")
+      .calledWith("execFinishCmd").mockImplementation(() => "")
+      .calledWith("usePassword").mockImplementation(() => false);
 
     /* prettier-ignore */
     when(spyOnGlobalValue)
@@ -1025,30 +1028,30 @@ describe("Backup", function () {
   });
 
   describe("create backup readme", () => {
-    it("should create a README.md in the backup directory", async () => {
-      backup.backupStartTime = null;
-      backup.passwordEnabled = false;
+    it.each([{ backupRetention: 1 }, { backupRetention: 2 }])(
+      "should create a README.md in the backup directory (case %#)",
+      async ({ backupRetention }) => {
+        when(spyOnsSettingsValue)
+          .calledWith("backupRetention")
+          .mockImplementation(async () => backupRetention)
+          .calledWith("backupInfo")
+          .mockImplementation(() => Promise.resolve("[]"));
 
-      when(spyOnsSettingsValue)
-        .calledWith("zipArchive")
-        .mockImplementation(() => "no");
-      when(spyOnsSettingsValue)
-        .calledWith("execFinishCmd")
-        .mockImplementation(() => "");
+        backup.backupStartTime = null;
+        await backup.start();
 
-      await backup.start();
+        // Should exist and be non-empty
+        const readmePath = path.join(
+          testPath.backupBasePath,
+          "JoplinBackup",
+          "README.md"
+        );
+        expect(await fs.pathExists(readmePath)).toBe(true);
+        expect(await fs.readFile(readmePath, "utf8")).not.toBe("");
 
-      // Should exist and be non-empty
-      const readmePath = path.join(
-        testPath.backupBasePath,
-        "JoplinBackup",
-        "README.md"
-      );
-      expect(await fs.pathExists(readmePath)).toBe(true);
-      expect(await fs.readFile(readmePath, "utf8")).not.toBe("");
-
-      // Prevent "open handle" errors
-      backup.stopTimer();
-    });
+        // Prevent "open handle" errors
+        backup.stopTimer();
+      }
+    );
   });
 });

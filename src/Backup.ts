@@ -477,8 +477,8 @@ class Backup {
         await this.backupNotebooks();
 
         const backupDst = await this.makeBackupSet();
-        await this.writeReadme(backupDst);
 
+        await this.writeReadme(this.backupBasePath);
         await joplin.settings.setValue(
           "lastBackup",
           this.backupStartTime.getTime()
