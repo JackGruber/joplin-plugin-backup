@@ -27,6 +27,7 @@ A plugin to extend Joplin with a manual and automatic backup function.
     - [Combine multiple JEX Files to one](#combine-multiple-jex-files-to-one)
     - [Open a JEX Backup file](#open-a-jex-backup-file)
     - [Are Note History Revisions backed up?](#are-note-history-revisions-backed-up)
+    - [Are all Joplin profiles backed up?](#are-all-joplin-profiles-backed-up)
 - [Changelog](#changelog)
 - [Links](#links)
 
@@ -52,6 +53,7 @@ A plugin to extend Joplin with a manual and automatic backup function.
 ## Usage
 
 First configure the Plugin under `Tools > Options > Backup`!
+The plugin must be configured separately for each Joplin profile.
 
 Backups can be created manually with the command `Tools > Create backup` or are created automatically based on the configured interval.
 The backup started manually by `Create backup` respects all the settings except for the `Backups interval in hours`.
@@ -129,6 +131,11 @@ The file names in the archive correspond to the Joplin internal IDs.
 ### Are Note History (Revisions) backed up?
 
 The note history and file versions (revisions) are not included in the backup.
+
+### Are all Joplin profiles backed up?
+
+No, the backup must be configured for each profile.
+Profiles that are not active are not backed up, even if a backup has been configured.
 
 ## Changelog
 
