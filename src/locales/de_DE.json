@@ -86,6 +86,7 @@
       "description": "Befehl/Program nach der Sicherung ausführen"
     }
   },
+  "backupReadme": "# Joplin Sicherung\n\nDieser Ordner enthält eine oder mehrere Sicherungen aus der Joplin Note Anwendung.\n\nSiehe [Backup documentation](https://joplinapp.org/plugins/plugin/io.github.jackgruber.backup/#restore) für informationen wie eine Sicherung wieder hergestellt werden kann.\n",
   "command": {
     "createBackup": "Backup erstellen"
   }
