@@ -478,6 +478,7 @@ class Backup {
 
         const backupDst = await this.makeBackupSet();
 
+        await this.writeReadme(this.backupBasePath);
         await joplin.settings.setValue(
           "lastBackup",
           this.backupStartTime.getTime()
@@ -682,6 +683,16 @@ class Backup {
     } else {
       return false;
     }
+  }
+
+  private async writeReadme(backupFolder: string) {
+    const readmePath = path.join(backupFolder, "README.md");
+    this.log.info("writeReadme to", readmePath);
+    const readmeText = i18n.__(
+      "backupReadme",
+      this.backupStartTime.toLocaleString()
+    );
+    await fs.writeFile(readmePath, readmeText, "utf8");
   }
 
   private async backupNotebooks() {
