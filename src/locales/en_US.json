@@ -86,7 +86,7 @@
       "description": "Execute command when backup is finished"
     }
   },
-  "backupReadme": "# Joplin Backup\n\nThis folder contains one or more backups of data from the Joplin note taking application.\n\nSee the [Backup documentation](https://joplinapp.org/plugins/plugin/io.github.jackgruber.backup/#restore) for information about how to restore from this backup.\n",
+  "backupReadme": "# Joplin Backup\n\nThis folder contains one or more backups of data from the Joplin note taking application.\n\nSee the [Backup documentation](https://joplinapp.org/plugins/plugin/io.github.jackgruber.backup/#restore) for information about how to restore from this backup.",
   "command": {
     "createBackup": "Create backup"
   }
