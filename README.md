@@ -1,4 +1,4 @@
-# Joplin Backup Plugin <img src=img/icon_32.png>
+# Joplin Plugin: Backup <img src=img/icon_32.png>
 
 A plugin to extend Joplin with a manual and automatic backup function.
 
@@ -37,7 +37,7 @@ A plugin to extend Joplin with a manual and automatic backup function.
 ### Automatic
 
 - Go to `Tools > Options > Plugins`
-- Search for `Simple Backup`
+- Search for `Backup`
 - Click Install plugin
 - Restart Joplin to enable the plugin
 
