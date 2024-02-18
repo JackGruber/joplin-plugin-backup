@@ -2,6 +2,8 @@
 
 ## not released
 
+- Renamed Plugin from `Simple Backup` to `Backup`
+
 ## v1.3.6 (2024-01-11)
 
 - Add: Screenshots / icon for [https://joplinapp.org/plugins/](https://joplinapp.org/plugins/)
