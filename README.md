@@ -59,24 +59,6 @@ The backup started manually by `Create backup` respects all the settings except 
 
 Go to `Tools > Options > Backup`
 
-| Option                       | Description                                                                                                                                                              | Default                 |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
-| `Backup path`                | Where to save the backups to. <br>This path is exclusive for the Joplin backups, there should be no other data in it when you disable the `Create Subfolder` settings!   |                         |
-| `Keep x backups`             | How many backups should be kept                                                                                                                                          | `1`                     |
-| `Backups interval in hours`  | Create a backup every X hours                                                                                                                                            | `24`                    |
-| `Only on change`             | Creates a backup at the specified backup interval only if there was a change to a `note`, `tag`, `resource` or `notebook`                                                | `false`                 |
-| `Password protected backups` | Protect the backups via encrypted Zip archive.                                                                                                                           | `false`                 |
-| `Logfile`                    | Loglevel for backup.log                                                                                                                                                  | `error`                 |
-| `Create zip archive`         | Save backup data in a Zip archive                                                                                                                                        | `No`                    |
-| `Zip compression Level`      | Compression level for zip archive archive                                                                                                                                | `Copy (no compression)` |
-| `Temporary export path`      | The data is first exported into this path before it is copied to the backup `Backup path`.                                                                               | ``                      |
-| `Backup set name`            | Name of the backup set if multiple backups are to be keep. [Available moment tokens](https://momentjs.com/docs/#/displaying/format/), which can be used with `{<TOKEN>}` | `{YYYYMMDDHHmm}`        |
-| `Single JEX`                 | Create only one JEX file for all, this option is recommended to prevent the loss of internal note links or folder structure during a restore!                            | `true`                  |
-| `Export format`              | Selection of the export format of the notes.                                                                                                                             | `jex`                   |
-| `Command on Backup finish`   | Execute command when backup is finished.                                                                                                                                 |                         |
-| `Create Subfolder`           | Create a sub folder `JoplinBackup` in the configured `Backup path`. Deactivate only if there is no other data in the `Backup path`!                                      | `true`                  |
-| `Backup plugins`             | Backup the plugin folder from the Joplin profile with all installed plugin jpl files.                                                                                    | `true`                  |
-
 ## Keyboard Shortcuts
 
 Under `Options > Keyboard Shortcuts` you can assign a keyboard shortcut for the following commands:
