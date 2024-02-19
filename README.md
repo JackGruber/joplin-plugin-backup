@@ -1,4 +1,4 @@
-# Joplin Backup Plugin <img src=img/icon_32.png>
+# Joplin Plugin: Backup <img src=img/icon_32.png>
 
 A plugin to extend Joplin with a manual and automatic backup function.
 
@@ -21,11 +21,13 @@ A plugin to extend Joplin with a manual and automatic backup function.
 - [Restore](#restore)
     - [Settings](#settings)
     - [Notes](#notes)
+    - [Restore a singel note](#restore-a-singel-note)
 - [FAQ](#faq)
     - [Internal Joplin links betwen notes are lost](#internal-joplin-links-betwen-notes-are-lost)
     - [Combine multiple JEX Files to one](#combine-multiple-jex-files-to-one)
     - [Open a JEX Backup file](#open-a-jex-backup-file)
     - [Are Note History Revisions backed up?](#are-note-history-revisions-backed-up)
+    - [Are all Joplin profiles backed up?](#are-all-joplin-profiles-backed-up)
 - [Changelog](#changelog)
 - [Links](#links)
 
@@ -37,7 +39,7 @@ A plugin to extend Joplin with a manual and automatic backup function.
 ### Automatic
 
 - Go to `Tools > Options > Plugins`
-- Search for `Simple Backup`
+- Search for `Backup`
 - Click Install plugin
 - Restart Joplin to enable the plugin
 
@@ -51,6 +53,7 @@ A plugin to extend Joplin with a manual and automatic backup function.
 ## Usage
 
 First configure the Plugin under `Tools > Options > Backup`!
+The plugin must be configured separately for each Joplin profile.
 
 Backups can be created manually with the command `Tools > Create backup` or are created automatically based on the configured interval.
 The backup started manually by `Create backup` respects all the settings except for the `Backups interval in hours`.
@@ -58,24 +61,6 @@ The backup started manually by `Create backup` respects all the settings except 
 ## Options
 
 Go to `Tools > Options > Backup`
-
-| Option                       | Description                                                                                                                                                              | Default                 |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
-| `Backup path`                | Where to save the backups to. <br>This path is exclusive for the Joplin backups, there should be no other data in it when you disable the `Create Subfolder` settings!   |                         |
-| `Keep x backups`             | How many backups should be kept                                                                                                                                          | `1`                     |
-| `Backups interval in hours`  | Create a backup every X hours                                                                                                                                            | `24`                    |
-| `Only on change`             | Creates a backup at the specified backup interval only if there was a change to a `note`, `tag`, `resource` or `notebook`                                                | `false`                 |
-| `Password protected backups` | Protect the backups via encrypted Zip archive.                                                                                                                           | `false`                 |
-| `Logfile`                    | Loglevel for backup.log                                                                                                                                                  | `error`                 |
-| `Create zip archive`         | Save backup data in a Zip archive                                                                                                                                        | `No`                    |
-| `Zip compression Level`      | Compression level for zip archive archive                                                                                                                                | `Copy (no compression)` |
-| `Temporary export path`      | The data is first exported into this path before it is copied to the backup `Backup path`.                                                                               | ``                      |
-| `Backup set name`            | Name of the backup set if multiple backups are to be keep. [Available moment tokens](https://momentjs.com/docs/#/displaying/format/), which can be used with `{<TOKEN>}` | `{YYYYMMDDHHmm}`        |
-| `Single JEX`                 | Create only one JEX file for all, this option is recommended to prevent the loss of internal note links or folder structure during a restore!                            | `true`                  |
-| `Export format`              | Selection of the export format of the notes.                                                                                                                             | `jex`                   |
-| `Command on Backup finish`   | Execute command when backup is finished.                                                                                                                                 |                         |
-| `Create Subfolder`           | Create a sub folder `JoplinBackup` in the configured `Backup path`. Deactivate only if there is no other data in the `Backup path`!                                      | `true`                  |
-| `Backup plugins`             | Backup the plugin folder from the Joplin profile with all installed plugin jpl files.                                                                                    | `true`                  |
 
 ## Keyboard Shortcuts
 
@@ -111,6 +96,17 @@ The notes are imported via `File > Import > JEX - Joplin Export File`.
 The notes are imported additionally, no check for duplicates is performed.
 If the notebook in which the note was located already exists in your Joplin, then a "(1)" will be appended to the folder name.
 
+### Restore a singel note
+
+1. Create a new profile in Joplin via `File > Switch profile > Create new Profile`
+2. Joplin switches automatically to the newly created profile
+3. Import the Backup via `File > Import > JEX - Joplin Export File`
+4. Search for the desired note
+5. In the note overview, click on the note on the right and select `Export > JEX - Joplin Export File`
+6. Save the file on your computer
+7. Switch back to your orginal Joplin profil via `File > Switch profile > Default`
+8. Import the exported note via `File > Import > JEX - Joplin Export File` and select the file from step 6
+
 ## FAQ
 
 ### Internal Joplin links betwen notes are lost
@@ -135,6 +131,11 @@ The file names in the archive correspond to the Joplin internal IDs.
 ### Are Note History (Revisions) backed up?
 
 The note history and file versions (revisions) are not included in the backup.
+
+### Are all Joplin profiles backed up?
+
+No, the backup must be configured for each profile.
+Profiles that are not active are not backed up, even if a backup has been configured.
 
 ## Changelog
 

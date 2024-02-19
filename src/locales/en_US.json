@@ -21,15 +21,16 @@
   },
   "settings": {
     "path": {
-      "label": "Backup path"
+      "label": "Backup path",
+      "description": "Storage location for the backups. Dieser Pfad ist exklusiv für die Joplin Backups, es sollten sich keine anderen Daten darin befinden, wenn die Einstellungen für 'Unterordner erstellen' deaktiviert wird!"
     },
     "exportPath": {
       "label": "Temporary export path",
-      "description": "Temporary path for note export from Joplin, before they are copyed to backup destination"
+      "description": "Temporary path for data export from Joplin, before the data is moved to the backup path"
     },
     "backupRetention": {
       "label": "Keep x backups",
-      "description": "If more than one version is configured, folders are created in the Backup Path acording to backupSetName setting"
+      "description": "How many backups should be kept. If more than one version configured, folders are created in the Backup Path acording to 'Backup set name' setting"
     },
     "backupInterval": {
       "label": "Backup interval in hours",
@@ -37,7 +38,7 @@
     },
     "onlyOnChange": {
       "label": "Only on change",
-      "description": "Creates a backup at the specified backup interval only if there was a change"
+      "description": "Creates a backup at the specified backup interval only if there was a change to a `note`, `tag`, `resource` or `notebook`"
     },
     "usePassword": {
       "label": "Password protected backups",
@@ -52,15 +53,16 @@
       "description": "Repeat password to validate"
     },
     "fileLogLevel": {
-      "label": "Loglevel"
+      "label": "Loglevel",
+      "description": "Loglevel for the backup logfile"
     },
     "createSubfolder": {
       "label": "Create Subfolder",
-      "description": "Create a subfolder in the the configured `Backup path`. Deactivate only if there is no other data in the `Backup path`!"
+      "description": "Create a subfolder in the the configured {{backupPath}}. Deactivate only if there is no other data in the {{backupPath}}!"
     },
     "zipArchive": {
       "label": "Create archive",
-      "description": "If a password protected backups is set, an archive is always created"
+      "description": "Save backup data in a archive, if a password protected backups is set, an archive is always created"
     },
     "compressionLevel": {
       "label": "Compression level",
@@ -68,7 +70,7 @@
     },
     "backupSetName": {
       "label": "Backup set name",
-      "description": "Name of the backup set if multiple backups are to be keep"
+      "description": "Name of the backup set if multiple backups are to be kept. Moment Token (https://momentjs.com/docs/#/displaying/format/) can be used with {TOKEN}"
     },
     "backupPlugins": {
       "label": "Backup plugins",
@@ -76,17 +78,18 @@
     },
     "exportFormat": {
       "label": "Export format",
-      "description": "Backup format for the notes"
+      "description": "Joplin data export format during the backup"
     },
     "singleJex": {
       "label": "Single JEX",
-      "description": "Create only one JEX file for all notebooks (Recommended to prevent the loss of internal note links and folder structure)"
+      "description": "Create only one JEX file (Recommended to prevent the loss of internal note links or folder structure during a restore!)"
     },
     "execFinishCmd": {
       "label": "Command on Backup finish",
       "description": "Execute command when backup is finished"
     }
   },
+  "backupReadme": "# Joplin Backup\n\nThis folder contains one or more backups of data from the Joplin note taking application.\n\nSee the [Backup documentation](https://joplinapp.org/plugins/plugin/io.github.jackgruber.backup/#restore) for information about how to restore from this backup.",
   "command": {
     "createBackup": "Create backup"
   }
