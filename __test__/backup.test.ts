@@ -55,7 +55,8 @@ describe("Backup", function () {
       .calledWith("path").mockImplementation(() => Promise.resolve(testPath.backupBasePath))
       .calledWith("zipArchive").mockImplementation(() => "no")
       .calledWith("execFinishCmd").mockImplementation(() => "")
-      .calledWith("usePassword").mockImplementation(() => false);
+      .calledWith("usePassword").mockImplementation(() => false)
+      .calledWith("createSubfolderPerProfile").mockImplementation(() => false);
 
     /* prettier-ignore */
     when(spyOnGlobalValue)
@@ -1094,7 +1095,7 @@ describe("Backup", function () {
 
   describe("create backup readme", () => {
     it.each([{ backupRetention: 1 }, { backupRetention: 2 }])(
-      "should create a README.md in the backup directory (case %#)",
+      "should create a README.md in the backup directory (case %j)",
       async ({ backupRetention }) => {
         when(spyOnsSettingsValue)
           .calledWith("backupRetention")
