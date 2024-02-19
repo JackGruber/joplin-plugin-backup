@@ -1,6 +1,7 @@
 import { Backup } from "../src/Backup";
 import * as fs from "fs-extra";
 import * as path from "path";
+import * as os from "os";
 import { when } from "jest-when";
 import { sevenZip } from "../src/sevenZip";
 import joplin from "api";
@@ -34,6 +35,7 @@ const spyOnGlobalValue = jest.spyOn(joplin.settings, "globalValue");
 const spyOnSettingsSetValue = jest
   .spyOn(joplin.settings, "setValue")
   .mockImplementation();
+const homeDirMock = jest.spyOn(os, "homedir");
 
 async function createTestStructure() {
   const test = await getTestPaths();
@@ -192,6 +194,25 @@ describe("Backup", function () {
       expect(backup.log.error).toHaveBeenCalledTimes(0);
       expect(backup.log.warn).toHaveBeenCalledTimes(0);
     });
+
+    it.each([
+      os.homedir(),
+      path.dirname(os.homedir()),
+      path.join(os.homedir(), "Desktop"),
+      path.join(os.homedir(), "Documents"),
+    ])(
+      "should not allow backup path (%s) to be an important system directory",
+      async (path) => {
+        when(spyOnsSettingsValue)
+          .calledWith("path")
+          .mockImplementation(() => Promise.resolve(path));
+        backup.createSubfolder = false;
+
+        await backup.loadBackupPath();
+
+        expect(backup.backupBasePath).toBe(null);
+      }
+    );
   });
 
   describe("Div", function () {

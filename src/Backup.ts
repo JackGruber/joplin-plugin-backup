@@ -289,16 +289,28 @@ class Backup {
       }
     }
 
-    const handleInvalidPath = async (errorId: string) => {
-      const invalidBackupPath = this.backupBasePath;
-      this.backupBasePath = null;
-      await this.showError(i18n.__(errorId, invalidBackupPath));
-    };
+    // Creating a backup can overwrite the backup directory. Thus,
+    // we mark several system and user directories as not-overwritable.
+    const systemDirectories = [
+      profileDir,
+      os.homedir(),
 
-    if (helper.isSubdirectoryOrEqual(this.backupBasePath, os.homedir())) {
-      await handleInvalidPath("msg.error.backupPathContainsHomeDir");
-    } else if (helper.isSubdirectoryOrEqual(this.backupBasePath, profileDir)) {
-      await handleInvalidPath("msg.error.backupPathContainsJoplinDir");
+      path.join(os.homedir(), "Desktop"),
+      path.join(os.homedir(), "Documents"),
+      path.join(os.homedir(), "Downloads"),
+      path.join(os.homedir(), "Pictures"),
+      "C:\\Windows",
+    ];
+
+    for (const systemDirectory of systemDirectories) {
+      if (helper.isSubdirectoryOrEqual(this.backupBasePath, systemDirectory)) {
+        const invalidBackupPath = this.backupBasePath;
+        this.backupBasePath = null;
+        await this.showError(
+          i18n.__("msg.error.backupPathContainsImportantDir", invalidBackupPath)
+        );
+        break;
+      }
     }
   }
 
