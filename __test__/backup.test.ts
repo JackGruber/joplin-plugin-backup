@@ -27,6 +27,7 @@ let spyOnLogWarn = null;
 let spyOnLogError = null;
 let spyOnShowError = null;
 let spyOnSaveBackupInfo = null;
+let spyOnDataGet = null;
 
 const spyOnsSettingsValue = jest.spyOn(joplin.settings, "value");
 const spyOnGlobalValue = jest.spyOn(joplin.settings, "globalValue");
@@ -51,7 +52,10 @@ describe("Backup", function () {
     when(spyOnsSettingsValue)
       .mockImplementation(() => Promise.resolve("no mockImplementation"))
       .calledWith("fileLogLevel").mockImplementation(() => Promise.resolve("error"))
-      .calledWith("path").mockImplementation(() => Promise.resolve(testPath.backupBasePath));
+      .calledWith("path").mockImplementation(() => Promise.resolve(testPath.backupBasePath))
+      .calledWith("zipArchive").mockImplementation(() => "no")
+      .calledWith("execFinishCmd").mockImplementation(() => "")
+      .calledWith("usePassword").mockImplementation(() => false);
 
     /* prettier-ignore */
     when(spyOnGlobalValue)
@@ -59,6 +63,13 @@ describe("Backup", function () {
       .calledWith("profileDir").mockImplementation(() => Promise.resolve(testPath.joplinProfile))
       .calledWith("locale").mockImplementation(() => Promise.resolve("en_US"))
       .calledWith("templateDir").mockImplementation(() => Promise.resolve(testPath.templates));
+
+    spyOnDataGet = jest
+      .spyOn(joplin.data, "get")
+      .mockImplementation(async (_path, _query) => ({
+        items: [],
+        hasMore: false,
+      }));
 
     await createTestStructure();
     backup = new Backup() as any;
@@ -93,6 +104,7 @@ describe("Backup", function () {
     spyOnShowError.mockReset();
     spyOnsSettingsValue.mockReset();
     spyOnGlobalValue.mockReset();
+    spyOnDataGet.mockReset();
     spyOnSaveBackupInfo.mockReset();
   });
 
@@ -1078,5 +1090,33 @@ describe("Backup", function () {
       expect(backup.log.error).toHaveBeenCalledTimes(0);
       expect(backup.log.warn).toHaveBeenCalledTimes(0);
     });
+  });
+
+  describe("create backup readme", () => {
+    it.each([{ backupRetention: 1 }, { backupRetention: 2 }])(
+      "should create a README.md in the backup directory (case %#)",
+      async ({ backupRetention }) => {
+        when(spyOnsSettingsValue)
+          .calledWith("backupRetention")
+          .mockImplementation(async () => backupRetention)
+          .calledWith("backupInfo")
+          .mockImplementation(() => Promise.resolve("[]"));
+
+        backup.backupStartTime = null;
+        await backup.start();
+
+        // Should exist and be non-empty
+        const readmePath = path.join(
+          testPath.backupBasePath,
+          "JoplinBackup",
+          "README.md"
+        );
+        expect(await fs.pathExists(readmePath)).toBe(true);
+        expect(await fs.readFile(readmePath, "utf8")).not.toBe("");
+
+        // Prevent "open handle" errors
+        backup.stopTimer();
+      }
+    );
   });
 });
