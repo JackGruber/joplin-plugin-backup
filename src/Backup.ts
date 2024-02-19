@@ -299,8 +299,11 @@ class Backup {
       path.join(os.homedir(), "Documents"),
       path.join(os.homedir(), "Downloads"),
       path.join(os.homedir(), "Pictures"),
-      "C:\\Windows",
     ];
+
+    if (os.platform() === "win32") {
+      systemDirectories.push("C:\\Windows");
+    }
 
     for (const systemDirectory of systemDirectories) {
       if (helper.isSubdirectoryOrEqual(this.backupBasePath, systemDirectory)) {

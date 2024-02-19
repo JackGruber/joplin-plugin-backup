@@ -200,6 +200,10 @@ describe("Backup", function () {
       path.dirname(os.homedir()),
       path.join(os.homedir(), "Desktop"),
       path.join(os.homedir(), "Documents"),
+      
+      // Avoid including system-specific paths here. For example,
+      // testing with "C:\Windows" fails on POSIX systems because it is interpreted
+      // as a relative path.
     ])(
       "should not allow backup path (%s) to be an important system directory",
       async (path) => {
