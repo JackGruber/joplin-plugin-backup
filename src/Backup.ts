@@ -17,6 +17,7 @@ class Backup {
   private msgDialog: any;
   private backupBasePath: string;
   private activeBackupPath: string;
+  private readmeOutputDirectory: string;
   private log: any;
   private logFile: string;
   private backupRetention: number;
@@ -294,6 +295,10 @@ class Backup {
       await handleSubfolderCreation();
     }
 
+    // Set the README output directory before adding a subdirectory for the profile.
+    // This gives us one README for all backup subfolders.
+    this.readmeOutputDirectory = this.backupBasePath;
+
     if (this.createSubfolderPerProfile) {
       this.log.verbose("append profile subfolder");
       // We assume that Joplin's profile structure is the following
@@ -536,7 +541,7 @@ class Backup {
 
         const backupDst = await this.makeBackupSet();
 
-        await this.writeReadme(this.backupBasePath);
+        await this.writeReadme(this.readmeOutputDirectory);
         await joplin.settings.setValue(
           "lastBackup",
           this.backupStartTime.getTime()

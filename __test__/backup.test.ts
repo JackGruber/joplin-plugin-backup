@@ -201,7 +201,7 @@ describe("Backup", function () {
       path.dirname(os.homedir()),
       path.join(os.homedir(), "Desktop"),
       path.join(os.homedir(), "Documents"),
-      
+
       // Avoid including system-specific paths here. For example,
       // testing with "C:\Windows" fails on POSIX systems because it is interpreted
       // as a relative path.
@@ -1119,14 +1119,20 @@ describe("Backup", function () {
   });
 
   describe("create backup readme", () => {
-    it.each([{ backupRetention: 1 }, { backupRetention: 2 }])(
+    it.each([
+      { backupRetention: 1, createSubfolderPerProfile: false },
+      { backupRetention: 2, createSubfolderPerProfile: false },
+      { backupRetention: 1, createSubfolderPerProfile: true },
+    ])(
       "should create a README.md in the backup directory (case %j)",
-      async ({ backupRetention }) => {
+      async ({ backupRetention, createSubfolderPerProfile }) => {
         when(spyOnsSettingsValue)
           .calledWith("backupRetention")
           .mockImplementation(async () => backupRetention)
           .calledWith("backupInfo")
-          .mockImplementation(() => Promise.resolve("[]"));
+          .mockImplementation(() => Promise.resolve("[]"))
+          .calledWith("createSubfolderPerProfile")
+          .mockImplementation(() => Promise.resolve(createSubfolderPerProfile));
 
         backup.backupStartTime = null;
         await backup.start();
