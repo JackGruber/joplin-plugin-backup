@@ -1,3 +1,4 @@
+import * as path from "path";
 import { helper } from "../src/helper";
 
 describe("Test helper", function () {
@@ -146,4 +147,43 @@ describe("Test helper", function () {
       ).toBe(testCase.expected);
     }
   });
+
+  test.each([
+    // Equality
+    ["/tmp/this/is/a/test", "/tmp/this/is/a/test", true],
+    ["/tmp/test", "/tmp/test///", true],
+
+    // Subdirectories
+    ["/tmp", "/tmp/test", true],
+    ["/tmp/", "/tmp/test", true],
+    ["/tmp/", "/tmp/..test", true],
+    ["/tmp/test", "/tmp/", false],
+
+    // Different directories
+    ["/tmp/", "/tmp/../test", false],
+    ["/tmp/te", "/tmp/test", false],
+    ["a", "/a", false],
+    ["/a/b", "/b/c", false],
+  ])(
+    "isSubdirectoryOrEqual with POSIX paths (is %s the parent of %s?)",
+    (path1, path2, expected) => {
+      expect(helper.isSubdirectoryOrEqual(path1, path2, path.posix)).toBe(
+        expected
+      );
+    }
+  );
+
+  test.each([
+    ["C:\\Users\\User\\", "C:\\Users\\User\\", true],
+    ["D:\\Users\\User\\", "C:\\Users\\User\\", false],
+    ["C:\\Users\\Userr\\", "C:\\Users\\User\\", false],
+    ["C:\\Users\\User\\", "C:\\Users\\User\\.config\\joplin-desktop", true],
+  ])(
+    "isSubdirectoryOrEqual with Windows paths (is %s the parent of %s?)",
+    (path1, path2, expected) => {
+      expect(helper.isSubdirectoryOrEqual(path1, path2, path.win32)).toBe(
+        expected
+      );
+    }
+  );
 });
