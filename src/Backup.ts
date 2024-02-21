@@ -4,6 +4,7 @@ import joplin from "api";
 import * as path from "path";
 import backupLogging from "electron-log";
 import * as fs from "fs-extra";
+import * as os from "os";
 import { sevenZip } from "./sevenZip";
 import * as moment from "moment";
 import { helper } from "./helper";
@@ -322,11 +323,31 @@ class Backup {
       await handleSubfolderCreation();
     }
 
-    if (path.normalize(profileDir) === this.backupBasePath) {
-      this.backupBasePath = null;
-      await this.showError(
-        i18n.__("msg.error.backupPathJoplinDir", path.normalize(profileDir))
-      );
+    // Creating a backup can overwrite the backup directory. Thus,
+    // we mark several system and user directories as not-overwritable.
+    const systemDirectories = [
+      profileDir,
+      os.homedir(),
+
+      path.join(os.homedir(), "Desktop"),
+      path.join(os.homedir(), "Documents"),
+      path.join(os.homedir(), "Downloads"),
+      path.join(os.homedir(), "Pictures"),
+    ];
+
+    if (os.platform() === "win32") {
+      systemDirectories.push("C:\\Windows");
+    }
+
+    for (const systemDirectory of systemDirectories) {
+      if (helper.isSubdirectoryOrEqual(this.backupBasePath, systemDirectory)) {
+        const invalidBackupPath = this.backupBasePath;
+        this.backupBasePath = null;
+        await this.showError(
+          i18n.__("msg.error.backupPathContainsImportantDir", invalidBackupPath)
+        );
+        break;
+      }
     }
   }
 
