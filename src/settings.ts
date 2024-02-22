@@ -18,6 +18,7 @@ export namespace Settings {
       section: "backupSection",
       public: true,
       label: i18n.__("settings.path.label"),
+      description: i18n.__("settings.path.description"),
     };
 
     let exportPathSettings = null;
@@ -119,6 +120,7 @@ export namespace Settings {
         isEnum: true,
         public: true,
         label: i18n.__("settings.fileLogLevel.label"),
+        description: i18n.__("settings.fileLogLevel.description"),
         options: {
           false: "Off",
           verbose: "Verbose",
@@ -134,7 +136,18 @@ export namespace Settings {
         public: true,
         advanced: true,
         label: i18n.__("settings.createSubfolder.label"),
-        description: i18n.__("settings.createSubfolder.description"),
+        description: i18n.__("settings.createSubfolder.description", {
+          backupPath: i18n.__("settings.path.label"),
+        }),
+      },
+      createSubfolderPerProfile: {
+        value: false,
+        type: SettingItemType.Bool,
+        section: "backupSection",
+        public: true,
+        advanced: true,
+        label: i18n.__("settings.createSubfolderPerProfile.label"),
+        description: i18n.__("settings.createSubfolderPerProfile.description"),
       },
       zipArchive: {
         value: "no",

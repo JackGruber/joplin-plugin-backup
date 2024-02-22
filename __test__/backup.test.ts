@@ -1,6 +1,7 @@
 import { Backup } from "../src/Backup";
 import * as fs from "fs-extra";
 import * as path from "path";
+import * as os from "os";
 import { when } from "jest-when";
 import { sevenZip } from "../src/sevenZip";
 import joplin from "api";
@@ -27,12 +28,14 @@ let spyOnLogWarn = null;
 let spyOnLogError = null;
 let spyOnShowError = null;
 let spyOnSaveBackupInfo = null;
+let spyOnDataGet = null;
 
 const spyOnsSettingsValue = jest.spyOn(joplin.settings, "value");
 const spyOnGlobalValue = jest.spyOn(joplin.settings, "globalValue");
 const spyOnSettingsSetValue = jest
   .spyOn(joplin.settings, "setValue")
   .mockImplementation();
+const homeDirMock = jest.spyOn(os, "homedir");
 
 async function createTestStructure() {
   const test = await getTestPaths();
@@ -51,7 +54,11 @@ describe("Backup", function () {
     when(spyOnsSettingsValue)
       .mockImplementation(() => Promise.resolve("no mockImplementation"))
       .calledWith("fileLogLevel").mockImplementation(() => Promise.resolve("error"))
-      .calledWith("path").mockImplementation(() => Promise.resolve(testPath.backupBasePath));
+      .calledWith("path").mockImplementation(() => Promise.resolve(testPath.backupBasePath))
+      .calledWith("zipArchive").mockImplementation(() => "no")
+      .calledWith("execFinishCmd").mockImplementation(() => "")
+      .calledWith("usePassword").mockImplementation(() => false)
+      .calledWith("createSubfolderPerProfile").mockImplementation(() => false);
 
     /* prettier-ignore */
     when(spyOnGlobalValue)
@@ -59,6 +66,13 @@ describe("Backup", function () {
       .calledWith("profileDir").mockImplementation(() => Promise.resolve(testPath.joplinProfile))
       .calledWith("locale").mockImplementation(() => Promise.resolve("en_US"))
       .calledWith("templateDir").mockImplementation(() => Promise.resolve(testPath.templates));
+
+    spyOnDataGet = jest
+      .spyOn(joplin.data, "get")
+      .mockImplementation(async (_path, _query) => ({
+        items: [],
+        hasMore: false,
+      }));
 
     await createTestStructure();
     backup = new Backup() as any;
@@ -93,6 +107,7 @@ describe("Backup", function () {
     spyOnShowError.mockReset();
     spyOnsSettingsValue.mockReset();
     spyOnGlobalValue.mockReset();
+    spyOnDataGet.mockReset();
     spyOnSaveBackupInfo.mockReset();
   });
 
@@ -168,7 +183,7 @@ describe("Backup", function () {
     });
 
     it(`relative paths`, async () => {
-      const backupPath = "../";
+      const backupPath = "../foo";
       /* prettier-ignore */
       when(spyOnsSettingsValue)
       .calledWith("path").mockImplementation(() => Promise.resolve(backupPath));
@@ -180,6 +195,94 @@ describe("Backup", function () {
       expect(backup.log.error).toHaveBeenCalledTimes(0);
       expect(backup.log.warn).toHaveBeenCalledTimes(0);
     });
+
+    it.each([
+      os.homedir(),
+      path.dirname(os.homedir()),
+      path.join(os.homedir(), "Desktop"),
+      path.join(os.homedir(), "Documents"),
+
+      // Avoid including system-specific paths here. For example,
+      // testing with "C:\Windows" fails on POSIX systems because it is interpreted
+      // as a relative path.
+    ])(
+      "should not allow backup path (%s) to be an important system directory",
+      async (path) => {
+        when(spyOnsSettingsValue)
+          .calledWith("path")
+          .mockImplementation(() => Promise.resolve(path));
+        backup.createSubfolder = false;
+
+        await backup.loadBackupPath();
+
+        expect(backup.backupBasePath).toBe(null);
+      }
+    );
+  });
+
+  describe("backups per profile", function () {
+    test.each([
+      {
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: testPath.joplinProfile,
+        joplinEnv: "prod",
+        expectedProfileName: "default",
+      },
+      {
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: testPath.joplinProfile,
+        joplinEnv: "dev",
+        expectedProfileName: "default-dev",
+      },
+      {
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: path.join(testPath.joplinProfile, "profile-test"),
+        joplinEnv: "prod",
+        expectedProfileName: "profile-test",
+      },
+      {
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: path.join(testPath.joplinProfile, "profile-idhere"),
+        joplinEnv: "prod",
+        expectedProfileName: "profile-idhere",
+      },
+      {
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: path.join(testPath.joplinProfile, "profile-idhere"),
+        joplinEnv: "dev",
+        expectedProfileName: "profile-idhere-dev",
+      },
+    ])(
+      "should correctly set backupBasePath based on the current profile name (case %#)",
+      async ({
+        profileDir,
+        rootProfileDir,
+        joplinEnv,
+        expectedProfileName,
+      }) => {
+        when(spyOnsSettingsValue)
+          .calledWith("path")
+          .mockImplementation(async () => testPath.backupBasePath);
+        when(spyOnGlobalValue)
+          .calledWith("rootProfileDir")
+          .mockImplementation(async () => rootProfileDir);
+        when(spyOnGlobalValue)
+          .calledWith("profileDir")
+          .mockImplementation(async () => profileDir);
+        when(spyOnGlobalValue)
+          .calledWith("env")
+          .mockImplementation(async () => joplinEnv);
+
+        // Should use the folder named "default" for the default profile
+        backup.createSubfolderPerProfile = true;
+        await backup.loadBackupPath();
+        expect(backup.backupBasePath).toBe(
+          path.normalize(
+            path.join(testPath.backupBasePath, expectedProfileName)
+          )
+        );
+      }
+    );
   });
 
   describe("Div", function () {
@@ -1013,5 +1116,39 @@ describe("Backup", function () {
       expect(backup.log.error).toHaveBeenCalledTimes(0);
       expect(backup.log.warn).toHaveBeenCalledTimes(0);
     });
+  });
+
+  describe("create backup readme", () => {
+    it.each([
+      { backupRetention: 1, createSubfolderPerProfile: false },
+      { backupRetention: 2, createSubfolderPerProfile: false },
+      { backupRetention: 1, createSubfolderPerProfile: true },
+    ])(
+      "should create a README.md in the backup directory (case %j)",
+      async ({ backupRetention, createSubfolderPerProfile }) => {
+        when(spyOnsSettingsValue)
+          .calledWith("backupRetention")
+          .mockImplementation(async () => backupRetention)
+          .calledWith("backupInfo")
+          .mockImplementation(() => Promise.resolve("[]"))
+          .calledWith("createSubfolderPerProfile")
+          .mockImplementation(() => Promise.resolve(createSubfolderPerProfile));
+
+        backup.backupStartTime = null;
+        await backup.start();
+
+        // Should exist and be non-empty
+        const readmePath = path.join(
+          testPath.backupBasePath,
+          "JoplinBackup",
+          "README.md"
+        );
+        expect(await fs.pathExists(readmePath)).toBe(true);
+        expect(await fs.readFile(readmePath, "utf8")).not.toBe("");
+
+        // Prevent "open handle" errors
+        backup.stopTimer();
+      }
+    );
   });
 });
