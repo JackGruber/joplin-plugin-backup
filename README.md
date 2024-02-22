@@ -14,7 +14,6 @@ A plugin to extend Joplin with a manual and automatic backup function.
 - [Installation](#installation)
     - [Replace Joplin built-in plugin via GUI](#replace-joplin-built-in-plugin-via-gui)
     - [Replace Joplin built-in plugin via file system](#replace-joplin-built-in-plugin-via-file-system)
-    - [Manual](#manual)
 - [Usage](#usage)
 - [Options](#options)
 - [Keyboard Shortcuts](#keyboard-shortcuts)
@@ -54,13 +53,6 @@ The built-in plugin cannot be updated via GUI, to update to a other version repl
 - Download the latest released JPL package (`io.github.jackgruber.backup.jpl`) from [here](https://github.com/JackGruber/joplin-plugin-backup/releases/latest)
 - Close Joplin
 - Got to your Joplin profile folder and place the JPL file in the `plugins` folder
-- Start Joplin
-
-### Manual
-
-- Download the latest released JPL package (`io.github.jackgruber.backup.jpl`) from [here](https://github.com/JackGruber/joplin-plugin-backup/releases/latest)
-- Close Joplin
-- Copy the downloaded JPL package in your profile `plugins` folder
 - Start Joplin
 
 ## Usage
