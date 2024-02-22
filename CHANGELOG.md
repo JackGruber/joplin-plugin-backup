@@ -2,6 +2,7 @@
 
 ## not released
 
+- Changes that are required for the Joplin default plugin
 - Renamed Plugin from `Simple Backup` to `Backup`
 - Add: Allow creating of subfolders for each profile
 
