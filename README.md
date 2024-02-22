@@ -12,7 +12,8 @@ A plugin to extend Joplin with a manual and automatic backup function.
 <!-- TOC depthfrom:2 orderedlist:false -->
 
 - [Installation](#installation)
-    - [Automatic](#automatic)
+    - [Replace Joplin built-in plugin via GUI](#replace-joplin-built-in-plugin-via-gui)
+    - [Replace Joplin built-in plugin via file system](#replace-joplin-built-in-plugin-via-file-system)
     - [Manual](#manual)
 - [Usage](#usage)
 - [Options](#options)
@@ -28,6 +29,7 @@ A plugin to extend Joplin with a manual and automatic backup function.
     - [Open a JEX Backup file](#open-a-jex-backup-file)
     - [Are Note History Revisions backed up?](#are-note-history-revisions-backed-up)
     - [Are all Joplin profiles backed up?](#are-all-joplin-profiles-backed-up)
+    - [The Joplin build-in version of the plugin cannot be updated](#the-joplin-build-in-version-of-the-plugin-cannot-be-updated)
 - [Changelog](#changelog)
 - [Links](#links)
 
@@ -36,12 +38,23 @@ A plugin to extend Joplin with a manual and automatic backup function.
 
 ## Installation
 
-### Automatic
+The plugin is installed as built-in plugin in Joplin version `2.14.6` and newer.
+The built-in plugin cannot be updated via GUI, to update to a other version replace the built-in version.
 
-- Go to `Tools > Options > Plugins`
-- Search for `Backup`
-- Click Install plugin
-- Restart Joplin to enable the plugin
+### Replace Joplin built-in plugin via GUI
+
+- Download the latest released JPL package (`io.github.jackgruber.backup.jpl`) from [here](https://github.com/JackGruber/joplin-plugin-backup/releases/latest)
+- Go to `Tools > Options > Plugins` in Joplin
+- Click on the gear wheel and select `Install from file`
+- Select the downloaded JPL file
+- Restart Joplin
+
+### Replace Joplin built-in plugin via file system
+
+- Download the latest released JPL package (`io.github.jackgruber.backup.jpl`) from [here](https://github.com/JackGruber/joplin-plugin-backup/releases/latest)
+- Close Joplin
+- Got to your Joplin profile folder and place the JPL file in the `plugins` folder
+- Start Joplin
 
 ### Manual
 
@@ -136,6 +149,10 @@ The note history and file versions (revisions) are not included in the backup.
 
 No, the backup must be configured for each profile.
 Profiles that are not active are not backed up, even if a backup has been configured.
+
+### The Joplin build-in version of the plugin cannot be updated
+
+Yes, the build-in version only gets updates with Joplin updates, but can be replaced as described in the [Installation](#installation) step.
 
 ## Changelog
 
