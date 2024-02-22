@@ -3,6 +3,7 @@
 ## not released
 
 - Renamed Plugin from `Simple Backup` to `Backup`
+- Add: Allow creating of subfolders for each profile
 
 ## v1.3.6 (2024-01-11)
 

@@ -57,7 +57,8 @@ describe("Backup", function () {
       .calledWith("path").mockImplementation(() => Promise.resolve(testPath.backupBasePath))
       .calledWith("zipArchive").mockImplementation(() => "no")
       .calledWith("execFinishCmd").mockImplementation(() => "")
-      .calledWith("usePassword").mockImplementation(() => false);
+      .calledWith("usePassword").mockImplementation(() => false)
+      .calledWith("createSubfolderPerProfile").mockImplementation(() => false);
 
     /* prettier-ignore */
     when(spyOnGlobalValue)
@@ -200,7 +201,7 @@ describe("Backup", function () {
       path.dirname(os.homedir()),
       path.join(os.homedir(), "Desktop"),
       path.join(os.homedir(), "Documents"),
-      
+
       // Avoid including system-specific paths here. For example,
       // testing with "C:\Windows" fails on POSIX systems because it is interpreted
       // as a relative path.
@@ -215,6 +216,71 @@ describe("Backup", function () {
         await backup.loadBackupPath();
 
         expect(backup.backupBasePath).toBe(null);
+      }
+    );
+  });
+
+  describe("backups per profile", function () {
+    test.each([
+      {
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: testPath.joplinProfile,
+        joplinEnv: "prod",
+        expectedProfileName: "default",
+      },
+      {
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: testPath.joplinProfile,
+        joplinEnv: "dev",
+        expectedProfileName: "default-dev",
+      },
+      {
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: path.join(testPath.joplinProfile, "profile-test"),
+        joplinEnv: "prod",
+        expectedProfileName: "profile-test",
+      },
+      {
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: path.join(testPath.joplinProfile, "profile-idhere"),
+        joplinEnv: "prod",
+        expectedProfileName: "profile-idhere",
+      },
+      {
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: path.join(testPath.joplinProfile, "profile-idhere"),
+        joplinEnv: "dev",
+        expectedProfileName: "profile-idhere-dev",
+      },
+    ])(
+      "should correctly set backupBasePath based on the current profile name (case %#)",
+      async ({
+        profileDir,
+        rootProfileDir,
+        joplinEnv,
+        expectedProfileName,
+      }) => {
+        when(spyOnsSettingsValue)
+          .calledWith("path")
+          .mockImplementation(async () => testPath.backupBasePath);
+        when(spyOnGlobalValue)
+          .calledWith("rootProfileDir")
+          .mockImplementation(async () => rootProfileDir);
+        when(spyOnGlobalValue)
+          .calledWith("profileDir")
+          .mockImplementation(async () => profileDir);
+        when(spyOnGlobalValue)
+          .calledWith("env")
+          .mockImplementation(async () => joplinEnv);
+
+        // Should use the folder named "default" for the default profile
+        backup.createSubfolderPerProfile = true;
+        await backup.loadBackupPath();
+        expect(backup.backupBasePath).toBe(
+          path.normalize(
+            path.join(testPath.backupBasePath, expectedProfileName)
+          )
+        );
       }
     );
   });
@@ -1053,14 +1119,20 @@ describe("Backup", function () {
   });
 
   describe("create backup readme", () => {
-    it.each([{ backupRetention: 1 }, { backupRetention: 2 }])(
-      "should create a README.md in the backup directory (case %#)",
-      async ({ backupRetention }) => {
+    it.each([
+      { backupRetention: 1, createSubfolderPerProfile: false },
+      { backupRetention: 2, createSubfolderPerProfile: false },
+      { backupRetention: 1, createSubfolderPerProfile: true },
+    ])(
+      "should create a README.md in the backup directory (case %j)",
+      async ({ backupRetention, createSubfolderPerProfile }) => {
         when(spyOnsSettingsValue)
           .calledWith("backupRetention")
           .mockImplementation(async () => backupRetention)
           .calledWith("backupInfo")
-          .mockImplementation(() => Promise.resolve("[]"));
+          .mockImplementation(() => Promise.resolve("[]"))
+          .calledWith("createSubfolderPerProfile")
+          .mockImplementation(() => Promise.resolve(createSubfolderPerProfile));
 
         backup.backupStartTime = null;
         await backup.start();

@@ -59,6 +59,10 @@
       "label": "Create Subfolder",
       "description": "Create a subfolder in the the configured {{backupPath}}. Deactivate only if there is no other data in the {{backupPath}}!"
     },
+    "createSubfolderPerProfile": {
+      "label": "Create subfolder for Joplin profile",
+      "description": "Create a subfolder within the backup directory for the current profile. This allows multiple profiles from the same Joplin installation to use the same backup directory without overwriting backups made from other profiles. All profiles that use the same backup directory must have this setting enabled."
+    },
     "zipArchive": {
       "label": "Create archive",
       "description": "Save backup data in a archive, if a password protected backups is set, an archive is always created"

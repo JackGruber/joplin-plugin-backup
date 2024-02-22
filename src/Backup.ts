@@ -17,6 +17,7 @@ class Backup {
   private msgDialog: any;
   private backupBasePath: string;
   private activeBackupPath: string;
+  private readmeOutputDirectory: string;
   private log: any;
   private logFile: string;
   private backupRetention: number;
@@ -29,6 +30,7 @@ class Backup {
   private compressionLevel: number;
   private singleJex: boolean;
   private createSubfolder: boolean;
+  private createSubfolderPerProfile: boolean;
   private backupSetName: string;
   private exportFormat: string;
   private execFinishCmd: string;
@@ -273,12 +275,10 @@ class Backup {
       );
     }
 
-    if (this.createSubfolder) {
-      this.log.verbose("append subFolder");
-      const orgBackupBasePath = this.backupBasePath;
-      this.backupBasePath = path.join(this.backupBasePath, "JoplinBackup");
+    const origBackupBasePath = this.backupBasePath;
+    const handleSubfolderCreation = async () => {
       if (
-        fs.existsSync(orgBackupBasePath) &&
+        fs.existsSync(origBackupBasePath) &&
         !fs.existsSync(this.backupBasePath)
       ) {
         try {
@@ -287,6 +287,45 @@ class Backup {
           await this.showError(i18n.__("msg.error.folderCreation", e.message));
         }
       }
+    };
+
+    if (this.createSubfolder) {
+      this.log.verbose("append subFolder");
+      this.backupBasePath = path.join(this.backupBasePath, "JoplinBackup");
+      await handleSubfolderCreation();
+    }
+
+    // Set the README output directory before adding a subdirectory for the profile.
+    // This gives us one README for all backup subfolders.
+    this.readmeOutputDirectory = this.backupBasePath;
+
+    if (this.createSubfolderPerProfile) {
+      this.log.verbose("append profile subfolder");
+      // We assume that Joplin's profile structure is the following
+      //   rootProfileDir/
+      //   | profileDir/
+      //   | | [[profile content]]
+      // or, if using the default,
+      //   rootProfileDir/
+      //   | [[profile content]]
+      const profileRootDir = await joplin.settings.globalValue(
+        "rootProfileDir"
+      );
+      const profileCurrentDir = await joplin.settings.globalValue("profileDir");
+
+      let profileName = path.basename(profileCurrentDir);
+      if (profileCurrentDir === profileRootDir) {
+        profileName = "default";
+      }
+
+      // Appending a -dev to the profile name prevents a devmode default Joplin
+      // profile from overwriting a non-devmode Joplin profile.
+      if ((await joplin.settings.globalValue("env")) === "dev") {
+        profileName += "-dev";
+      }
+
+      this.backupBasePath = path.join(this.backupBasePath, profileName);
+      await handleSubfolderCreation();
     }
 
     // Creating a backup can overwrite the backup directory. Thus,
@@ -320,6 +359,9 @@ class Backup {
   public async loadSettings() {
     this.log.verbose("loadSettings");
     this.createSubfolder = await joplin.settings.value("createSubfolder");
+    this.createSubfolderPerProfile = await joplin.settings.value(
+      "createSubfolderPerProfile"
+    );
     await this.loadBackupPath();
     this.backupRetention = await joplin.settings.value("backupRetention");
 
@@ -499,7 +541,7 @@ class Backup {
 
         const backupDst = await this.makeBackupSet();
 
-        await this.writeReadme(this.backupBasePath);
+        await this.writeReadme(this.readmeOutputDirectory);
         await joplin.settings.setValue(
           "lastBackup",
           this.backupStartTime.getTime()
