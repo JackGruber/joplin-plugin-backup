@@ -58,6 +58,10 @@
       "label": "Erstellen eines Unterordners",
       "description": "Erstellt einen Unterordner im konfigurierten %s. Nur deaktivieren, wenn sich keine weiteren Daten im %s befinden!"
     },
+    "createSubfolderPerProfile": {
+      "label": "Unterordner für Joplin profile",
+      "description": "Erstellt einen Unterordner innerhalb des Sicherungsverzeichnisses für das aktuelle Profil. Dadurch können mehrere Profile derselben Joplin Installation dasselbe Sicherungsverzeichnis verwenden, ohne dass Sicherungen anderer Profile überschrieben werden. Alle Profile, die dasselbe Sicherungsverzeichnis verwenden, müssen diese Einstellung aktiviert haben"
+    },
     "zipArchive": {
       "label": "Erstelle ein Archive",
       "description": "Backup Daten in einem Archiv speichern, wenn ein Passwortschutz für die Sicherung eingestellt ist wird immer ein Archiv erstellt"
