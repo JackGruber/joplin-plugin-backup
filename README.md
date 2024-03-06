@@ -146,6 +146,12 @@ Profiles that are not active are not backed up, even if a backup has been config
 
 Yes, the build-in version only gets updates with Joplin updates, but can be replaced as described in the [Installation](#installation) step.
 
+### Can I use a Backup to speed up first Joplin sync?
+
+No, because new IDs are assigned in Joplin during the import.
+If this device is then synchronized with a synchronization target in which other clients already synchronize with the same notes, all notes are then available multiple times on the devices.
+Therefore, the same note is then available with different IDs in Joplin.
+
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md)
