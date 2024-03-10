@@ -2,6 +2,10 @@
 
 ## not released
 
+## v1.4.1 (2024-03-10)
+
+- Fix: Don't show `There is no Data to export` on empty profiles and automatic backups #71
+
 ## v1.4.0 (2024-02-22)
 
 - Changes that are required for the Joplin default plugin

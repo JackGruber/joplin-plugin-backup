@@ -29,6 +29,7 @@ let spyOnLogError = null;
 let spyOnShowError = null;
 let spyOnSaveBackupInfo = null;
 let spyOnDataGet = null;
+let spyOnIsThereData = null;
 
 const spyOnsSettingsValue = jest.spyOn(joplin.settings, "value");
 const spyOnGlobalValue = jest.spyOn(joplin.settings, "globalValue");
@@ -1119,6 +1120,15 @@ describe("Backup", function () {
   });
 
   describe("create backup readme", () => {
+    beforeEach(async () => {
+      spyOnIsThereData = jest
+        .spyOn(backup, "isThereData")
+        .mockImplementation(() => Promise.resolve(true));
+    });
+    afterEach(async () => {
+      spyOnIsThereData.mockRestore();
+    });
+
     it.each([
       { backupRetention: 1, createSubfolderPerProfile: false },
       { backupRetention: 2, createSubfolderPerProfile: false },
