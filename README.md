@@ -22,6 +22,7 @@ A plugin to extend Joplin with a manual and automatic backup function.
     - [Settings](#settings)
     - [Notes](#notes)
     - [Restore a singel note](#restore-a-singel-note)
+    - [Full Joplin restore](#full-joplin-restore)
 - [FAQ](#faq)
     - [Internal Joplin links betwen notes are lost](#internal-joplin-links-betwen-notes-are-lost)
     - [Combine multiple JEX Files to one](#combine-multiple-jex-files-to-one)
@@ -112,6 +113,10 @@ If the notebook in which the note was located already exists in your Joplin, the
 7. Switch back to your orginal Joplin profil via `File > Switch profile > Default`
 8. Import the exported note via `File > Import > JEX - Joplin Export File` and select the file from step 6
 
+### Full Joplin restore
+
+See the guide for a [Full Joplin restore](FULLRESTORE.md)
+
 ## FAQ
 
 ### Internal Joplin links betwen notes are lost
@@ -135,7 +140,7 @@ The file names in the archive correspond to the Joplin internal IDs.
 
 ### Are Note History (Revisions) backed up?
 
-The note history and file versions (revisions) are not included in the backup.
+A JEX backup file **does not** contain any note history (revisions). It contains the notebooks, notes and attachments as they were at the time the backup was made.
 
 ### Are all Joplin profiles backed up?
 
@@ -148,7 +153,7 @@ Yes, the build-in version only gets updates with Joplin updates, but can be repl
 
 ### Can I use a Backup to speed up first Joplin sync?
 
-No, because new IDs are assigned in Joplin during the import.
+No, because all items in the backup will get newunique IDs are assigned in Joplin during the import (however links between notes will be maintained).
 If this device is then synchronized with a synchronization target in which other clients already synchronize with the same notes, all notes are then available multiple times on the devices.
 Therefore, the same note is then available with different IDs in Joplin.
 
