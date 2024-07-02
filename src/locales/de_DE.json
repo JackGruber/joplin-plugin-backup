@@ -20,7 +20,7 @@
   "settings": {
     "path": {
       "label": "Sicherungs Pfad",
-      "description": "Speicherort für die Backups. "
+      "description": "Speicherort für die Backups. Dieser Pfad ist exklusiv für die Joplin Backups wenn die Einstellungen für 'Erstellen eines Unterordners' deaktiviert wird, es dürfen sich dann keine anderen Daten darin befinden!"
     },
     "exportPath": {
       "label": "Temporärer Export Pfad",

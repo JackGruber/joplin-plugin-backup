@@ -21,7 +21,7 @@
   "settings": {
     "path": {
       "label": "Backup path",
-      "description": "Storage location for the backups. Dieser Pfad ist exklusiv für die Joplin Backups, es sollten sich keine anderen Daten darin befinden, wenn die Einstellungen für 'Unterordner erstellen' deaktiviert wird!"
+      "description": "Storage location for the backups. This path is exclusively for the Joplin Backups if the settings for 'Create a subfolder' are deactivated, no other data should be in it!"
     },
     "exportPath": {
       "label": "Temporary export path",
