@@ -21,7 +21,7 @@
   "settings": {
     "path": {
       "label": "Backup path",
-      "description": "Storage location for the backups. This path is exclusively for the Joplin Backups if the settings for 'Create a subfolder' are deactivated, no other data should be in it!"
+      "description": "Storage location for the backups. This path is exclusive to Joplin backups when the 'Create Subfolder' setting is disabled: there should be no other data in it!"
     },
     "exportPath": {
       "label": "Temporary export path",
@@ -29,7 +29,7 @@
     },
     "backupRetention": {
       "label": "Keep x backups",
-      "description": "How many backups should be kept. If more than one version configured, folders are created in the Backup Path acording to 'Backup set name' setting"
+      "description": "How many backups should be kept. If more than one version configured, folders are created in the Backup Path according to 'Backup set name' setting"
     },
     "backupInterval": {
       "label": "Backup interval in hours",
@@ -52,12 +52,12 @@
       "description": "Repeat password to validate"
     },
     "fileLogLevel": {
-      "label": "Loglevel",
-      "description": "Loglevel for the backup logfile"
+      "label": "Log level",
+      "description": "Log level for the backup log file"
     },
     "createSubfolder": {
       "label": "Create Subfolder",
-      "description": "Create a subfolder in the the configured {{backupPath}}. Deactivate only if there is no other data in the {{backupPath}}!"
+      "description": "Create a subfolder in the configured {{backupPath}}. Deactivate only if there is no other data in the {{backupPath}}!"
     },
     "createSubfolderPerProfile": {
       "label": "Create subfolder for Joplin profile",
@@ -65,7 +65,7 @@
     },
     "zipArchive": {
       "label": "Create archive",
-      "description": "Save backup data in a archive, if a password protected backups is set, an archive is always created"
+      "description": "Save backup data in an archive. If 'Password protected backups' is set, an archive is always created."
     },
     "compressionLevel": {
       "label": "Compression level",
