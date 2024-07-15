@@ -504,6 +504,14 @@ class Backup {
   }
 
   public async start(showDoneMsg: boolean = false) {
+    // Prevent error message for empty profile on automatic backup
+    // https://github.com/JackGruber/joplin-plugin-backup/issues/71
+    // https://github.com/laurent22/joplin/issues/10046
+    if (showDoneMsg == false && (await this.isThereData()) === false) {
+      this.log.warn(`Empty Joplin profile (No notes), skipping backup`);
+      return;
+    }
+
     if (this.backupStartTime === null) {
       this.backupStartTime = new Date();
 
@@ -1280,6 +1288,22 @@ class Backup {
       }
     });
     return true;
+  }
+
+  private async isThereData(): Promise<boolean> {
+    let check = await joplin.data.get(["notes"], {
+      fields: "title, id, updated_time",
+      order_by: "updated_time",
+      order_dir: "DESC",
+      limit: 1,
+      page: 1,
+    });
+
+    if (check.items.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 
