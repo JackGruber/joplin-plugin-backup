@@ -2,6 +2,8 @@
 
 ## not released
 
+## v1.4.2 (2024-07-17)
+
 - Fix: Some EN translations and typos #76
 
 ## v1.4.1 (2024-03-10)
