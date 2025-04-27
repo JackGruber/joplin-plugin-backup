@@ -1,0 +1,119 @@
+{
+  "msg": {
+    "backup": {
+      "completed": "Copie de siguranță finalizată"
+    },
+    "error": {
+      "PluginUpgrade": "Eroare actualizare %s: %s",
+      "folderCreation": "Eroare la crearea dosarului: %s",
+      "ConfigureBackupPath": "Te rog configurează calea pentru copia de siguranță în Joplin din meniul Unelte > Opțiuni > Backup",
+      "PasswordMissMatch": "Parolele nu se potrivesc!",
+      "BackupPathDontExist": "Calea „%s” pentru copia de siguranță nu există!",
+      "BackupAlreadyRunning": "O copiere de siguranță este deja în desfășurare!",
+      "Backup": "Eroare copie de siguranță pentru %s: %s",
+      "fileCopy": "Eroare la copierea fișierului/dosarului în %s: %s",
+      "deleteFile": "Eroare la ștergerea fișierului/dosarului în %s: %s",
+      "backupPathContainsImportantDir": "Calea pentru copia de siguranță este sau conține un dosar important (%s) care ar putea fi suprascris de o copie de siguranță. Fără a activa setarea pentru subdosare, acest lucru nu este permis!",
+      "BackupSetNotSupportedChars": "Numele setului copiei de siguranță conține caractere nepermise ( %s )!",
+      "passwordDoubleQuotes": "Parola conține \" (ghilimele). Acestea nu sînt permise din cauza unui defect. Protectția cu parolă a copiei de siguranță este dezactivată!"
+    }
+  },
+  "settings": {
+    "path": {
+      "label": "Locație copie de siguranță",
+      "description": "Calea către locația pentru stocarea cópiilor de siguranță. Această cale este folosită exclusiv de cópiile Joplin atunci cînd setarea „Creează subdosar” este dezactivată: nu ar trebui să fie niciun fel de alte date în ea!"
+    },
+    "exportPath": {
+      "label": "Cale de export temporară",
+      "description": "Cale temporară pentru exportul de date din Joplin, folosită înainte de mutarea datelor în calea copiei de siguranță."
+    },
+    "backupRetention": {
+      "label": "Păstrează n cópii de siguranță",
+      "description": "Cîte cópii de siguranță ar trebui păstrate. Dacă este configurată mai mult de o versiune, se vor creea dosare în calea dată în concordanță cu setarea „Nume set copie de siguranță”."
+    },
+    "backupInterval": {
+      "label": "Interval de copiere în ore",
+      "description": "0 = dezactivează copierea automată"
+    },
+    "onlyOnChange": {
+      "label": "Doar la schimbare",
+      "description": "Creează o copie de siguranță la intervalul de timp specificat doar dacă s-a detectat o schimbare la o notiță, etichetă, resursă sau caiet."
+    },
+    "usePassword": {
+      "label": "Protejează cópiile de siguranță cu parolă",
+      "description": "Realizează o arhivă criptată a cópiilor."
+    },
+    "password": {
+      "label": "Parolă",
+      "description": "Dacă este întrodusă o parolă, cópiile vor fi protejate."
+    },
+    "passwordRepeat": {
+      "label": "Parolă (din nou)",
+      "description": "Repetă parola pentru a valida."
+    },
+    "fileLogLevel": {
+      "label": "Nivel juranlizare",
+      "description": "Nivelul de severitate pentru jurnalul copiei de siguranță.",
+      "value": {
+        "false": "fără",
+        "verbose": "detaliat",
+        "info": "informativ",
+        "warn": "atenționări",
+        "error": "erori"
+      }
+    },
+    "createSubfolder": {
+      "label": "Creează subdosar",
+      "description": "Creează un subdosar în calea copiei de siguranță date. Dezactivează doar dacă nu există alte date în calea copiei de siguranță!"
+    },
+    "createSubfolderPerProfile": {
+      "label": "Creează subdosar pentru profilul Joplin",
+      "description": "Creează un subdosar în dosarul copiei de siguranță pentru profilul curent. Acest lucru permite ca mai multe profile din instalarea curentă a Joplin să folosească același dosar de cópii de siguranță fără să suprascrie cópiile create de alte profile. Toate profilele care folosesc același dosar de cópii trebuie să aibă această opțiune activată."
+    },
+    "zipArchive": {
+      "label": "Creează arhivă",
+      "description": "Salvează datele copiate într-o arhivă. Dacă „Protejează cópiile de siguranță cu parolă” este activat, o arhivă este mereu creată.",
+      "value": {
+        "no": "nu",
+        "yes": "da",
+        "yesone": "da, o singură arhivă"
+      }
+    },
+    "compressionLevel": {
+      "label": "Nivel compresie",
+      "description": "Gradul de compresie al arhivei",
+      "value": {
+        "copy": "fără compresie",
+        "fastest": "cea mai rapidă",
+        "fast": "rapidă",
+        "normal": "normală",
+        "maximum": "maximă",
+        "ultra": "ultra"
+      }
+    },
+    "backupSetName": {
+      "label": "Nume set copie de siguranță",
+      "description": "Numele unui set de cópii dacă mai multe cópii trebuie păstrate. Token-uri Moment (https://momentjs.com/docs/#/displaying/format/) pot fi utilizate cu {TOKEN}"
+    },
+    "backupPlugins": {
+      "label": "Copiază plugin-urile",
+      "description": "Copiază și fișierele jpl ale plugin-urilor (fără setări!)"
+    },
+    "exportFormat": {
+      "label": "Format export",
+      "description": "Formatul folosit la exportarea notițelor din Joplin"
+    },
+    "singleJex": {
+      "label": "Un singur fișier JEX",
+      "description": "Creează doar un singur fișier JEX (Recomandat pentru a preveni pierderile de date legate de legăturile dintre note și structura ierarhică în timpul restaurării!)"
+    },
+    "execFinishCmd": {
+      "label": "Comandă la finalizarea copierii de siguranță",
+      "description": "Execută o comandă la terminarea copierii"
+    }
+  },
+  "backupReadme": "# Copie de siguranță Joplin\n\nAcest dosar conține una sau mai multe cópii de siguranță ale datelor din aplicația de notițe Joplin.\n\nVezi [documentația](https://joplinapp.org/plugins/plugin/io.github.jackgruber.backup/#restore) pentru informații legate de cum să restaurezi copia de siguranță.",
+  "command": {
+    "createBackup": "Creează o copie de siguranță"
+  }
+}
