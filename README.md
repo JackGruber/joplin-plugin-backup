@@ -153,7 +153,7 @@ Yes, the build-in version only gets updates with Joplin updates, but can be repl
 
 ### Can I use a Backup to speed up first Joplin sync?
 
-No, because all items in the backup will get newunique IDs are assigned in Joplin during the import (however links between notes will be maintained).
+No, because all items in the backup will get new unique IDs are assigned in Joplin during the import (however links between notes will be maintained).
 If this device is then synchronized with a synchronization target in which other clients already synchronize with the same notes, all notes are then available multiple times on the devices.
 Therefore, the same note is then available with different IDs in Joplin.
 
