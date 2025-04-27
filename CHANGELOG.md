@@ -2,6 +2,10 @@
 
 ## not released
 
+## v1.4.3 (2025-04-27)
+
+- Add: ro_RO and ro_MD translations #88
+
 ## v1.4.2 (2024-07-17)
 
 - Fix: Some EN translations and typos #76

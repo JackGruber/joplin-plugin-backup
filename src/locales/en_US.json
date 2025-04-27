@@ -53,7 +53,14 @@
     },
     "fileLogLevel": {
       "label": "Log level",
-      "description": "Log level for the backup log file"
+      "description": "Log level for the backup log file",
+      "value": {
+        "false": "Off",
+        "verbose": "Verbose",
+        "info": "Info",
+        "warn": "Warning",
+        "error": "Error"
+      }
     },
     "createSubfolder": {
       "label": "Create Subfolder",
@@ -65,11 +72,24 @@
     },
     "zipArchive": {
       "label": "Create archive",
-      "description": "Save backup data in an archive. If 'Password protected backups' is set, an archive is always created."
+      "description": "Save backup data in an archive. If 'Password protected backups' is set, an archive is always created.",
+      "value": {
+        "no": "No",
+        "yes": "Yes",
+        "yesone": "Yes, one archive"
+      }
     },
     "compressionLevel": {
       "label": "Compression level",
-      "description": "Compression level for archive"
+      "description": "Compression level for archive",
+      "value": {
+        "copy": "Copy (no compression)",
+        "fastest": "Fastest",
+        "fast": "Fast",
+        "normal": "Normal",
+        "maximum": "Maximum",
+        "ultra": "Ultra"
+      }
     },
     "backupSetName": {
       "label": "Backup set name",
