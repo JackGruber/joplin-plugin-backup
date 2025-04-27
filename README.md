@@ -21,7 +21,7 @@ A plugin to extend Joplin with a manual and automatic backup function.
 - [Restore](#restore)
     - [Settings](#settings)
     - [Notes](#notes)
-    - [Restore a singel note](#restore-a-singel-note)
+    - [Restore a Single note](#restore-a-single-note)
     - [Full Joplin restore](#full-joplin-restore)
 - [FAQ](#faq)
     - [Internal Joplin links betwen notes are lost](#internal-joplin-links-betwen-notes-are-lost)
@@ -102,7 +102,7 @@ The notes are imported via `File > Import > JEX - Joplin Export File`.
 The notes are imported additionally, no check for duplicates is performed.
 If the notebook in which the note was located already exists in your Joplin, then a "(1)" will be appended to the folder name.
 
-### Restore a singel note
+### Restore a Single note
 
 1. Create a new profile in Joplin via `File > Switch profile > Create new Profile`
 2. Joplin switches automatically to the newly created profile
