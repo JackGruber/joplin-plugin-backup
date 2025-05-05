@@ -6,7 +6,7 @@ import { i18n } from "./Backup";
 export namespace Settings {
   export async function register() {
     await joplin.settings.registerSection("backupSection", {
-      label: "Backup",
+      label: i18n.__("settings.section.label"),
       iconName: "fas fa-archive",
     });
 
