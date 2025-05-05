@@ -2,6 +2,8 @@
 
 ## not released
 
+- Add: Added Slovak language #89
+
 ## v1.4.3 (2025-04-27)
 
 - Add: ro_RO and ro_MD translations #88
