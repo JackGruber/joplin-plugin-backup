@@ -1,0 +1,119 @@
+{
+  "msg": {
+    "backup": {
+      "completed": "Zálohovanie dokončené"
+    },
+    "error": {
+      "PluginUpgrade": "Chyba aktualizácie %s: %s",
+      "folderCreation": "Chyba pri vytváraní priečinka: %s",
+      "ConfigureBackupPath": "Prosím, nastavte cestu zálohy Joplin v ponuke Nástroje > Možnosti > Zálohovanie",
+      "PasswordMissMatch": "Heslá sa nezhodujú!",
+      "BackupPathDontExist": "Cesta zálohy '%s' neexistuje!",
+      "BackupAlreadyRunning": "Zálohovanie už prebieha!",
+      "Backup": "Chyba zálohovania pre %s: %s",
+      "fileCopy": "Chyba pri kopírovaní súboru/priečinka v %s: %s",
+      "deleteFile": "Chyba pri mazaní súboru/priečinka v %s: %s",
+      "backupPathContainsImportantDir": "Cesta zálohy je alebo obsahuje dôležitý priečinok (%s), ktorý by mohol byť prepísaný zálohou. Bez povolenia nastavenia podpriečinka toto nie je povolené!",
+      "BackupSetNotSupportedChars": "Názov záložnej sady obsahuje nepovolené znaky ( %s )!",
+      "passwordDoubleQuotes": "Heslo obsahuje \" (úvodzovky). Tieto nie sú povolené kvôli chybe. Ochrana heslom pre zálohu je deaktivovaná!"
+    }
+  },
+  "settings": {
+    "path": {
+      "label": "Cesta zálohovania",
+      "description": "Umiestnenie úložiska pre zálohy. Táto cesta je výhradne pre zálohy Joplin, keď je nastavenie 'Vytvoriť podpriečinok' zakázané: nemali by v ňom byť žiadne iné údaje!"
+    },
+    "exportPath": {
+      "label": "Dočasná cesta exportu",
+      "description": "Dočasná cesta pre export údajov z aplikácie Joplin pred presunom údajov do zálohovacej cesty"
+    },
+    "backupRetention": {
+      "label": "Ponechať x záloh",
+      "description": "Koľko záloh by sa malo zachovať. Ak je nastavená viac ako jedna verzia, priečinky sa vytvárajú v ceste zálohovania podľa nastavenia 'Názov záložnej sady'"
+    },
+    "backupInterval": {
+      "label": "Interval zálohovania v hodinách",
+      "description": "0 = vypnúť automatické zálohovanie"
+    },
+    "onlyOnChange": {
+      "label": "Iba pri zmene",
+      "description": "Vytvorí zálohu v zadanom intervale zálohovania iba vtedy, ak došlo v `poznámke`, `štítku`, `zdroji` alebo `zápisníku` ku zmene"
+    },
+    "usePassword": {
+      "label": "Zálohy chránené heslom",
+      "description": "Chrániť zálohy prostredníctvom šifrovaného archívu"
+    },
+    "password": {
+      "label": "Heslo",
+      "description": "Ak bolo zadané heslo, zálohy sú chránené heslom"
+    },
+    "passwordRepeat": {
+      "label": "Heslo (opakovať)",
+      "description": "Zopakovať heslo pre overenie"
+    },
+    "fileLogLevel": {
+      "label": "Úroveň záznamu",
+      "description": "Úroveň záznamu pre súbor záznamu zálohy",
+      "value": {
+        "false": "Vypnuté",
+        "verbose": "Podrobné",
+        "info": "Informácie",
+        "warn": "Upozornenie",
+        "error": "Chyba"
+      }
+    },
+    "createSubfolder": {
+      "label": "Vytvoriť podpriečinok",
+      "description": "Vytvoriť podpriečinok v nastavenej {backupPath}. Deaktivujte iba vtedy, ak v {backupPath} nie sú žiadne iné údaje!"
+    },
+    "createSubfolderPerProfile": {
+      "label": "Vytvoriť podpriečinok pre profil Joplin",
+      "description": "Vytvoriť podpriečinok v rámci priečinku zálohy pre aktuálny profil. To umožňuje viacerým profilom z rovnakej inštalácie Joplin používať rovnaký priečinok zálohy bez prepisovania záloh vytvorených z iných profilov. Všetky profily, ktoré používajú rovnaký priečinok zálohy, musia mať toto nastavenie povolené."
+    },
+    "zipArchive": {
+      "label": "Vytvoriť archív",
+      "description": "Uložiť zálohované údaje do archívu. Ak sú nastavené 'Zálohy chránené heslom', archív sa vždy vytvorí.",
+      "value": {
+        "no": "Nie",
+        "yes": "Áno",
+        "yesone": "Áno, jeden archív"
+      }
+    },
+    "compressionLevel": {
+      "label": "Úroveň kompresie",
+      "description": "Úroveň kompresie pre archív",
+      "value": {
+        "copy": "Kopírovať (žiadna kompresia)",
+        "fastest": "Najrýchlejšia",
+        "fast": "Rýchla",
+        "normal": "Normálna",
+        "maximum": "Maximálna",
+        "ultra": "Ultra"
+      }
+    },
+    "backupSetName": {
+      "label": "Názov záložnej sady",
+      "description": "Názov záložnej sady, ak sa má uchovávať viacero záloh. Moment Token (https://momentjs.com/docs/#/displaying/format/) je možné použiť s {TOKEN}"
+    },
+    "backupPlugins": {
+      "label": "Zálohovať doplnky",
+      "description": "Zálohovať jpl súbory doplnku (Nie nastavenia doplnku!)"
+    },
+    "exportFormat": {
+      "label": "Formát exportu",
+      "description": "Formát exportu údajov aplikácie Joplin počas zálohovania"
+    },
+    "singleJex": {
+      "label": "Jediný JEX",
+      "description": "Vytvoriť iba jeden JEX súbor (Odporúča sa, aby sa predišlo strate interných odkazov na poznámky alebo štruktúry priečinkov počas obnovy!)"
+    },
+    "execFinishCmd": {
+      "label": "Príkaz po dokončení zálohy",
+      "description": "Spustiť príkaz po dokončení zálohy"
+    }
+  },
+  "backupReadme": "# Joplin Backup\n\nTento priečinok obsahuje jednu alebo viac záloh údajov z aplikácie na zapisovanie poznámok Joplin.\n\nPozrite si [Dokumentáciu zálohovania](https://joplinapp.org/plugins/plugin/io.github.jackgruber.backup/#restore) pre informácie o tom, ako obnoviť túto zálohu.",
+  "command": {
+    "createBackup": "Vytvoriť zálohu"
+  }
+}

@@ -19,6 +19,9 @@
     }
   },
   "settings": {
+    "section": {
+      "label": "Backup"
+    },
     "path": {
       "label": "Backup path",
       "description": "Storage location for the backups. This path is exclusive to Joplin backups when the 'Create Subfolder' setting is disabled: there should be no other data in it!"

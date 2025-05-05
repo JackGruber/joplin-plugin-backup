@@ -2,6 +2,12 @@
 
 ## not released
 
+## v1.4.4 (2025-05-05)
+
+- Add: Added Slovak language #89
+- Add: Translation option `settings.section.label` to translate the plugin setting section label
+- Update: German translation
+
 ## v1.4.3 (2025-04-27)
 
 - Add: ro_RO and ro_MD translations #88
