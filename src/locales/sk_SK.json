@@ -19,6 +19,9 @@
     }
   },
   "settings": {
+     "section": {
+      "label": "Zálohovanie"
+    },
     "path": {
       "label": "Cesta zálohovania",
       "description": "Umiestnenie úložiska pre zálohy. Táto cesta je výhradne pre zálohy Joplin, keď je nastavenie 'Vytvoriť podpriečinok' zakázané: nemali by v ňom byť žiadne iné údaje!"
@@ -28,7 +31,7 @@
       "description": "Dočasná cesta pre export údajov z aplikácie Joplin pred presunom údajov do zálohovacej cesty"
     },
     "backupRetention": {
-      "label": "Ponechať x záloh",
+      "label": "Ponechať počet záloh",
       "description": "Koľko záloh by sa malo zachovať. Ak je nastavená viac ako jedna verzia, priečinky sa vytvárajú v ceste zálohovania podľa nastavenia 'Názov záložnej sady'"
     },
     "backupInterval": {
@@ -101,7 +104,7 @@
     },
     "exportFormat": {
       "label": "Formát exportu",
-      "description": "Formát exportu údajov aplikácie Joplin počas zálohovania"
+      "description": "Formát exportu údajov aplikácie Joplin pri vytváraní zálohy"
     },
     "singleJex": {
       "label": "Jediný JEX",
