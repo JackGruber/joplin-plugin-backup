@@ -8,6 +8,6 @@ jobs:
   auto-assign:
     runs-on: ubuntu-latest
     steps:
-      - uses: kentaro-m/auto-assign-action@v2
+      - uses: kentaro-m/auto-assign-action@v2.0.0
         with:
           configuration-path: ".github/auto_assign.yml"
