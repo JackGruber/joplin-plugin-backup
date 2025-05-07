@@ -2,6 +2,8 @@
 
 ## not released
 
+- Update: sk_SK minor update #90
+
 ## v1.4.4 (2025-05-05)
 
 - Add: Added Slovak language #89
