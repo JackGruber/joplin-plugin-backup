@@ -10,6 +10,7 @@ import * as moment from "moment";
 import { helper } from "./helper";
 import { exec } from "child_process";
 import { I18n } from "i18n";
+import { promisify } from "util";
 
 let i18n: any;
 
@@ -35,6 +36,7 @@ class Backup {
   private exportFormat: string;
   private execFinishCmd: string;
   private suppressErrorMsgUntil: number;
+  private execPromise = promisify(exec);
 
   constructor() {
     this.log = backupLogging;
@@ -67,7 +69,7 @@ class Backup {
     i18n = new I18n({
       locales: ["en_US", "de_DE", "ro_MD", "ro_RO", "sk_SK", "zh_CN"],
       defaultLocale: "en_US",
-      fallbacks: { "en_*": "en_US", "ro": "ro_RO" },
+      fallbacks: { "en_*": "en_US", ro: "ro_RO" },
       updateFiles: false,
       retryInDefaultLocale: true,
       syncFiles: true,
@@ -1279,15 +1281,15 @@ class Backup {
 
   private async execCmd(cmd: string): Promise<boolean> {
     this.log.info("execCmd: " + cmd);
-    exec(cmd, (error, stdout, stderr) => {
+    try {
+      const { stdout, stderr } = await this.execPromise(cmd);
       this.log.verbose("execCmd stdout: " + stdout);
       this.log.verbose("execCmd stderr: " + stderr);
-      if (error) {
-        this.log.error(`execCmd error: ${error}`);
-        return false;
-      }
-    });
-    return true;
+      return true;
+    } catch (e) {
+      this.log.error(`execCmd error: ${e}`);
+      return false;
+    }
   }
 
   private async isThereData(): Promise<boolean> {

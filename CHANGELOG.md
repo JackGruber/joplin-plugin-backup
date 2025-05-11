@@ -7,6 +7,7 @@
 - Add: Added Slovak language #89
 - Add: Translation option `settings.section.label` to translate the plugin setting section label
 - Update: German translation
+- Fix: `Command on Backup finish`, It was not waited for completion of the command (Some log output could be missed)
 
 ## v1.4.3 (2025-04-27)
 
