@@ -19,6 +19,9 @@
     }
   },
   "settings": {
+    "section": {
+      "label": "Zálohovanie"
+    },
     "path": {
       "label": "Cesta zálohovania",
       "description": "Umiestnenie úložiska pre zálohy. Táto cesta je výhradne pre zálohy Joplin, keď je nastavenie 'Vytvoriť podpriečinok' zakázané: nemali by v ňom byť žiadne iné údaje!"
