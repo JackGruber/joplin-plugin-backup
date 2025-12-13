@@ -1,0 +1,122 @@
+{
+  "msg": {
+    "backup": {
+      "completed": "Sigurnosna kopija je gotova"
+    },
+    "error": {
+      "PluginUpgrade": "Greška pri nadogradnji %s: %s",
+      "folderCreation": "Greška pri stvaranju mape: %s",
+      "ConfigureBackupPath": "Konfiguriraj putanju za sigurnosne kopije u Joplin Alati > Opcije > Sigurnosna kopija",
+      "PasswordMissMatch": "Lozinke se ne podudaraju!",
+      "BackupPathDontExist": "Putanja sigurnosnih kopija „%s” ne postoji!",
+      "BackupAlreadyRunning": "Izrada sigurnosne kopije je već u tijeku!",
+      "Backup": "Greška sigurnosne kopije za %s: %s",
+      "fileCopy": "Greška pri kopiranju datoteke/mape u %s: %s",
+      "deleteFile": "Greška pri brisanju datoteke/mape u %s: %s",
+      "backupPathContainsImportantDir": "Putanja sigurnosnih kopija je ili sadrži važan direktorij (%s) koji bi se mogao prepisati sigurnosnom kopijom. Bez uključivanja postavke podmape, to nije dozvoljeno!",
+      "BackupSetNotSupportedChars": "Ima skupa sigurnosnih kopija sadrži nedopuzvoljene znakove (%s)!",
+      "passwordDoubleQuotes": "Lozinka sadrži \" (dvostruke navodnike), što nije dozvoljeno zbog greške. Zaštita sigurnosnih kopija s lozinkom je deaktivirana!"
+    }
+  },
+  "settings": {
+    "section": {
+      "label": "Sigurnosna kopija"
+    },
+    "path": {
+      "label": "Putanja sigurnosne kopije",
+	  "description": "Mjesto za spremanje sigurnosnih kopija. Ova je putanja rezervirana isključivo za Joplinove sigurnosne kopije kada je postavka „Stvori podmapu” isključena: u njoj se ne bi smjeli nalaziti nikakvi drugi podaci!"
+    },
+    "exportPath": {
+      "label": "Privremena putanja izvoza",
+      "description": "Privremena putanja za izvoz podataka iz Joplina, prije nego što se podaci premjeste u putanju sigurnosne kopije"
+    },
+    "backupRetention": {
+      "label": "Zadrži x sigurnosnih kopija",
+      "description": "Odredi broj sigurnosnih kopija koje želiš zadržati. Ako je konfigurirano više od jedne verzije, mape se stvaraju u putanji sigurnosne kopije prema postavci „Ime skupa sigurnosnih kopija”"
+    },
+    "backupInterval": {
+      "label": "Interval sigurnosnog kopiranja u satima",
+      "description": "0 = isključi automatsko sigurnosno kopiranje"
+    },
+    "onlyOnChange": {
+      "label": "Samo pri promjeni",
+      "description": "Stvara sigurnosnu kopiju u navedenom intervalu samo ako je došlo do promjene u `bilješci`, `oznaci`, `resursu` ili `bilježnici`"
+    },
+    "usePassword": {
+      "label": "Sigurnosne kopije zaštićene lozinkom",
+      "description": "Štiti sigurnosne kopije putem šifrirane arhive"
+    },
+    "password": {
+      "label": "Lozinka",
+      "description": "Ako je lozinka upisana, sigurnosne kopije će se zaštititi lozinkom"
+    },
+    "passwordRepeat": {
+      "label": "Lozinka (ponovi)",
+      "description": "Ponovi lozinku radi provjere"
+    },
+    "fileLogLevel": {
+      "label": "Razina zapisivanja",
+      "description": "Razina zapisivanja za datoteku zapisnika sigurnosne kopije",
+      "value": {
+        "false": "Isključeno",
+        "verbose": "Detaljno",
+        "info": "Informacije",
+        "warn": "Upozorenje",
+        "error": "Greška"
+      }
+    },
+    "createSubfolder": {
+      "label": "Stvori podmapu",
+      "description": "Stvori podmapu u konfiguriranoj putanji {{backupPath}}. Isključi samo ako u {{backupPath}} nema drugih podataka!"
+    },
+    "createSubfolderPerProfile": {
+      "label": "Stvori podmapu za Joplin profil",
+      "description": "Stvara podmapu unutar direktorija sigurnosnih kopija za trenutačni profil. Ovo omogućuje da više profila iz iste Joplin instalacije koristi isti direktorij sigurnosnih kopija bez prepisivanja kopija drugih profila. Svi profili koji koriste isti direktorij sigurnosnih kopija moraju imati ovu postavku uključenu."
+    },
+    "zipArchive": {
+      "label": "Stvori arhivu",
+      "description": "Spremi podatke sigurnosne kopije u arhivu. Ako je uključeno 'Sigurnosne kopije zaštićene lozinkom', arhiva se uvijek stvara.",
+      "value": {
+        "no": "Ne",
+        "yes": "Da",
+        "yesone": "Da, jedna arhiva"
+    }
+    },
+    "compressionLevel": {
+      "label": "Razina kompresije",
+      "description": "Razina kompresije za arhivu",
+      "value": {
+        "copy": "Kopiraj (bez kompresije)",
+        "fastest": "Najbrže",
+        "fast": "Brzo",
+        "normal": "Normalno",
+        "maximum": "Maksimalno",
+        "ultra": "Ultra"
+      }
+    },
+    "backupSetName": {
+      "label": "Ime skupa sigurnosnih kopija",
+      "description": "Ime skupa sigurnosnih kopija ako se želi zadržati više kopija. „Moment” token (https://momentjs.com/docs/#/displaying/format/) se može koristiti s {TOKEN}"
+    },
+    "backupPlugins": {
+      "label": "Sigurnosna kopija dodataka",
+      "description": "Spremi jpl datoteke dodataka (Bez postavki dodataka!)"
+    },
+    "exportFormat": {
+      "label": "Format izvoza",
+      "description": "Format izvoza Joplin podataka tijekom izrade sigurnosne kopije"
+    },
+    "singleJex": {
+      "label": "Jedan JEX",
+      "description": "Stvori samo jednu JEX datoteku (preporučuje se kako bi se spriječilo gubljenje internih poveznica bilježaka ili strukture mapa tijekom obnavljanja!)"
+    },
+    "execFinishCmd": {
+      "label": "Naredba po završetku izrade sigurnosne kopije",
+      "description": "Izvrši naredbu kada je sigurnosna kopija gotova"
+    }
+  },
+  "backupReadme": "# Joplinova sigurnosna kopija\n\nOva mapa sadrži jednu ili više sigurnosnih kopija podataka od Joplin aplikacije.\n\nPogledaj [dokumentaciju za sigurnosne kopije](https://joplinapp.org/plugins/plugin/io.github.jackgruber.backup/#restore) za informacije o tome kako obnoviti podatke iz ove sigurnosne kopije.",
+  "command": {
+    "createBackup": "Izradi sigurnosnu kopiju"
+  }
+}
