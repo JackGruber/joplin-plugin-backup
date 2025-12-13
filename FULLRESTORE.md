@@ -23,8 +23,8 @@ With this method the existing link to the synchronisation cloud storage server w
 - When the above sync is complete, sync any other clients so that all the notebooks and notes they contain are deleted.
 - In case the cloud storage server has limits on how much data can be transferred at once it is suggested that all clients other than the one on the primary machine are shut down.
 - When all clients are empty move to the primary machine and import the backup (`File > Import > JEX - Joplin Export File`).
-- Sync the client to the cloud storage server. If you have a large collection of notes and attachments this may tale some time.
-- Once complete, start each client in turn and sync. The restored notes will be downloaded. If you have a large collection of notes and attachments this may tale some time.
+- Sync the client to the cloud storage server. If you have a large collection of notes and attachments this may take some time.
+- Once complete, start each client in turn and sync. The restored notes will be downloaded. If you have a large collection of notes and attachments this may take some time.
 - If you are certain that the cloud provider will not limit connections or download speed if a large volume of transfers are made, the other clients could be synced at the same time.
 
 ## Full Restore - Fully resetting the Joplin clients
