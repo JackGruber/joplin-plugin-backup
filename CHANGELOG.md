@@ -2,6 +2,8 @@
 
 ## not released
 
+## v1.4.5 (2025-12-13)
+
 - Update: Slovak translation (sk_SK) #90 #94
 - Update: German translation (de_DE) #96
 - Add: Croatian translation (hr_HR) #97
