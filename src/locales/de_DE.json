@@ -4,15 +4,15 @@
       "completed": "Backup wurde erstellt"
     },
     "error": {
-      "PluginUpgrade": "Upgrade Fehler %s: %s",
+      "PluginUpgrade": "Upgrade-Fehler %s: %s",
       "folderCreation": "Fehler beim Ordner erstellen: %s",
-      "ConfigureBackupPath": "Bitte einen Backup Pfad in `Joplin Tools > Options > Backup` konfigurieren",
+      "ConfigureBackupPath": "Bitte einen Backup Pfad in `Joplin Werkzeuge > Optionen > Backup` konfigurieren",
       "PasswordMissMatch": "Passwörter stimmen nicht überein!",
-      "BackupPathDontExist": "Der Backup Pfad '%s' existiert nicht!",
+      "BackupPathDontExist": "Der Backup-Pfad '%s' existiert nicht!",
       "BackupAlreadyRunning": "Es läuft bereits ein Backup!",
       "Backup": "Backup Fehler für %s: %s",
-      "fileCopy": "Fehler beim kopieren von Datei/Ordner in %s: %s",
-      "deleteFile": "Fehler beim löschen von Datei/Ordner in %s: %s",
+      "fileCopy": "Fehler beim Kopieren von Datei/Ordner in %s: %s",
+      "deleteFile": "Fehler beim Löschen von Datei/Ordner in %s: %s",
       "backupPathContainsImportantDir": "Der Sicherungspfad ist oder enthält ein wichtiges Verzeichnis (%s), das durch ein Backup überschrieben werden könnte. Ohne die Aktivierung der Unterordner-Einstellung ist dies nicht erlaubt!",
       "BackupSetNotSupportedChars": "Der Name des Backup-Sets enthält nicht zulässige Zeichen ( %s )!",
       "passwordDoubleQuotes": "Das Passwort enthält \" (Doppelte Anführungszeichen), diese sind wegen eines Bugs nicht erlaubt. Der Passwortschutz für die Backups wurde deaktivert!"
@@ -20,31 +20,31 @@
   },
   "settings": {
     "section": {
-      "label": "Backup"
+      "label": "Sicherung"
     },
     "path": {
-      "label": "Sicherungs Pfad",
-      "description": "Speicherort für die Backups. Dieser Pfad ist exklusiv für die Joplin Backups wenn die Einstellungen für 'Erstellen eines Unterordners' deaktiviert wird, es dürfen sich dann keine anderen Daten darin befinden!"
+      "label": "Sicherungspfad",
+      "description": "Speicherort für die Sicherungen. Dieser Pfad ist exklusiv für die Joplin Sichrungen, wenn die Einstellungen für 'Unterordner erstellen' deaktiviert wird, es dürfen sich dann keine anderen Daten darin befinden!"
     },
     "exportPath": {
-      "label": "Temporärer Export Pfad",
+      "label": "Temporärer Exportpfad",
       "description": "Temporärer Pfad für den Datenexport aus Joplin, bevor die Daten in den %s verschoben werden"
     },
     "backupRetention": {
-      "label": "Behalte x Sicherungen",
+      "label": "x Sicherungen behalten",
       "description": "Wie viele Sicherungen aufbewahrt werden sollen. Wenn mehr als eine Version konfiguriert ist, werden die Ordner im Sicherungspfad entsprechend der Einstellung 'Sicherungsset Namen' erstellt"
     },
     "backupInterval": {
-      "label": "Sicherungsinterval in Stunden",
-      "description": "0 = Automatisches Sicherung ist deaktivert"
+      "label": "Sicherungsintervall in Stunden",
+      "description": "0 = Automatische Sicherung ist deaktivert"
     },
     "onlyOnChange": {
-      "label": "Nur bei änderung",
-      "description": "Erstellt eine Sicherung im angegebenen Sicherungsintervall nur dann, wenn es eine Änderung in den Notizen, Tags, Dateien oder Notizbücher gab"
+      "label": "Nur bei Änderung",
+      "description": "Erstellt eine Sicherung im angegebenen Sicherungsintervall nur dann, wenn es eine Änderung in den Notizen, Schlagwörtern, Dateien oder Notizbücher gab"
     },
     "usePassword": {
-      "label": "Passwort geschütztes Sicherung",
-      "description": "Die Sicherung wird mittels verschlüsseltem Archive geschützt"
+      "label": "Passwortgeschützte Sicherung",
+      "description": "Schutz der Sicherungen durch verschlüsselte Archive"
     },
     "password": {
       "label": "Passwort",
@@ -66,20 +66,20 @@
       }
     },
     "createSubfolder": {
-      "label": "Erstellen eines Unterordners",
+      "label": "Unterordner erstellen",
       "description": "Erstellt einen Unterordner im konfigurierten %s. Nur deaktivieren, wenn sich keine weiteren Daten im %s befinden!"
     },
     "createSubfolderPerProfile": {
-      "label": "Unterordner für Joplin profile",
+      "label": "Unterordner für Joplin Profile erstellen",
       "description": "Erstellt einen Unterordner innerhalb des Sicherungsverzeichnisses für das aktuelle Profil. Dadurch können mehrere Profile derselben Joplin Installation dasselbe Sicherungsverzeichnis verwenden, ohne dass Sicherungen anderer Profile überschrieben werden. Alle Profile, die dasselbe Sicherungsverzeichnis verwenden, müssen diese Einstellung aktiviert haben"
     },
     "zipArchive": {
-      "label": "Erstelle ein Archive",
-      "description": "Backup Daten in einem Archiv speichern, wenn ein Passwortschutz für die Sicherung eingestellt ist wird immer ein Archiv erstellt",
+      "label": "Archiv erstellen",
+      "description": "Sicherungsdaten in einem Archiv speichern. Wenn „Passwortgeschützte Sicherungen“ aktiviert ist, wird immer ein Archiv erstellt.",
       "value": {
         "no": "Nein",
         "yes": "Ja",
-        "yesone": "Ja, eine archive Datei"
+        "yesone": "Ja, eine Archiv-Datei"
       }
     },
     "compressionLevel": {
@@ -95,15 +95,15 @@
       }
     },
     "backupSetName": {
-      "label": "Sicherungsset Namen",
+      "label": "Sicherungssatz-Name",
       "description": "Name des Sicherungssatzes, wenn mehrere Sicherungen aufbewahrt werden sollen. Moment Token (https://momentjs.com/docs/#/displaying/format/) können mittels {TOKEN} verwendet werden"
     },
     "backupPlugins": {
       "label": "Plugins sichern",
-      "description": "Plugin jpl Dateien mit sichern (Es werden keine Plugin Einstellungen gesichert!)"
+      "description": "Plugin .jpl-Dateien mit sichern (Es werden keine Plugin Einstellungen gesichert!)"
     },
     "exportFormat": {
-      "label": "Export Format",
+      "label": "Export-Format",
       "description": "Joplin Datenexportformat während der Sicherung"
     },
     "singleJex": {
@@ -112,10 +112,10 @@
     },
     "execFinishCmd": {
       "label": "Befehl nach der Sicherung",
-      "description": "Befehl/Program nach der Sicherung ausführen"
+      "description": "Befehl/Programm nach der Sicherung ausführen"
     }
   },
-  "backupReadme": "# Joplin Sicherung\n\nDieser Ordner enthält eine oder mehrere Sicherungen aus der Joplin Note Anwendung.\n\nSiehe [Backup documentation](https://joplinapp.org/plugins/plugin/io.github.jackgruber.backup/#restore) für Informationen wie eine Sicherung wieder hergestellt werden kann.",
+  "backupReadme": "# Joplin Sicherung\n\nDieser Ordner enthält eine oder mehrere Sicherungen aus der Joplin Notiz Anwendung.\n\nSiehe [Backup documentation](https://joplinapp.org/plugins/plugin/io.github.jackgruber.backup/#restore) für Informationen, wie eine Sicherung wieder hergestellt werden kann.",
   "command": {
     "createBackup": "Backup erstellen"
   }
