@@ -2,7 +2,9 @@
 
 ## not released
 
-- Update: sk_SK minor update #90
+- Update: Slovak translation (sk_SK) #90 #94
+- Update: German translation (de_DE) #96
+- Add: Croatian translation (hr_HR) #97
 
 ## v1.4.4 (2025-05-05)
 
