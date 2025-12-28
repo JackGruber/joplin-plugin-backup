@@ -1,6 +1,7 @@
 # Changelog
 
 ## not released
+- Fix: ENOTSUP: operation not supported on socket #98
 
 ## v1.4.5 (2025-12-13)
 

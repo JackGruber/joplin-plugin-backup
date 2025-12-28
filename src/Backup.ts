@@ -37,6 +37,7 @@ class Backup {
   private execFinishCmd: string;
   private suppressErrorMsgUntil: number;
   private execPromise = promisify(exec);
+  private fsWorkaroundLinux: boolean;
 
   constructor() {
     this.log = backupLogging;
@@ -372,6 +373,7 @@ class Backup {
     this.singleJex = await joplin.settings.value("singleJexV2");
     this.exportFormat = await joplin.settings.value("exportFormat");
     this.execFinishCmd = (await joplin.settings.value("execFinishCmd")).trim();
+    this.fsWorkaroundLinux = (await joplin.settings.value("fsWorkaroundLinux"))
 
     this.backupPlugins = await joplin.settings.value("backupPlugins");
 
@@ -489,6 +491,7 @@ class Backup {
       "backupPlugins",
       "createSubfolder",
       "exportFormat",
+      "fsWorkaroundLinux",
     ];
 
     this.log.verbose("Plugin settings:");
@@ -745,7 +748,7 @@ class Backup {
         await this.addToZipArchive(logDst, logFile, this.password, ["-sdel"]);
       } else {
         try {
-          fs.moveSync(logFile, path.join(logDst, logfileName));
+          await helper.WorkaroundMove(logFile, path.join(logDst, logfileName), this.fsWorkaroundLinux)
         } catch (e) {
           await this.showError("moveLogFile: " + e.message);
           throw e;
@@ -1057,7 +1060,7 @@ class Backup {
     if (fs.existsSync(src)) {
       this.log.verbose("Copy " + src);
       try {
-        fs.copySync(src, dst);
+        await helper.WorkaroundCopyFile(src, dst, this.fsWorkaroundLinux)
         return true;
       } catch (e) {
         await this.showError(
@@ -1075,7 +1078,7 @@ class Backup {
     if (fs.existsSync(src)) {
       this.log.verbose("Copy " + src);
       try {
-        fs.copyFileSync(src, dest);
+        await helper.WorkaroundCopyFile(src, dest, this.fsWorkaroundLinux)
         return true;
       } catch (e) {
         this.log.error("backupFile: " + e.message);
@@ -1119,7 +1122,7 @@ class Backup {
       }
 
       try {
-        fs.moveSync(src, backupDestination);
+        await helper.WorkaroundMove(src, backupDestination, this.fsWorkaroundLinux)
       } catch (e) {
         await this.showError(
           i18n.__("msg.error.fileCopy", "moveFinishedBackup", e.message)
@@ -1135,7 +1138,7 @@ class Backup {
       if (zipFile) {
         backupDestination = path.join(this.backupBasePath, "JoplinBackup.7z");
         try {
-          fs.moveSync(zipFile, backupDestination);
+          await helper.WorkaroundMove(zipFile, backupDestination, this.fsWorkaroundLinux)
         } catch (e) {
           await this.showError(
             i18n.__("msg.error.fileCopy", "moveFinishedBackup", e.message)
@@ -1150,9 +1153,7 @@ class Backup {
         for (const file of backupData) {
           let dst = path.join(backupDestination, file);
           try {
-            fs.moveSync(path.join(this.activeBackupPath, file), dst, {
-              overwrite: true,
-            });
+            await helper.WorkaroundMove(path.join(this.activeBackupPath, file), dst, this.fsWorkaroundLinux, true)
           } catch (e) {
             await this.showError(
               i18n.__("msg.error.fileCopy", "moveFinishedBackup", e.message)
