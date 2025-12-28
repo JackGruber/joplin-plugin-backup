@@ -488,7 +488,6 @@ class Backup {
       "backupVersion",
       "backupPlugins",
       "createSubfolder",
-      "createSubfolder",
       "exportFormat",
     ];
 
