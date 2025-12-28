@@ -2,8 +2,8 @@ import joplin from "api";
 import * as path from "path";
 import { exec } from "child_process";
 import { promisify } from "util";
-import { copyFileSync} from "fs-extra";
-import { moveSync} from "fs-extra";
+import { copyFileSync } from "fs-extra";
+import { moveSync } from "fs-extra";
 
 export namespace helper {
   export async function validFileName(fileName: string) {
@@ -97,20 +97,29 @@ export namespace helper {
 
   // Workaround for "ENOTSUP: operation not supported on socket" #98
   // https://github.com/JackGruber/joplin-plugin-backup/issues/98
-  export async function WorkaroundCopyFile(src: string, dst: string, fsWorkaroundLinux: boolean): Promise<boolean> {
+  export async function WorkaroundCopyFile(
+    src: string,
+    dst: string,
+    fsWorkaroundLinux: boolean
+  ): Promise<boolean> {
     if (process.platform == "linux" && fsWorkaroundLinux === true) {
       var execPromise = promisify(exec);
-      await execPromise(`cp '${src}' '${dst}'`);
+      await execPromise(`cp -r '${src}' '${dst}'`);
     } else {
       copyFileSync(src, dst);
     }
 
-    return true
+    return true;
   }
 
   // Workaround for "ENOTSUP: operation not supported on socket" #98
   // https://github.com/JackGruber/joplin-plugin-backup/issues/98
-  export async function WorkaroundMove(src: string, dst: string, fsWorkaroundLinux: boolean, overwrite: boolean = false): Promise<boolean> {
+  export async function WorkaroundMove(
+    src: string,
+    dst: string,
+    fsWorkaroundLinux: boolean,
+    overwrite: boolean = false
+  ): Promise<boolean> {
     if (process.platform == "linux" && fsWorkaroundLinux === true) {
       var execPromise = promisify(exec);
       await execPromise(`mv '${src}' '${dst}'`);
@@ -120,6 +129,6 @@ export namespace helper {
       });
     }
 
-    return true
+    return true;
   }
 }
