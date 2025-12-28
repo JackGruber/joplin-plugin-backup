@@ -4,7 +4,7 @@
 
 ## v1.5.0 (2025-12-28)
 
-- Fix: Add woraround for "ENOTSUP: operation not supported on socket" #98
+- Fix: Add workaround for "ENOTSUP: operation not supported on socket" #98
 - Fix: Backup is overwritten by secondary instances #95
 
 ## v1.4.5 (2025-12-13)
