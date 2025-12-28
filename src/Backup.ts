@@ -264,7 +264,7 @@ class Backup {
     );
   }
 
-  private async getProfileName(profileRootDir: string, profileDir: string) {
+  private async getProfileName(profileRootDir: string, rootProfileDir: string) {
     // We assume that Joplin's profile structure is the following
     //   rootProfileDir/
     //   | profileDir/
@@ -273,8 +273,8 @@ class Backup {
     //   rootProfileDir/
     //   | [[profile content]]
 
-    let profileName = path.basename(profileDir);
-    if (profileDir === profileRootDir) {
+    let profileName = path.basename(rootProfileDir);
+    if (rootProfileDir === profileRootDir) {
       profileName = "default";
     }
 
@@ -287,19 +287,19 @@ class Backup {
     const altInstanceId = await joplin.settings.globalValue("altInstanceId");
 
     const profileDir = await joplin.settings.globalValue("profileDir");
-    const profileRootDir = await joplin.settings.globalValue("rootProfileDir");
+    const rootProfileDir = await joplin.settings.globalValue("rootProfileDir");
 
     let env = "";
     if ((await joplin.settings.globalValue("env")) === "dev") {
       env = "dev";
     }
 
-    const profileName = await this.getProfileName(profileRootDir, profileDir);
+    const profileName = await this.getProfileName(rootProfileDir, profileDir);
 
     const data = {
       env: env,
       profileName: profileName,
-      profileRootDir: profileRootDir,
+      rootProfileDir: rootProfileDir,
       profileDir: profileDir,
     };
     for (const [key, value] of Object.entries(data)) {
