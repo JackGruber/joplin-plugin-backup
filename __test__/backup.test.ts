@@ -1043,6 +1043,8 @@ describe("Backup", function () {
       fs.writeFileSync(file1, "template1");
       fs.writeFileSync(file2, "template2");
 
+      backup.fsWorkaroundLinux = true;
+
       expect(await backup.backupFolder(testPath.templates, dst)).toBe(true);
       expect(fs.existsSync(checkFile1)).toBe(true);
       expect(fs.existsSync(checkFile2)).toBe(true);
@@ -1105,6 +1107,7 @@ describe("Backup", function () {
 
       backup.activeBackupPath = testPath.activeBackupJob;
       backup.backupPlugins = true;
+      backup.fsWorkaroundLinux = true;
       await backup.backupProfileData();
 
       expect(fs.existsSync(backupTemplate)).toBe(true);
