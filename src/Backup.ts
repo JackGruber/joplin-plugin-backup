@@ -615,6 +615,7 @@ class Backup {
   }
 
   private async makeBackupSet(): Promise<string> {
+    this.log.verbose("makeBackupSet")
     let backupDst = "";
     if (this.zipArchive === "no" && this.passwordEnabled === false) {
       if (this.backupRetention > 1) {
@@ -628,6 +629,7 @@ class Backup {
         backupDst = await this.moveFinishedBackup();
       }
     } else {
+      this.log.verbose("Bakupset as zip")
       const zipFile = await this.createZipArchive();
       if (this.backupRetention > 1) {
         backupDst = await this.moveFinishedBackup(zipFile);
