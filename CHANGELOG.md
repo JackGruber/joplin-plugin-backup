@@ -2,6 +2,11 @@
 
 ## not released
 
+## v1.5.0 (2025-12-28)
+
+- Fix: Add woraround for "ENOTSUP: operation not supported on socket" #98
+- Fix: Backup is overwritten by secondary instances #95
+
 ## v1.4.5 (2025-12-13)
 
 - Update: Slovak translation (sk_SK) #90 #94

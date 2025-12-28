@@ -224,34 +224,74 @@ describe("Backup", function () {
   describe("backups per profile", function () {
     test.each([
       {
+        altInstanceId: "",
         rootProfileDir: testPath.joplinProfile,
         profileDir: testPath.joplinProfile,
         joplinEnv: "prod",
         expectedProfileName: "default",
       },
       {
+        altInstanceId: "",
         rootProfileDir: testPath.joplinProfile,
         profileDir: testPath.joplinProfile,
         joplinEnv: "dev",
         expectedProfileName: "default-dev",
       },
       {
+        altInstanceId: "",
         rootProfileDir: testPath.joplinProfile,
         profileDir: path.join(testPath.joplinProfile, "profile-test"),
         joplinEnv: "prod",
         expectedProfileName: "profile-test",
       },
       {
+        altInstanceId: "",
         rootProfileDir: testPath.joplinProfile,
         profileDir: path.join(testPath.joplinProfile, "profile-idhere"),
         joplinEnv: "prod",
         expectedProfileName: "profile-idhere",
       },
       {
+        altInstanceId: "",
         rootProfileDir: testPath.joplinProfile,
         profileDir: path.join(testPath.joplinProfile, "profile-idhere"),
         joplinEnv: "dev",
         expectedProfileName: "profile-idhere-dev",
+      },
+      {
+        altInstanceId: "alt1",
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: testPath.joplinProfile,
+        joplinEnv: "prod",
+        expectedProfileName: "alt1_default",
+      },
+      {
+        altInstanceId: "alt1",
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: testPath.joplinProfile,
+        joplinEnv: "dev",
+        expectedProfileName: "alt1_default-dev",
+      },
+      {
+        altInstanceId: "alt1",
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: path.join(testPath.joplinProfile, "profile-test"),
+        joplinEnv: "prod",
+        expectedProfileName: "alt1_profile-test",
+      },
+      {
+        altInstanceId: "alt1",
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: path.join(testPath.joplinProfile, "profile-idhere"),
+        joplinEnv: "prod",
+        expectedProfileName: "alt1_profile-idhere",
+      },
+      {
+        altInstanceId: "alt1",
+        rootProfileDir: testPath.joplinProfile,
+        profileDir: path.join(testPath.joplinProfile, "profile-idhere"),
+        joplinEnv: "dev",
+        expectedProfileName: "alt1_profile-idhere-dev",
       },
     ])(
       "should correctly set backupBasePath based on the current profile name (case %#)",
@@ -260,6 +300,7 @@ describe("Backup", function () {
         rootProfileDir,
         joplinEnv,
         expectedProfileName,
+        altInstanceId,
       }) => {
         when(spyOnsSettingsValue)
           .calledWith("path")
@@ -273,6 +314,9 @@ describe("Backup", function () {
         when(spyOnGlobalValue)
           .calledWith("env")
           .mockImplementation(async () => joplinEnv);
+        when(spyOnGlobalValue)
+          .calledWith("altInstanceId")
+          .mockImplementation(async () => altInstanceId);
 
         // Should use the folder named "default" for the default profile
         backup.createSubfolderPerProfile = true;
@@ -1043,6 +1087,8 @@ describe("Backup", function () {
       fs.writeFileSync(file1, "template1");
       fs.writeFileSync(file2, "template2");
 
+      backup.fsWorkaroundLinux = true;
+
       expect(await backup.backupFolder(testPath.templates, dst)).toBe(true);
       expect(fs.existsSync(checkFile1)).toBe(true);
       expect(fs.existsSync(checkFile2)).toBe(true);
@@ -1105,6 +1151,7 @@ describe("Backup", function () {
 
       backup.activeBackupPath = testPath.activeBackupJob;
       backup.backupPlugins = true;
+      backup.fsWorkaroundLinux = true;
       await backup.backupProfileData();
 
       expect(fs.existsSync(backupTemplate)).toBe(true);

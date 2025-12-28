@@ -233,7 +233,16 @@ export namespace Settings {
         advanced: true,
         label: "Single JEX",
         description: "Old setting, for compatibility and upgrade only.",
-      },
+      },    
+      fsWorkaroundLinux: {
+        value: false,
+        type: SettingItemType.Bool,
+        section: "backupSection",
+        public: true,
+        advanced: true,
+        label: i18n.__("settings.fsWorkaroundLinux.label"),
+        description: i18n.__("settings.fsWorkaroundLinux.description"),
+      }, 
       execFinishCmd: {
         value: "",
         type: SettingItemType.String,

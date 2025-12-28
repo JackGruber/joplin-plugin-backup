@@ -113,6 +113,10 @@
     "execFinishCmd": {
       "label": "Command on Backup finish",
       "description": "Execute command when backup is finished"
+    },
+    "fsWorkaroundLinux": {
+      "label": "Use native Linux commands instead of fs",
+      "description": "Uses native Linux commands instead of the Node.js fs API as a workaround for issue #98."
     }
   },
   "backupReadme": "# Joplin Backup\n\nThis folder contains one or more backups of data from the Joplin note taking application.\n\nSee the [Backup documentation](https://joplinapp.org/plugins/plugin/io.github.jackgruber.backup/#restore) for information about how to restore from this backup.",

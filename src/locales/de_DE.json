@@ -113,6 +113,10 @@
     "execFinishCmd": {
       "label": "Befehl nach der Sicherung",
       "description": "Befehl/Programm nach der Sicherung ausführen"
+    },
+    "fsWorkaroundLinux": {
+      "label": "Native Linux Befehle statt fs verwenden",
+      "description": "Nutzt native Linux Befehle anstelle der Node.js fs API als Workaround für Problem #98"
     }
   },
   "backupReadme": "# Joplin Sicherung\n\nDieser Ordner enthält eine oder mehrere Sicherungen aus der Joplin Notiz Anwendung.\n\nSiehe [Backup documentation](https://joplinapp.org/plugins/plugin/io.github.jackgruber.backup/#restore) für Informationen, wie eine Sicherung wieder hergestellt werden kann.",
