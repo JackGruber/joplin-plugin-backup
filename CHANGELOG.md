@@ -1,7 +1,9 @@
 # Changelog
 
 ## not released
+
 - Fix: Add woraround for "ENOTSUP: operation not supported on socket" #98
+- Fix: Backup is overwritten by secondary instances #95
 
 ## v1.4.5 (2025-12-13)
 

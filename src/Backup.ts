@@ -298,6 +298,7 @@ class Backup {
 
     const data = {
       env: env,
+      altInstanceId: altInstanceId,
       profileName: profileName,
       rootProfileDir: rootProfileDir,
       profileDir: profileDir,
@@ -351,6 +352,9 @@ class Backup {
       this.log.verbose("append profile / instance subfolder");
 
       let profileName = "";
+      if (instanceInfo["altInstanceId"] !== "") {
+        profileName += instanceInfo["altInstanceId"] + "_";
+      }
       profileName += instanceInfo["profileName"];
       if (instanceInfo["env"] !== "") {
         profileName += "-" + instanceInfo["env"];
