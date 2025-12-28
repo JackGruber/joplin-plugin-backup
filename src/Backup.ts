@@ -264,10 +264,55 @@ class Backup {
     );
   }
 
+  private async getProfileName(profileRootDir: string, profileDir: string) {
+    // We assume that Joplin's profile structure is the following
+    //   rootProfileDir/
+    //   | profileDir/
+    //   | | [[profile content]]
+    // or, if using the default,
+    //   rootProfileDir/
+    //   | [[profile content]]
+
+    let profileName = path.basename(profileDir);
+    if (profileDir === profileRootDir) {
+      profileName = "default";
+    }
+
+    return profileName;
+  }
+
+  private async getInstanceInfo() {
+    this.log.verbose("getInstanceInfo");
+
+    const altInstanceId = await joplin.settings.globalValue("altInstanceId");
+
+    const profileDir = await joplin.settings.globalValue("profileDir");
+    const profileRootDir = await joplin.settings.globalValue("rootProfileDir");
+
+    let env = "";
+    if ((await joplin.settings.globalValue("env")) === "dev") {
+      env = "dev";
+    }
+
+    const profileName = await this.getProfileName(profileRootDir, profileDir);
+
+    const data = {
+      env: env,
+      profileName: profileName,
+      profileRootDir: profileRootDir,
+      profileDir: profileDir,
+    };
+    for (const [key, value] of Object.entries(data)) {
+      this.log.verbose(`${key}:`, value);
+    }
+    return data;
+  }
+
   private async loadBackupPath() {
     this.log.verbose("loadBackupPath");
+    const instanceInfo = await this.getInstanceInfo();
     const pathSetting = await joplin.settings.value("path");
-    const profileDir = await joplin.settings.globalValue("profileDir");
+    const profileDir = instanceInfo["profileDir"];
 
     if (path.isAbsolute(pathSetting)) {
       this.backupBasePath = path.normalize(pathSetting);
@@ -303,28 +348,12 @@ class Backup {
     this.readmeOutputDirectory = this.backupBasePath;
 
     if (this.createSubfolderPerProfile) {
-      this.log.verbose("append profile subfolder");
-      // We assume that Joplin's profile structure is the following
-      //   rootProfileDir/
-      //   | profileDir/
-      //   | | [[profile content]]
-      // or, if using the default,
-      //   rootProfileDir/
-      //   | [[profile content]]
-      const profileRootDir = await joplin.settings.globalValue(
-        "rootProfileDir"
-      );
-      const profileCurrentDir = await joplin.settings.globalValue("profileDir");
+      this.log.verbose("append profile / instance subfolder");
 
-      let profileName = path.basename(profileCurrentDir);
-      if (profileCurrentDir === profileRootDir) {
-        profileName = "default";
-      }
-
-      // Appending a -dev to the profile name prevents a devmode default Joplin
-      // profile from overwriting a non-devmode Joplin profile.
-      if ((await joplin.settings.globalValue("env")) === "dev") {
-        profileName += "-dev";
+      let profileName = "";
+      profileName += instanceInfo["profileName"];
+      if (instanceInfo["env"] !== "") {
+        profileName += "-" + instanceInfo["env"];
       }
 
       this.backupBasePath = path.join(this.backupBasePath, profileName);
@@ -373,7 +402,7 @@ class Backup {
     this.singleJex = await joplin.settings.value("singleJexV2");
     this.exportFormat = await joplin.settings.value("exportFormat");
     this.execFinishCmd = (await joplin.settings.value("execFinishCmd")).trim();
-    this.fsWorkaroundLinux = (await joplin.settings.value("fsWorkaroundLinux"))
+    this.fsWorkaroundLinux = await joplin.settings.value("fsWorkaroundLinux");
 
     this.backupPlugins = await joplin.settings.value("backupPlugins");
 
@@ -615,7 +644,7 @@ class Backup {
   }
 
   private async makeBackupSet(): Promise<string> {
-    this.log.verbose("makeBackupSet")
+    this.log.verbose("makeBackupSet");
     let backupDst = "";
     if (this.zipArchive === "no" && this.passwordEnabled === false) {
       if (this.backupRetention > 1) {
@@ -629,7 +658,7 @@ class Backup {
         backupDst = await this.moveFinishedBackup();
       }
     } else {
-      this.log.verbose("Bakupset as zip")
+      this.log.verbose("Bakupset as zip");
       const zipFile = await this.createZipArchive();
       if (this.backupRetention > 1) {
         backupDst = await this.moveFinishedBackup(zipFile);
@@ -750,7 +779,11 @@ class Backup {
         await this.addToZipArchive(logDst, logFile, this.password, ["-sdel"]);
       } else {
         try {
-          await helper.WorkaroundMove(logFile, path.join(logDst, logfileName), this.fsWorkaroundLinux)
+          await helper.WorkaroundMove(
+            logFile,
+            path.join(logDst, logfileName),
+            this.fsWorkaroundLinux
+          );
         } catch (e) {
           await this.showError("moveLogFile: " + e.message);
           throw e;
@@ -1062,7 +1095,7 @@ class Backup {
     if (fs.existsSync(src)) {
       this.log.verbose("Copy " + src);
       try {
-        await helper.WorkaroundCopyFile(src, dst, this.fsWorkaroundLinux)
+        await helper.WorkaroundCopyFile(src, dst, this.fsWorkaroundLinux);
         return true;
       } catch (e) {
         await this.showError(
@@ -1080,7 +1113,7 @@ class Backup {
     if (fs.existsSync(src)) {
       this.log.verbose("Copy " + src);
       try {
-        await helper.WorkaroundCopyFile(src, dest, this.fsWorkaroundLinux)
+        await helper.WorkaroundCopyFile(src, dest, this.fsWorkaroundLinux);
         return true;
       } catch (e) {
         await this.showError(
@@ -1126,7 +1159,11 @@ class Backup {
       }
 
       try {
-        await helper.WorkaroundMove(src, backupDestination, this.fsWorkaroundLinux)
+        await helper.WorkaroundMove(
+          src,
+          backupDestination,
+          this.fsWorkaroundLinux
+        );
       } catch (e) {
         await this.showError(
           i18n.__("msg.error.fileCopy", "moveFinishedBackup", e.message)
@@ -1142,7 +1179,11 @@ class Backup {
       if (zipFile) {
         backupDestination = path.join(this.backupBasePath, "JoplinBackup.7z");
         try {
-          await helper.WorkaroundMove(zipFile, backupDestination, this.fsWorkaroundLinux)
+          await helper.WorkaroundMove(
+            zipFile,
+            backupDestination,
+            this.fsWorkaroundLinux
+          );
         } catch (e) {
           await this.showError(
             i18n.__("msg.error.fileCopy", "moveFinishedBackup", e.message)
@@ -1157,7 +1198,12 @@ class Backup {
         for (const file of backupData) {
           let dst = path.join(backupDestination, file);
           try {
-            await helper.WorkaroundMove(path.join(this.activeBackupPath, file), dst, this.fsWorkaroundLinux, true)
+            await helper.WorkaroundMove(
+              path.join(this.activeBackupPath, file),
+              dst,
+              this.fsWorkaroundLinux,
+              true
+            );
           } catch (e) {
             await this.showError(
               i18n.__("msg.error.fileCopy", "moveFinishedBackup", e.message)
