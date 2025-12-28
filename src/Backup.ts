@@ -1083,7 +1083,9 @@ class Backup {
         await helper.WorkaroundCopyFile(src, dest, this.fsWorkaroundLinux)
         return true;
       } catch (e) {
-        this.log.error("backupFile: " + e.message);
+        await this.showError(
+          i18n.__("msg.error.fileCopy", "backupFile", e.message)
+        );
         throw e;
       }
     } else {
