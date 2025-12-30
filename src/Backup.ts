@@ -284,7 +284,12 @@ class Backup {
   private async getInstanceInfo() {
     this.log.verbose("getInstanceInfo");
 
-    const altInstanceId = await joplin.settings.globalValue("altInstanceId");
+    let altInstanceId = "";
+    try {
+      altInstanceId = await joplin.settings.globalValue("altInstanceId");
+    } catch (e) {
+      this.log.verbose("Joplin version without altInstanceId");
+    }
 
     const profileDir = await joplin.settings.globalValue("profileDir");
     const rootProfileDir = await joplin.settings.globalValue("rootProfileDir");

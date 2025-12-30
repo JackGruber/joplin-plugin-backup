@@ -2,6 +2,8 @@
 
 ## not released
 
+- Fix: Joplin versions without multiple instances support
+
 ## v1.5.0 (2025-12-28)
 
 - Fix: Add workaround for "ENOTSUP: operation not supported on socket" #98
