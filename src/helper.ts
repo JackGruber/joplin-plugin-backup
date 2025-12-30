@@ -4,8 +4,21 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import { copyFileSync } from "fs-extra";
 import { moveSync } from "fs-extra";
+import * as fs from "fs-extra";
 
 export namespace helper {
+  export async function getPluginVersion(): Promise<string> {
+    const installationDir = await joplin.plugins.installationDir();
+    try {
+      const manifest = JSON.parse(
+        fs.readFileSync(path.join(installationDir, "manifest.json"), "utf8")
+      );
+      return manifest.version;
+    } catch (error) {
+      return "n/a";
+    }
+  }
+
   export async function validFileName(fileName: string) {
     var regChar = /[:*?"<>\/|\\]+/; // forbidden characters \ / : * ? " < > |
     var rexNames = /^(nul|prn|con|lpt[0-9]|com[0-9])(\.|$)/i; // forbidden file names
