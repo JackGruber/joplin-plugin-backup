@@ -1,6 +1,6 @@
 import joplin from "api";
 import * as path from "path";
-import { exec } from "child_process";
+import { execFile } from "child_process";
 import { promisify } from "util";
 import { copyFileSync } from "fs-extra";
 import { moveSync } from "fs-extra";
@@ -116,8 +116,8 @@ export namespace helper {
     fsWorkaroundLinux: boolean
   ): Promise<boolean> {
     if (process.platform == "linux" && fsWorkaroundLinux === true) {
-      var execPromise = promisify(exec);
-      await execPromise(`cp -r '${src}' '${dst}'`);
+      var execPromise = promisify(execFile);
+      await execPromise("cp", ["-r", src, dst]);
     } else {
       copyFileSync(src, dst);
     }
@@ -134,8 +134,8 @@ export namespace helper {
     overwrite: boolean = false
   ): Promise<boolean> {
     if (process.platform == "linux" && fsWorkaroundLinux === true) {
-      var execPromise = promisify(exec);
-      await execPromise(`mv '${src}' '${dst}'`);
+      var execPromise = promisify(execFile);
+      await execPromise("mv", [src, dst]);
     } else {
       moveSync(src, dst, {
         overwrite: overwrite,
