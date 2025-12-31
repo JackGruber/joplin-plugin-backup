@@ -3,6 +3,7 @@ import * as path from "path";
 import { execFile } from "child_process";
 import { promisify } from "util";
 import { copyFileSync } from "fs-extra";
+import { copySync } from "fs-extra";
 import { moveSync } from "fs-extra";
 import * as fs from "fs-extra";
 
@@ -120,6 +121,23 @@ export namespace helper {
       await execPromise("cp", ["-r", src, dst]);
     } else {
       copyFileSync(src, dst);
+    }
+
+    return true;
+  }
+
+  // Workaround for "ENOTSUP: operation not supported on socket" #98
+  // https://github.com/JackGruber/joplin-plugin-backup/issues/98
+  export async function WorkaroundCopyFolder(
+    src: string,
+    dst: string,
+    fsWorkaroundLinux: boolean
+  ): Promise<boolean> {
+    if (process.platform == "linux" && fsWorkaroundLinux === true) {
+      var execPromise = promisify(execFile);
+      await execPromise("cp", ["-r", src, dst]);
+    } else {
+      copySync(src, dst);
     }
 
     return true;

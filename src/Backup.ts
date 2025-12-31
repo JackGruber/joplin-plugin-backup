@@ -1114,7 +1114,7 @@ class Backup {
     if (fs.existsSync(src)) {
       this.log.verbose("Copy " + src);
       try {
-        await helper.WorkaroundCopyFile(src, dst, this.fsWorkaroundLinux);
+        await helper.WorkaroundCopyFolder(src, dst, this.fsWorkaroundLinux);
         return true;
       } catch (e) {
         await this.showError(
