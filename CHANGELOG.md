@@ -2,6 +2,8 @@
 
 ## not released
 
+## v1.5.1 (2025-12-31)
+
 - Fix: Joplin versions without multiple instances support
 - Fix: Backup of plugins #99
 - Fix: Security issue on escaping paths for copy workaround
