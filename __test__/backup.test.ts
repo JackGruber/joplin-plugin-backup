@@ -30,6 +30,7 @@ let spyOnShowError = null;
 let spyOnSaveBackupInfo = null;
 let spyOnDataGet = null;
 let spyOnIsThereData = null;
+let spyOnLogVerisonInfos = null;
 
 const spyOnsSettingsValue = jest.spyOn(joplin.settings, "value");
 const spyOnGlobalValue = jest.spyOn(joplin.settings, "globalValue");
@@ -98,6 +99,10 @@ describe("Backup", function () {
       .mockImplementation(() => {});
 
     await backup.confLocale(path.join(__dirname, "..", "src", "locales"));
+
+    spyOnLogVerisonInfos = jest
+      .spyOn(backup, "logVerisonInfos")
+      .mockImplementation(() => {});
   });
 
   afterEach(async () => {
@@ -110,6 +115,7 @@ describe("Backup", function () {
     spyOnGlobalValue.mockReset();
     spyOnDataGet.mockReset();
     spyOnSaveBackupInfo.mockReset();
+    spyOnLogVerisonInfos.mockReset();
   });
 
   afterAll(async () => {
