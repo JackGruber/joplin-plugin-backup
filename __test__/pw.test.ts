@@ -107,7 +107,7 @@ describe("Password", function () {
       if (testCase.expected == 1) {
         expect(backup.password).toBe(testCase.password);
       }
-      expect(spyOnsSettingsSetValue).toBeCalledTimes(testCase.called);
+      expect(spyOnsSettingsSetValue).toHaveBeenCalledTimes(testCase.called);
       expect(backup.log.error).toHaveBeenCalledTimes(0);
       expect(backup.log.warn).toHaveBeenCalledTimes(0);
       spyOnsSettingsSetValue.mockReset();
