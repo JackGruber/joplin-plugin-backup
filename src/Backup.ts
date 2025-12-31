@@ -55,6 +55,7 @@ class Backup {
     await this.registerCommands();
     await this.registerMenues();
     await this.createErrorDialog();
+    await this.logVerisonInfos();
     await this.loadSettings();
     await this.startTimer();
     await this.upgradeBackupPluginVersion();
@@ -284,7 +285,12 @@ class Backup {
   private async getInstanceInfo() {
     this.log.verbose("getInstanceInfo");
 
-    const altInstanceId = await joplin.settings.globalValue("altInstanceId");
+    let altInstanceId = "";
+    try {
+      altInstanceId = await joplin.settings.globalValue("altInstanceId");
+    } catch (e) {
+      this.log.verbose("Joplin version without altInstanceId");
+    }
 
     const profileDir = await joplin.settings.globalValue("profileDir");
     const rootProfileDir = await joplin.settings.globalValue("rootProfileDir");
@@ -540,6 +546,14 @@ class Backup {
     );
   }
 
+  public async logVerisonInfos() {
+    const joplinVersionInfo = await helper.joplinVersionInfo();
+    const pluginVersion = await helper.getPluginVersion();
+    this.log.verbose("Joplin Version: " + joplinVersionInfo.version);
+    this.log.verbose("Node.JS Version: " + process.version);
+    this.log.info("Plugin Version: " + pluginVersion);
+  }
+
   public async start(showDoneMsg: boolean = false) {
     // Prevent error message for empty profile on automatic backup
     // https://github.com/JackGruber/joplin-plugin-backup/issues/71
@@ -555,6 +569,7 @@ class Backup {
       await this.deleteLogFile();
       await this.fileLogging(true);
       this.log.info("Backup started");
+      await this.logVerisonInfos();
 
       await this.stopTimer();
 
@@ -1099,7 +1114,7 @@ class Backup {
     if (fs.existsSync(src)) {
       this.log.verbose("Copy " + src);
       try {
-        await helper.WorkaroundCopyFile(src, dst, this.fsWorkaroundLinux);
+        await helper.WorkaroundCopyFolder(src, dst, this.fsWorkaroundLinux);
         return true;
       } catch (e) {
         await this.showError(
