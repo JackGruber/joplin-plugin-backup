@@ -113,6 +113,10 @@
     "execFinishCmd": {
       "label": "Naredba po završetku izrade sigurnosne kopije",
       "description": "Izvrši naredbu kada je sigurnosna kopija gotova"
+    },
+    "fsWorkaroundLinux": {
+      "label": "Koristi izvorne Linux naredbe umjesto fs",
+      "description": "Koristi izvorne Linux naredbe umjesto Node.js fs API-ja kao zaobilazno rješenje za problem #98."
     }
   },
   "backupReadme": "# Joplinova sigurnosna kopija\n\nOva mapa sadrži jednu ili više sigurnosnih kopija podataka od Joplin aplikacije.\n\nPogledaj [dokumentaciju za sigurnosne kopije](https://joplinapp.org/plugins/plugin/io.github.jackgruber.backup/#restore) za informacije o tome kako obnoviti podatke iz ove sigurnosne kopije.",
