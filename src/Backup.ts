@@ -11,6 +11,11 @@ import { helper } from "./helper";
 import { exec } from "child_process";
 import { I18n } from "i18n";
 import { promisify } from "util";
+import {
+  RetentionPolicy,
+  parseRetentionPolicy,
+  selectBackupsToKeep,
+} from "./retention";
 
 let i18n: any;
 
@@ -22,6 +27,7 @@ class Backup {
   private log: any;
   private logFile: string;
   private backupRetention: number;
+  private retentionPolicy: RetentionPolicy;
   private timer: any;
   private passwordEnabled: boolean;
   private password: string;
@@ -406,6 +412,7 @@ class Backup {
     );
     await this.loadBackupPath();
     this.backupRetention = await joplin.settings.value("backupRetention");
+    await this.loadRetentionPolicy();
 
     this.zipArchive = await joplin.settings.value("zipArchive");
     this.compressionLevel = await joplin.settings.value("compressionLevel");
@@ -430,6 +437,24 @@ class Backup {
 
     await this.enablePassword();
     await this.setActiveBackupPath();
+  }
+
+  private async loadRetentionPolicy() {
+    try {
+      this.retentionPolicy = parseRetentionPolicy(
+        await joplin.settings.value("backupRetentionPolicy")
+      );
+    } catch (e) {
+      // Never delete anything if the policy can't be understood
+      this.retentionPolicy = { last: Infinity };
+      await this.showError(
+        i18n.__("msg.error.retentionPolicyInvalid", e.message)
+      );
+    }
+  }
+
+  private keepsMultipleBackupSets(): boolean {
+    return this.backupRetention > 1 || !!this.retentionPolicy;
   }
 
   private async createErrorDialog() {
@@ -516,6 +541,7 @@ class Backup {
       "singleJex",
       "singleJexV2",
       "backupRetention",
+      "backupRetentionPolicy",
       "backupInterval",
       "onlyOnChange",
       "usePassword",
@@ -666,11 +692,12 @@ class Backup {
     this.log.verbose("makeBackupSet");
     let backupDst = "";
     if (this.zipArchive === "no" && this.passwordEnabled === false) {
-      if (this.backupRetention > 1) {
+      if (this.keepsMultipleBackupSets()) {
         backupDst = await this.moveFinishedBackup();
         await this.deleteOldBackupSets(
           this.backupBasePath,
-          this.backupRetention
+          this.backupRetention,
+          this.retentionPolicy
         );
       } else {
         await this.clearBackupTarget(this.backupBasePath);
@@ -679,7 +706,7 @@ class Backup {
     } else {
       this.log.verbose("Bakupset as zip");
       const zipFile = await this.createZipArchive();
-      if (this.backupRetention > 1) {
+      if (this.keepsMultipleBackupSets()) {
         backupDst = await this.moveFinishedBackup(zipFile);
         try {
           fs.removeSync(this.activeBackupPath);
@@ -689,7 +716,8 @@ class Backup {
         }
         await this.deleteOldBackupSets(
           this.backupBasePath,
-          this.backupRetention
+          this.backupRetention,
+          this.retentionPolicy
         );
       } else {
         await this.clearBackupTarget(this.backupBasePath);
@@ -1149,7 +1177,7 @@ class Backup {
   private async moveFinishedBackup(zipFile: string = null): Promise<string> {
     this.log.info("Move finished backup");
     let backupDestination = null;
-    if (this.backupRetention > 1) {
+    if (this.keepsMultipleBackupSets()) {
       const backupSetFolder = await this.getBackupSetFolderName();
       backupDestination = zipFile
         ? path.join(this.backupBasePath, backupSetFolder + ".7z")
@@ -1304,7 +1332,8 @@ class Backup {
 
   private async deleteOldBackupSets(
     backupPath: string,
-    backupRetention: number
+    backupRetention: number,
+    retentionPolicy: RetentionPolicy = null
   ) {
     this.log.verbose("deleteOldBackupSets");
     let info = JSON.parse(await joplin.settings.value("backupInfo"));
@@ -1319,13 +1348,16 @@ class Backup {
     }
     await joplin.settings.setValue("backupInfo", JSON.stringify(setOk));
     info = JSON.parse(await joplin.settings.value("backupInfo"));
-    if (info.length > backupRetention) {
-      info.sort((a, b) => b.date - a.date);
-    }
+    info.sort((a, b) => b.date - a.date);
 
-    while (info.length > backupRetention) {
-      const del = info.splice(backupRetention, 1);
-      const folder = path.join(backupPath, del[0].name);
+    const keep = selectBackupsToKeep(
+      info,
+      retentionPolicy || { last: backupRetention }
+    );
+    const toDelete = info.filter((set) => !keep.has(set.name));
+
+    for (const del of toDelete) {
+      const folder = path.join(backupPath, del.name);
       if (fs.existsSync(folder)) {
         this.log.verbose("Remove backup set " + folder);
 
@@ -1344,6 +1376,7 @@ class Backup {
           throw e;
         }
       }
+      info = info.filter((set) => set !== del);
       await joplin.settings.setValue("backupInfo", JSON.stringify(info));
     }
   }

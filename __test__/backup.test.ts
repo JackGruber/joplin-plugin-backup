@@ -929,6 +929,43 @@ describe("Backup", function () {
       expect(fs.existsSync(folder4)).toBe(true);
       expect(fs.existsSync(folder5)).toBe(true);
     });
+
+    it(`Retention policy overrides backupRetention`, async () => {
+      const names = [
+        "202601011200",
+        "202601021200",
+        "202601021800",
+        "202601031200",
+        "202601031800",
+      ];
+      for (const name of names) {
+        fs.emptyDirSync(path.join(testPath.backupBasePath, name));
+      }
+
+      const backupInfo = names.map((name) => ({
+        name: name,
+        date: new Date(
+          parseInt(name.substring(0, 4)),
+          parseInt(name.substring(4, 6)) - 1,
+          parseInt(name.substring(6, 8)),
+          parseInt(name.substring(8, 10)),
+          parseInt(name.substring(10, 12))
+        ).getTime(),
+      }));
+
+      when(spyOnsSettingsValue)
+        .calledWith("backupInfo")
+        .mockImplementation(() => Promise.resolve(JSON.stringify(backupInfo)));
+
+      await backup.deleteOldBackupSets(testPath.backupBasePath, 1, {
+        daily: 2,
+      });
+
+      expect(fs.readdirSync(testPath.backupBasePath).sort()).toEqual([
+        "202601021800",
+        "202601031800",
+      ]);
+    });
   });
 
   describe("Logging", function () {
