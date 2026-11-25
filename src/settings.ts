@@ -62,6 +62,17 @@ export namespace Settings {
         label: i18n.__("settings.backupRetention.label"),
         description: i18n.__("settings.backupRetention.description"),
       },
+      backupRetentionPolicy: {
+        value: "",
+        type: SettingItemType.String,
+        section: "backupSection",
+        public: true,
+        advanced: true,
+        label: i18n.__("settings.backupRetentionPolicy.label"),
+        description: i18n.__("settings.backupRetentionPolicy.description", {
+          backupRetention: i18n.__("settings.backupRetention.label"),
+        }),
+      },
       backupInterval: {
         value: 24,
         minimum: 0,
@@ -233,7 +244,7 @@ export namespace Settings {
         advanced: true,
         label: "Single JEX",
         description: "Old setting, for compatibility and upgrade only.",
-      },    
+      },
       fsWorkaroundLinux: {
         value: false,
         type: SettingItemType.Bool,
@@ -242,7 +253,7 @@ export namespace Settings {
         advanced: true,
         label: i18n.__("settings.fsWorkaroundLinux.label"),
         description: i18n.__("settings.fsWorkaroundLinux.description"),
-      }, 
+      },
       execFinishCmd: {
         value: "",
         type: SettingItemType.String,
